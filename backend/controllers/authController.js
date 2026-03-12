@@ -1,21 +1,32 @@
 const jwt = require("jsonwebtoken");
+const passport = require("passport");
 
-exports.login = async (req, res) => {
-  const user = req.user; 
-  const payload = {
-    id: user.id_usuario,
-    usuario: user.usuario,
-    role: user.Rol.nombre
-  };
+exports.login = (req, res, next) => {
+  passport.authenticate("local", { session: false }, (err, user, info) => {
+    if (err) {
+      return res.status(500).json({ message: "Error en el servidor" });
+    }
 
-  const token = jwt.sign(payload, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES
-  });
+    if (!user) {
+      const status = info?.status || 401;
+      return res.status(status).json({ message: info?.message || "Credenciales inválidas" });
+    }
 
-  res.json({ message: "Login exitoso", token });
+    //generar token si el usuario es válido
+    const payload = {
+      id: user.id_usuario,
+      usuario: user.usuario,
+      role: user.Rol.nombre
+    };
+
+    const token = jwt.sign(payload, process.env.JWT_SECRET, {
+      expiresIn: process.env.JWT_EXPIRES
+    });
+
+    return res.json({ message: "Login exitoso", token });
+  })(req, res, next);
 };
 
 exports.logout = (req, res) => {
-  //frontend borra el token.
   res.json({ message: "Logout exitoso, borra el token en frontend" });
 };

@@ -20,7 +20,25 @@ export class LoginComponent {
         this.router.navigate(['/dashboard']);
       },
       error: (err) => {
-        console.error('Error de login', err);
+        switch (err.status) {
+          case 0:
+            alert("No se pudo conectar al servidor.");
+            break;
+          case 401:
+            alert("Credenciales incorrectas.");
+            break;
+          case 403:
+            alert("Tu usuario está inactivo. Contacta al administrador.");
+            break;
+          case 404:
+            alert("Usuario no encontrado.");
+            break;
+          case 500:
+            alert("Error interno del servidor.");
+            break;
+          default:
+            alert("Error inesperado. Intente nuevamente.");
+        }
       }
     });
   }
