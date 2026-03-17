@@ -12,13 +12,21 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { LoginComponent } from './components/login/login.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { UsuariosComponent } from './components/usuarios/usuarios.component';
+import { MainLayoutComponent } from './components/main-layout/main-layout.component';
+import { SidebarComponent } from './components/sidebar/sidebar.component';
+import { NavbarComponent } from './components/navbar/navbar.component';
+import { AuthLayoutComponent } from './components/auth-layout/auth-layout.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
     DashboardComponent,
-    UsuariosComponent
+    UsuariosComponent,
+    MainLayoutComponent,
+    SidebarComponent,
+    NavbarComponent,
+    AuthLayoutComponent
   ],
   imports: [
     FormsModule,

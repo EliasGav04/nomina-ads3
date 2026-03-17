@@ -3,25 +3,41 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { authGuard } from './guards/auth.guard';
 
+import { AuthLayoutComponent } from './components/auth-layout/auth-layout.component';
+import { MainLayoutComponent } from './components/main-layout/main-layout.component';
+
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { LoginComponent } from './components/login/login.component';
 import { UsuariosComponent } from './components/usuarios/usuarios.component';
 
 
 const routes: Routes = [
-  { 
-    path: 'dashboard',
-    component: DashboardComponent, canActivate: [authGuard]
+  {
+    path: '',
+    component: AuthLayoutComponent,
+    children: [
+      { 
+        path: 'login',
+        component: LoginComponent
+      },
+    ]
   },
-  { path: 'login',
-     component: LoginComponent
+  {
+    path: '',
+    component: MainLayoutComponent,
+    canActivate: [authGuard],
+    children: [
+      { 
+        path: 'dashboard',
+        component: DashboardComponent
+      },
+      { 
+        path: 'usuarios',
+        component: UsuariosComponent 
+      },
+
+    ]
   },
-  { path: 'usuarios',
-    component: UsuariosComponent
- },
-
-
-
   { path: '', redirectTo: '/login', pathMatch: 'full' }
 ];
 
