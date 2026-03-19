@@ -5,7 +5,11 @@ const { Usuario, Rol } = require("../models");
 module.exports = (passport) => {
   passport.use(new LocalStrategy(async (username, password, done) => {
     try {
-      const user = await Usuario.findOne({ where: { usuario: username }, include: Rol });
+      const user = await Usuario.findOne({
+        where: { usuario: username },
+        include: [{ model: Rol }]
+      });
+
       if (!user) {
         return done(null, false, { status: 404, message: "Usuario no encontrado" });
       }
@@ -27,7 +31,7 @@ module.exports = (passport) => {
 
   passport.serializeUser((user, done) => done(null, user.id_usuario));
   passport.deserializeUser(async (id, done) => {
-    const user = await Usuario.findByPk(id, { include: Rol });
+    const user = await Usuario.findByPk(id, { include: [{ model: Rol }] });
     done(null, user);
   });
 };

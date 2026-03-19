@@ -1,1 +1,55 @@
-<p>usuarios works!</p>
+<h2>Gestión de Usuarios</h2>
+
+<button (click)="openModal()">Crear Usuario</button>
+
+<hr />
+
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Rol</th>
+      <th>Usuario</th>
+      <th>Clave</th>
+      <th>Estado</th>
+      <th>Último acceso</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let u of usuarios">
+      <td>{{ u.id_usuario }}</td>
+      <td>{{ u.Rol?.rol }}</td>
+      <td>{{ u.usuario }}</td>
+      <td>{{ '********' }}</td>
+      <td>{{ u.estado }}</td>
+      <td>{{ u.ultimo_acceso | date:'short' }}</td>
+      <td>
+        <button (click)="editUsuario(u)">Editar</button>
+        <button (click)="deleteUsuario(u.id_usuario)">Inactivar</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- Modal -->
+<div class="modal" *ngIf="showModal">
+  <div class="modal-content">
+    <h3>{{ editing ? 'Editar Usuario' : 'Crear Usuario' }}</h3>
+    <form [formGroup]="usuarioForm" (ngSubmit)="saveUsuario()">
+      <label>Rol:</label>
+      <select formControlName="id_rol">
+        <option *ngFor="let r of roles" [value]="r.id_rol">{{ r.rol }}</option>
+      </select>
+
+      <label>Usuario:</label>
+      <input formControlName="usuario" type="text" />
+
+      <label>Clave:</label>
+      <input formControlName="clave" type="password" />
+
+      <button type="submit">{{ editing ? 'Actualizar' : 'Crear' }}</button>
+      <button type="button" (click)="closeModal()">Cancelar</button>
+    </form>
+  </div>
+</div>

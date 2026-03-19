@@ -5,8 +5,13 @@ const passport = require('passport');
 require('dotenv').config();
 
 const sequelize = require('./config/database');
-const authRoutes = require('./routes/auth');
+
 require('./config/passport')(passport);
+
+//rutas backend
+const authRoutes = require('./routes/auth');
+const usuariosRoutes = require('./routes/usuarios');
+const rolesRoutes = require('./routes/roles');
 
 const app = express();
 
@@ -21,6 +26,9 @@ app.get('/', (req, res) => {
 
 // rutas
 app.use('/api/auth', authRoutes);
+app.use('/api/usuarios', usuariosRoutes);
+app.use('/api/roles', rolesRoutes);
+
 
 //conexion BD
 sequelize.authenticate()
