@@ -1,6 +1,8 @@
 <h2>Gestión de Usuarios</h2>
 
-<button (click)="openModal()">Crear Usuario</button>
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#usuarioModal">
+  Crear Usuario
+</button>
 
 <hr />
 
@@ -25,31 +27,40 @@
       <td>{{ u.estado }}</td>
       <td>{{ u.ultimo_acceso | date:'short' }}</td>
       <td>
-        <button (click)="editUsuario(u)">Editar</button>
-        <button (click)="deleteUsuario(u.id_usuario)">Inactivar</button>
+        <button class="btn btn-warning btn-sm me-2" (click)="editUsuario(u)">
+          Editar
+        </button>
+        <button class="btn btn-danger btn-sm" (click)="deleteUsuario(u.id_usuario)">
+          Inactivar
+        </button>
       </td>
     </tr>
   </tbody>
 </table>
 
 <!-- Modal -->
-<div class="modal" *ngIf="showModal">
-  <div class="modal-content">
-    <h3>{{ editing ? 'Editar Usuario' : 'Crear Usuario' }}</h3>
-    <form [formGroup]="usuarioForm" (ngSubmit)="saveUsuario()">
-      <label>Rol:</label>
-      <select formControlName="id_rol">
-        <option *ngFor="let r of roles" [value]="r.id_rol">{{ r.rol }}</option>
-      </select>
+<div class="modal fade" id="usuarioModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <h3>{{ editing ? 'Editar Usuario' : 'Crear Usuario' }}</h3>
+      <form [formGroup]="usuarioForm" (ngSubmit)="saveUsuario()">
+        <div class="modal-body">
+          <label>Rol:</label>
+          <select formControlName="id_rol" class="form-select">
+            <option *ngFor="let r of roles" [value]="r.id_rol">{{ r.rol }}</option>
+          </select>
 
-      <label>Usuario:</label>
-      <input formControlName="usuario" type="text" />
+          <label>Usuario:</label>
+          <input formControlName="usuario" type="text" class="form-control" />
 
-      <label>Clave:</label>
-      <input formControlName="clave" type="password" />
-
-      <button type="submit">{{ editing ? 'Actualizar' : 'Crear' }}</button>
-      <button type="button" (click)="closeModal()">Cancelar</button>
-    </form>
+          <label>Clave:</label>
+          <input formControlName="clave" type="password" class="form-control" />
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-success">{{ editing ? 'Actualizar' : 'Crear' }}</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        </div>
+      </form>
+    </div>
   </div>
 </div>

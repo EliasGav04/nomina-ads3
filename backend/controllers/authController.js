@@ -8,8 +8,11 @@ exports.login = (req, res, next) => {
     }
 
     if (!user) {
-      const status = info?.status || 401;
-      return res.status(status).json({ message: info?.message || "Credenciales inválidas" });
+      if (info) {
+        console.log("Info recibido desde estrategia:", info);
+        return res.status(info.status || 401).json({ message: info.message });
+      }
+      return res.status(401).json({ message: "Credenciales inválidas" });
     }
 
     //bloquear si usuario inactivo

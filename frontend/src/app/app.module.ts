@@ -18,6 +18,9 @@ import { MainLayoutComponent } from './components/main-layout/main-layout.compon
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { AuthLayoutComponent } from './components/auth-layout/auth-layout.component';
+import { EmpleadosComponent } from './components/empleados/empleados.component';
+import { ConceptosComponent } from './components/conceptos/conceptos.component';
+import { PeriodosComponent } from './components/periodos/periodos.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +31,10 @@ import { AuthLayoutComponent } from './components/auth-layout/auth-layout.compon
     MainLayoutComponent,
     SidebarComponent,
     NavbarComponent,
-    AuthLayoutComponent
+    AuthLayoutComponent,
+    EmpleadosComponent,
+    ConceptosComponent,
+    PeriodosComponent
   ],
   imports: [
     FormsModule,
