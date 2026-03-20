@@ -1,1 +1,20 @@
-<p>sidebar works!</p>
+<nav class="sidebar bg-dark text-white p-3" style="width: 220px; min-height: 100vh;">
+    <h4 class="mb-4">Menú</h4>
+    <ul class="nav flex-column">
+      <li class="nav-item">
+        <a routerLink="/dashboard" routerLinkActive="active" class="nav-link text-white">
+          <i class="bi bi-speedometer2"></i> Dashboard
+        </a>
+      </li>
+      <li class="nav-item">
+        <a routerLink="/usuarios" routerLinkActive="active" class="nav-link text-white">
+          <i class="bi bi-people"></i> Usuarios
+        </a>
+      </li>
+      <li class="nav-item">
+        <a routerLink="/infoempresa" routerLinkActive="active" class="nav-link text-white">
+          <i class="bi bi-building"></i> Empresa
+        </a>
+      </li>
+    </ul>
+  </nav>
