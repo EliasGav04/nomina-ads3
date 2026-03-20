@@ -12,6 +12,7 @@ require('./config/passport')(passport);
 const authRoutes = require('./routes/auth');
 const usuariosRoutes = require('./routes/usuarios');
 const rolesRoutes = require('./routes/roles');
+const infoempresaRoutes = require('./routes/infoempresa');
 
 const app = express();
 
@@ -28,7 +29,7 @@ app.get('/', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/usuarios', usuariosRoutes);
 app.use('/api/roles', rolesRoutes);
-
+app.use('/api/infoempresa', infoempresaRoutes);
 
 //conexion BD
 sequelize.authenticate()

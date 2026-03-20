@@ -1,0 +1,64 @@
+<h2 class="mb-3">Información de la Empresa</h2>
+
+<form [formGroup]="empresaForm" (ngSubmit)="saveEmpresa()">
+  <!-- Campos de texto -->
+  <div class="mb-3">
+    <label class="form-label">Nombre:</label>
+    <input formControlName="nombre" type="text" class="form-control" />
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Razón Social:</label>
+    <input formControlName="razon_social" type="text" class="form-control" />
+  </div>
+  <div class="mb-3">
+    <label class="form-label">RTN:</label>
+    <input formControlName="rtn" type="text" class="form-control" />
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Dirección:</label>
+    <input formControlName="direccion" type="text" class="form-control" />
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Teléfono:</label>
+    <input formControlName="telefono" type="text" class="form-control" />
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Correo:</label>
+    <input formControlName="correo" type="email" class="form-control" />
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Sitio Web:</label>
+    <input formControlName="sitio_web" type="text" class="form-control" />
+  </div>
+
+  <!-- Logo -->
+  <div class="mb-3">
+    <label class="form-label">Logo:</label>
+    <input type="file" class="form-control" (change)="onFileSelected($event)" />
+
+    <div class="logo-preview mt-2">
+      <img 
+        [src]="logoBase64 || 'assets/no-photo.png'" 
+        alt="Logo" 
+        class="img-thumbnail" />
+    </div>
+  </div>
+
+  <button type="submit" class="btn btn-success">Guardar</button>
+</form>
+
+<!-- Toast -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+  <div 
+    class="toast align-items-center text-white border-0" 
+    role="alert" 
+    [class.show]="toastVisible" 
+    [ngClass]="toastColor">
+    <div class="d-flex">
+      <div class="toast-body">
+        {{ toastMessage }}
+      </div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" (click)="toastVisible=false"></button>
+    </div>
+  </div>
+</div>

@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { RolesService } from '../../services/roles.service';
 import { UsuariosService } from '../../services/usuarios.service';
 import { Rol, Usuario } from '../../interfaces/interface';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-usuarios',
@@ -14,15 +15,21 @@ export class UsuariosComponent implements OnInit {
   roles: Rol[] = [];
   usuarios: Usuario[] = [];
   usuarioForm: FormGroup;
-  editing: boolean = false;
+  editing = false;
   selectedId: number | null = null;
 
-  showModal: boolean = false;
+  private modalRef: NgbModalRef | null = null;
+
+  // Toast
+  toastMessage = '';
+  toastColor = 'bg-success';
+  toastVisible = false;
 
   constructor(
     private usuariosService: UsuariosService,
     private rolesService: RolesService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private modalService: NgbModal
   ) {
     this.usuarioForm = this.fb.group({
       usuario: [''],
@@ -38,62 +45,62 @@ export class UsuariosComponent implements OnInit {
   }
 
   loadRoles(): void {
-    this.rolesService.getAll().subscribe(data => {
-      this.roles = data;
-    });
+    this.rolesService.getAll().subscribe(data => this.roles = data);
   }
 
   loadUsuarios(): void {
-    this.usuariosService.getAll().subscribe(data => {
-      this.usuarios = data;
-    });
+    this.usuariosService.getAll().subscribe(data => this.usuarios = data);
   }
 
-  
-
-  //modal
-  openModal(): void {
-    this.showModal = true;
+  openModal(content: TemplateRef<any>): void {
     this.editing = false;
     this.usuarioForm.reset({ estado: 'Activo' });
-  }
-  
-  closeModal(): void {
-    this.showModal = false;
-    this.resetForm();
+    this.modalRef = this.modalService.open(content, { backdrop: 'static' });
   }
 
   saveUsuario(): void {
     const data = { ...this.usuarioForm.value, estado: 'Activo' };
-  
+
     if (this.editing && this.selectedId) {
-      this.usuariosService.update(this.selectedId, data).subscribe(() => {
-        this.closeModal();
-        this.loadUsuarios();
+      this.usuariosService.update(this.selectedId, data).subscribe({
+        next: () => {
+          this.showToast('Usuario actualizado correctamente', 'bg-success');
+          this.modalRef?.close();
+          this.loadUsuarios();
+        },
+        error: () => this.showToast('Error al actualizar usuario', 'bg-danger')
       });
     } else {
-      this.usuariosService.create(data).subscribe(() => {
-        this.closeModal();
-        this.loadUsuarios();
+      this.usuariosService.create(data).subscribe({
+        next: () => {
+          this.showToast('Usuario creado correctamente', 'bg-success');
+          this.modalRef?.close();
+          this.loadUsuarios();
+        },
+        error: () => this.showToast('Error al crear usuario', 'bg-danger')
       });
     }
   }
 
-  editUsuario(usuario: Usuario): void {
+  editUsuario(usuario: Usuario, content: TemplateRef<any>): void {
     this.editing = true;
     this.selectedId = usuario.id_usuario;
-    this.showModal = true;
     this.usuarioForm.patchValue({
       usuario: usuario.usuario,
       clave: '',
       estado: 'Activo',
       id_rol: usuario.id_rol
     });
+    this.modalRef = this.modalService.open(content, { backdrop: 'static' });
   }
 
   deleteUsuario(id: number): void {
-    this.usuariosService.delete(id).subscribe(() => {
-      this.loadUsuarios();
+    this.usuariosService.delete(id).subscribe({
+      next: () => {
+        this.showToast('Usuario inactivado correctamente', 'bg-warning');
+        this.loadUsuarios();
+      },
+      error: () => this.showToast('Error al inactivar usuario', 'bg-danger')
     });
   }
 
@@ -101,5 +108,12 @@ export class UsuariosComponent implements OnInit {
     this.editing = false;
     this.selectedId = null;
     this.usuarioForm.reset({ estado: 'Activo' });
+  }
+
+  showToast(message: string, color: string = 'bg-success'): void {
+    this.toastMessage = message;
+    this.toastColor = color;
+    this.toastVisible = true;
+    setTimeout(() => this.toastVisible = false, 3000);
   }
 }

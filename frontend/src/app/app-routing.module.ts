@@ -9,6 +9,7 @@ import { MainLayoutComponent } from './components/main-layout/main-layout.compon
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { LoginComponent } from './components/login/login.component';
 import { UsuariosComponent } from './components/usuarios/usuarios.component';
+import { InfoempresaComponent } from './components/infoempresa/infoempresa.component';
 
 
 const routes: Routes = [
@@ -35,6 +36,12 @@ const routes: Routes = [
         path: 'usuarios',
         component: UsuariosComponent 
       },
+      { 
+        path: 'infoempresa',
+        component: InfoempresaComponent 
+      },
+
+      
 
     ]
   },

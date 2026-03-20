@@ -21,6 +21,7 @@ import { AuthLayoutComponent } from './components/auth-layout/auth-layout.compon
 import { EmpleadosComponent } from './components/empleados/empleados.component';
 import { ConceptosComponent } from './components/conceptos/conceptos.component';
 import { PeriodosComponent } from './components/periodos/periodos.component';
+import { InfoempresaComponent } from './components/infoempresa/infoempresa.component';
 
 @NgModule({
   declarations: [
@@ -34,7 +35,8 @@ import { PeriodosComponent } from './components/periodos/periodos.component';
     AuthLayoutComponent,
     EmpleadosComponent,
     ConceptosComponent,
-    PeriodosComponent
+    PeriodosComponent,
+    InfoempresaComponent
   ],
   imports: [
     FormsModule,
