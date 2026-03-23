@@ -10,7 +10,7 @@ import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { LoginComponent } from './components/login/login.component';
 import { UsuariosComponent } from './components/usuarios/usuarios.component';
 import { InfoempresaComponent } from './components/infoempresa/infoempresa.component';
-
+import { AreasComponent } from './components/areas/areas.component';
 
 const routes: Routes = [
   {
@@ -40,7 +40,11 @@ const routes: Routes = [
         path: 'infoempresa',
         component: InfoempresaComponent 
       },
-
+      { 
+        path: 'areas',
+        component: AreasComponent 
+      },
+      
       
 
     ]

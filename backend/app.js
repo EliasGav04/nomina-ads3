@@ -13,6 +13,7 @@ const authRoutes = require('./routes/auth');
 const usuariosRoutes = require('./routes/usuarios');
 const rolesRoutes = require('./routes/roles');
 const infoempresaRoutes = require('./routes/infoempresa');
+const areasRoutes = require('./routes/areas');
 
 const app = express();
 
@@ -25,11 +26,13 @@ app.get('/', (req, res) => {
   res.send('API funcionando');
 });
 
-// rutas
+// rutas frontend
 app.use('/api/auth', authRoutes);
 app.use('/api/usuarios', usuariosRoutes);
 app.use('/api/roles', rolesRoutes);
 app.use('/api/infoempresa', infoempresaRoutes);
+app.use('/api/areas', areasRoutes);
+
 
 //conexion BD
 sequelize.authenticate()

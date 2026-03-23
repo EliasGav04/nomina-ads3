@@ -30,3 +30,11 @@ export interface Infoempresa {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface Area {
+  id_area: number;
+  area: string;
+  estado: string;
+  createdAt: string;
+  updatedAt: string;
+}
