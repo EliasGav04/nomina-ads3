@@ -11,6 +11,7 @@ import { LoginComponent } from './components/login/login.component';
 import { UsuariosComponent } from './components/usuarios/usuarios.component';
 import { InfoempresaComponent } from './components/infoempresa/infoempresa.component';
 import { AreasComponent } from './components/areas/areas.component';
+import { ConceptosComponent } from './components/conceptos/conceptos.component';
 
 const routes: Routes = [
   {
@@ -44,9 +45,13 @@ const routes: Routes = [
         path: 'areas',
         component: AreasComponent 
       },
+      { 
+        path: 'conceptos',
+        component: ConceptosComponent 
+      },
       
       
-
+      
     ]
   },
   { path: '', redirectTo: '/login', pathMatch: 'full' }

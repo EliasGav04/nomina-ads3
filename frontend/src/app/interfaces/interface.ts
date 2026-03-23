@@ -38,3 +38,15 @@ export interface Area {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface Concepto {
+  id_concepto: number;
+  concepto: string;
+  tipo: 'ingreso' | 'deduccion';
+  naturaleza: 'fijo' | 'porcentaje' | 'manual';
+  valor_defecto: number;
+  es_global: boolean;
+  estado: string;
+  createdAt: string;
+  updatedAt: string;
+}

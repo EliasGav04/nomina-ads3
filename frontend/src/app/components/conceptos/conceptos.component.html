@@ -1,1 +1,105 @@
-<p>conceptos works!</p>
+<h2 class="mb-3">Gestión de Conceptos</h2>
+
+<button type="button" class="btn btn-primary mb-3" (click)="openModal(content)">
+  Crear Concepto
+</button>
+
+<table class="table table-striped table-hover table-bordered align-middle">
+  <thead class="table-dark">
+    <tr>
+      <th>ID</th>
+      <th>Concepto</th>
+      <th>Tipo</th>
+      <th>Naturaleza</th>
+      <th>Valor defecto</th>
+      <th>Global</th>
+      <th>Estado</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let c of conceptos">
+      <td>{{ c.id_concepto }}</td>
+      <td>{{ c.concepto }}</td>
+      <td>{{ tipoLabels[c.tipo] }}</td>
+      <td>{{ naturalezaLabels[c.naturaleza] }}</td>
+      <td>{{ c.valor_defecto }}</td>
+      <td>{{ c.es_global ? 'Sí' : 'No' }}</td>
+      <td>{{ c.estado }}</td>
+      <td>
+        <button class="btn btn-warning btn-sm me-2" (click)="editConcepto(c, content)">
+          Editar
+        </button>
+        <button class="btn btn-danger btn-sm" (click)="deleteConcepto(c.id_concepto)">
+          Inactivar
+        </button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<ng-template #content let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title">{{ editing ? 'Editar Concepto' : 'Crear Concepto' }}</h5>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
+    </div>
+  
+    <form [formGroup]="conceptoForm" (ngSubmit)="saveConcepto()">
+      <div class="modal-body">
+        <div class="mb-3">
+          <label class="form-label">Nombre del Concepto:</label>
+          <input formControlName="concepto" type="text" class="form-control" />
+        </div>
+  
+        <div class="mb-3">
+          <label class="form-label">Tipo:</label>
+          <select formControlName="tipo" class="form-select">
+            <option value="ingreso">Ingreso</option>
+            <option value="deduccion">Deducción</option>
+          </select>
+        </div>
+  
+        <div class="mb-3">
+          <label class="form-label">Naturaleza:</label>
+          <select formControlName="naturaleza" class="form-select">
+            <option value="fijo">Fijo</option>
+            <option value="porcentaje">Porcentaje</option>
+            <option value="manual">Manual</option>
+          </select>
+        </div>
+  
+        <div class="mb-3">
+          <label class="form-label">Valor por defecto:</label>
+          <input formControlName="valor_defecto" type="number" step="0.01" class="form-control" />
+        </div>
+  
+        <div class="mb-3 form-check">
+          <input formControlName="es_global" type="checkbox" class="form-check-input" id="globalCheck" />
+          <label class="form-check-label" for="globalCheck">¿Es global?</label>
+        </div>
+      </div>
+  
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-success">{{ editing ? 'Actualizar' : 'Crear' }}</button>
+        <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Cancelar</button>
+      </div>
+    </form>
+  </ng-template>
+
+  <!-- Toast -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div 
+      class="toast align-items-center text-white border-0" 
+      role="alert" 
+      [class.show]="toastVisible" 
+      [ngClass]="toastColor">
+      <div class="d-flex">
+        <div class="toast-body">
+          {{ toastMessage }}
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" (click)="toastVisible=false"></button>
+      </div>
+    </div>
+  </div>
+  
+
