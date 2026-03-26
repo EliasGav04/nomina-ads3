@@ -1,0 +1,73 @@
+const { Empleado } = require('../models');
+
+exports.getAll = async (req, res) => {
+  try {
+    const empleados = await Empleado.findAll();
+    res.json(empleados);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+exports.getById = async (req, res) => {
+  try {
+    const empleado = await Empleado.findByPk(req.params.id);
+    if (!empleado) return res.status(404).json({ error: 'Empleado no encontrado' });
+    res.json(empleado);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+exports.create = async (req, res) => {
+  try {
+    const { dni, nombre_completo, cargo, fecha_ingreso, numero_ihss, cta_bancaria, estado, id_area } = req.body;
+    const nuevoEmpleado = await Empleado.create({
+      dni,
+      nombre_completo,
+      cargo,
+      fecha_ingreso,
+      numero_ihss,
+      cta_bancaria,
+      estado: estado || 'Activo',
+      id_area
+    });
+    res.status(201).json(nuevoEmpleado);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+exports.update = async (req, res) => {
+  try {
+    const empleado = await Empleado.findByPk(req.params.id);
+    if (!empleado) return res.status(404).json({ error: 'Empleado no encontrado' });
+
+    const { dni, nombre_completo, cargo, fecha_ingreso, numero_ihss, cta_bancaria, estado, id_area } = req.body;
+    await empleado.update({
+      dni,
+      nombre_completo,
+      cargo,
+      fecha_ingreso,
+      numero_ihss,
+      cta_bancaria,
+      estado: estado || 'Activo',
+      id_area
+    });
+    res.json(empleado);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+exports.delete = async (req, res) => {
+  try {
+    const empleado = await Empleado.findByPk(req.params.id);
+    if (!empleado) return res.status(404).json({ error: 'Empleado no encontrado' });
+
+    await empleado.update({ estado: 'Inactivo' });
+    res.json({ message: 'Empleado marcado como Inactivo' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};

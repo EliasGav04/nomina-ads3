@@ -50,3 +50,17 @@ export interface Concepto {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface Empleado {
+  id_empleado: number;
+  dni: string;
+  nombre_completo: string;
+  cargo: string;
+  fecha_ingreso: string; 
+  numero_ihss: string;
+  cta_bancaria: string;
+  estado: string;
+  id_area: number;
+  createdAt: string;
+  updatedAt: string;
+}
