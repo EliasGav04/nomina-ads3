@@ -23,6 +23,7 @@ import { ConceptosComponent } from './components/conceptos/conceptos.component';
 import { PeriodosComponent } from './components/periodos/periodos.component';
 import { InfoempresaComponent } from './components/infoempresa/infoempresa.component';
 import { AreasComponent } from './components/areas/areas.component';
+import { EmpleadoConceptosComponent } from './components/empleado-conceptos/empleado-conceptos.component';
 
 @NgModule({
   declarations: [
@@ -39,6 +40,7 @@ import { AreasComponent } from './components/areas/areas.component';
     PeriodosComponent,
     InfoempresaComponent,
     AreasComponent,
+    EmpleadoConceptosComponent,
   ],
   imports: [
     FormsModule,

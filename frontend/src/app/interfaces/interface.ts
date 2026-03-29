@@ -64,3 +64,26 @@ export interface Empleado {
   createdAt: string;
   updatedAt: string;
 }
+
+
+export interface EmpleadoConcepto {
+  id_empleado_concepto: number;
+  id_empleado: number;
+  id_concepto: number;
+  valor: number;
+  fecha_desde: string;
+  fecha_hasta: string | null;
+  createdAt: string;
+  updatedAt: string;
+
+  Empleado?: {
+    id_empleado: number;
+    nombre_completo: string;
+  };
+  Concepto?: {
+    id_concepto: number;
+    concepto: string;
+    tipo: string;
+    naturaleza: string;
+  };
+}

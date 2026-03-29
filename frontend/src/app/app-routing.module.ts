@@ -13,6 +13,7 @@ import { InfoempresaComponent } from './components/infoempresa/infoempresa.compo
 import { AreasComponent } from './components/areas/areas.component';
 import { ConceptosComponent } from './components/conceptos/conceptos.component';
 import { EmpleadosComponent } from './components/empleados/empleados.component';
+import { EmpleadoConceptosComponent } from './components/empleado-conceptos/empleado-conceptos.component';
 
 const routes: Routes = [
   {
@@ -54,7 +55,10 @@ const routes: Routes = [
         path: 'empleados',
         component: EmpleadosComponent 
       },
-      
+      { 
+        path: 'empleado-conceptos',
+        component: EmpleadoConceptosComponent 
+      },
       
       
     ]

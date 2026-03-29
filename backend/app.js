@@ -16,6 +16,7 @@ const infoempresaRoutes = require('./routes/infoempresa');
 const areasRoutes = require('./routes/areas');
 const conceptosRoutes = require('./routes/conceptos');
 const empleadosRoutes = require('./routes/empleados');
+const empleadoConceptosRoutes = require('./routes/empleadoConceptos');
 
 const app = express();
 
@@ -36,6 +37,8 @@ app.use('/api/infoempresa', infoempresaRoutes);
 app.use('/api/areas', areasRoutes);
 app.use('/api/conceptos', conceptosRoutes);
 app.use('/api/empleados', empleadosRoutes);
+app.use('/api/empleado-conceptos', empleadoConceptosRoutes);
+
 
 //conexion BD
 sequelize.authenticate()
