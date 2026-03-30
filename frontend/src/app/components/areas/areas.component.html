@@ -1,11 +1,13 @@
-<h2 class="mb-3">Gestión de Áreas</h2>
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2 class="mb-3">Gestión de Áreas</h2> 
 
-<button type="button" class="btn btn-primary mb-3" (click)="openModal(content)">
-  Crear Área
-</button>
-
+  <button type="button" class="btn btn-primary mb-3" (click)="openModal(content)" 
+    style="background-color: #13142a; border-color: #13142a;">
+    Crear Área
+  </button>
+</div>
 <table class="table table-striped table-hover table-bordered align-middle">
-  <thead class="table-dark">
+  <thead class="encabezado-areas">
     <tr>
       <th>ID</th>
       <th>Área</th>
@@ -17,13 +19,19 @@
     <tr *ngFor="let a of areas">
       <td>{{ a.id_area }}</td>
       <td>{{ a.area }}</td>
-      <td>{{ a.estado }}</td>
       <td>
-        <button class="btn btn-warning btn-sm me-2" (click)="editArea(a, content)">
-          Editar
+        <span 
+          class="estado-badge"
+          [ngClass]="a.estado === 'Activo' ? 'activo' : 'inactivo'">
+          {{ a.estado }}
+        </span>
+      </td>
+      <td>
+        <button class="btn btn-warning btn-sm me-2 btn-edit" (click)="editArea(a, content)">
+          <i class="bi bi-pencil-square"></i>
         </button>
-        <button class="btn btn-danger btn-sm" (click)="deleteArea(a.id_area)">
-          Inactivar
+        <button class="btn btn-danger btn-sm btn-edit" (click)="deleteArea(a.id_area)">
+          <i class="bi bi-trash"></i>
         </button>
       </td>
     </tr>
@@ -31,9 +39,9 @@
 </table>
 
 <ng-template #content let-modal>
-  <div class="modal-header">
-    <h5 class="modal-title">{{ editing ? 'Editar Área' : 'Crear Área' }}</h5>
-    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
+  <div class="modal-header" style="background-color: #32314e;"> 
+    <h5 class="modal-title" style="color: white;">{{ editing ? 'Editar Área' : 'Crear Área' }}</h5>
+    <button type="button" class="btn-close" aria-label="Close" data-bs-theme="dark" (click)="modal.dismiss()"></button>
   </div>
 
   <form [formGroup]="areaForm" (ngSubmit)="saveArea()">
@@ -51,7 +59,6 @@
   </form>
 </ng-template>
 
-<!-- Toast -->
 <div class="toast-container position-fixed bottom-0 end-0 p-3">
   <div 
     class="toast align-items-center text-white border-0" 

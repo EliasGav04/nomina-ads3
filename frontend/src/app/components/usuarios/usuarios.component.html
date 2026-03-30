@@ -16,7 +16,7 @@
 </div>
 
 <table class="table table-striped table-hover table-bordered align-middle">
-  <thead class="table" style="color: #13142a;">
+  <thead class="encabezado-usuarios">
     <tr>
       <th>ID</th>
       <th>Rol</th>
@@ -33,13 +33,19 @@
       <td>{{ u.Rol?.rol }}</td>
       <td>{{ u.usuario }}</td>
       <td>********</td>
-      <td>{{ u.estado }}</td>
+      <td>
+        <span 
+          class="estado-badge"
+          [ngClass]="u.estado === 'Activo' ? 'activo' : 'inactivo'">
+          {{ u.estado }}
+        </span>
+      </td>
       <td>{{ u.ultimo_acceso | date:'short' }}</td>
       <td>
-        <button class="btn btn-sm me-2 btn-edit" (click)="editUsuario(u, content)">
+        <button class="btn btn-warning btn-sm me-2 btn-edit" (click)="editUsuario(u, content)">
           <i class="bi bi-pencil-square"></i>
         </button>
-        <button class="btn btn-sm me-2 btn-edit" (click)="editUsuario(u, content)">
+        <button class="btn btn-danger btn-sm btn-edit" (click)="deleteUsuario(u.id_usuario)">
           <i class="bi bi-trash"></i>
         </button>
       
