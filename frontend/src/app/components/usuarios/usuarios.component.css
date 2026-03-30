@@ -30,3 +30,13 @@ form {
     background-color: #f4f4f4;
   }
 
+.btn-edit:hover {
+    background-color: #d8d8d8;
+  }
+
+  .btn-edit{
+    background-color: white; 
+    border-color: #13142a; 
+    color: #13142a;
+  }
+  

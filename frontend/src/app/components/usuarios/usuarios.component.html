@@ -1,8 +1,19 @@
-<h2 class="mb-3" style="color: #13142a;">Gestión de Usuarios</h2>
+<div class="d-flex justify-content-between align-items-center mb-3">
 
-<button type="button" class="btn btn-primary mb-3" (click)="openModal(content)", style="background-color: #13142a">
-  Crear Usuario
-</button>
+  <h2 class="mb-0" style="color: #13142a;">
+    Gestión de Usuarios
+  </h2>
+
+  <button 
+    type="button" 
+    class="btn btn-primary"
+    (click)="openModal(content)"
+    style="background-color: #13142a; border-color: #13142a;"
+  >
+    Crear Usuario
+  </button>
+
+</div>
 
 <table class="table table-striped table-hover table-bordered align-middle">
   <thead class="table" style="color: #13142a;">
@@ -25,12 +36,13 @@
       <td>{{ u.estado }}</td>
       <td>{{ u.ultimo_acceso | date:'short' }}</td>
       <td>
-        <button class="btn  btn-sm me-2" (click)="editUsuario(u, content)" style="background-color: #FFD94D; color: #13142a;">
-          Editar
+        <button class="btn btn-sm me-2 btn-edit" (click)="editUsuario(u, content)">
+          <i class="bi bi-pencil-square"></i>
         </button>
-        <button class="btn btn-sm" (click)="deleteUsuario(u.id_usuario)" style="background-color: #B90E09; color: white;">
-          Inactivar
+        <button class="btn btn-sm me-2 btn-edit" (click)="editUsuario(u, content)">
+          <i class="bi bi-trash"></i>
         </button>
+      
       </td>
     </tr>
   </tbody>
