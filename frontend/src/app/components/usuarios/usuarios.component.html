@@ -49,9 +49,9 @@
 </table>
 
 <ng-template #content let-modal>
-  <div class="modal-header">
-    <h5 class="modal-title">{{ editing ? 'Editar Usuario' : 'Crear Usuario' }}</h5>
-    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
+  <div class="modal-header" style="background-color: #32314e;">
+    <h5 class="modal-title" style="color: white;">{{ editing ? 'Editar Usuario' : 'Crear Usuario' }}</h5>
+    <button type="button" class="btn-close" data-bs-theme="dark" aria-label="Close" (click)="modal.dismiss()" ></button>
   </div>
 
   <form [formGroup]="usuarioForm" (ngSubmit)="saveUsuario()">

@@ -1,5 +1,11 @@
 .sidebar {
     background-color: #13142a;
+    position: fixed;
+    top: 60px; 
+    left: 0;
+    width: 220px;
+    height: calc(100vh - 60px);
+    overflow-y: auto;
   }
   
   .nav-link.active {
