@@ -3,9 +3,16 @@
     color: white;
     font-weight: 600;
 }
+.btn-edit:hover {
+    background-color: #d8d8d8;
+  }
 
-
-/*Pestaña de Activos e Inactivos*/
+  .btn-edit{
+    background-color: white; 
+    border-color: #13142a; 
+    color: #13142a;
+  }
+  
 .estado-badge {
   padding: 5px 12px;
   border-radius: 8px;

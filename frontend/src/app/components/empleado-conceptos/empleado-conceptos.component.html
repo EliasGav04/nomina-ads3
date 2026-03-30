@@ -29,10 +29,10 @@
           <td>{{ a.fecha_desde }}</td>
           <td>{{ a.fecha_hasta || '-' }}</td>
           <td class="acciones-col">
-            <button class="btn btn-warning btn-sm me-2" (click)="editAsignacion(a, content)">
+            <button class="btn btn-warning btn-sm me-2 btn-edit" (click)="editAsignacion(a, content)">
               <i class="bi bi-pencil-square"></i>
             </button>
-            <button class="btn btn-danger btn-sm" (click)="deleteAsignacion(a.id_empleado_concepto)">
+            <button class="btn btn-danger btn-sm btn-edit" (click)="deleteAsignacion(a.id_empleado_concepto)">
               <i class="bi bi-trash"></i>
             </button>
           </td>
