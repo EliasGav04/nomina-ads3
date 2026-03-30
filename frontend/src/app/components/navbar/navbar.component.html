@@ -2,6 +2,9 @@
   <div class="navbar-left">
     <h1>Sistema de Gestión de Nómina</h1>
   </div>
+  <span class="fecha">
+    {{ fechaActual | date:'fullDate' }}
+  </span>
   <div class="navbar-right">
     <button (click)="logout()">Cerrar sesión</button>
   </div>

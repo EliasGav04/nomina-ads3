@@ -6,37 +6,52 @@
     Crear Área
   </button>
 </div>
-<table class="table table-striped table-hover table-bordered align-middle">
-  <thead class="encabezado-areas">
-    <tr>
-      <th>ID</th>
-      <th>Área</th>
-      <th>Estado</th>
-      <th>Acciones</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let a of areas">
-      <td>{{ a.id_area }}</td>
-      <td>{{ a.area }}</td>
-      <td>
-        <span 
-          class="estado-badge"
-          [ngClass]="a.estado === 'Activo' ? 'activo' : 'inactivo'">
-          {{ a.estado }}
-        </span>
-      </td>
-      <td>
-        <button class="btn btn-warning btn-sm me-2 btn-edit" (click)="editArea(a, content)">
-          <i class="bi bi-pencil-square"></i>
-        </button>
-        <button class="btn btn-danger btn-sm btn-edit" (click)="deleteArea(a.id_area)">
-          <i class="bi bi-trash"></i>
-        </button>
-      </td>
-    </tr>
-  </tbody>
-</table>
+<div class="table-container">
+  <div class="table-responsive">
+
+    <table class="table table-striped table-hover table-bordered align-middle tabla-areas">
+
+      <thead class="encabezado-areas">
+        <tr>
+          <th>ID</th>
+          <th>Área</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let a of areas">
+          <td>{{ a.id_area }}</td>
+          <td>{{ a.area }}</td>
+
+          <td>
+            <span 
+              class="estado-badge"
+              [ngClass]="a.estado === 'Activo' ? 'activo' : 'inactivo'">
+              {{ a.estado }}
+            </span>
+          </td>
+
+          <td class="acciones-col">
+            <button class="btn btn-warning btn-sm me-2 btn-edit"
+              (click)="editArea(a, content)">
+              <i class="bi bi-pencil-square"></i>
+            </button>
+
+            <button class="btn btn-danger btn-sm btn-edit"
+              (click)="deleteArea(a.id_area)">
+              <i class="bi bi-trash"></i>
+            </button>
+          </td>
+
+        </tr>
+      </tbody>
+
+    </table>
+
+  </div>
+</div>
 
 <ng-template #content let-modal>
   <div class="modal-header" style="background-color: #32314e;"> 

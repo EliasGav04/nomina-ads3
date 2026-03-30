@@ -67,3 +67,40 @@ form {
   color: #dc3545;
   border: 1px solid #dc3545;
 }
+
+
+
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.tabla-usuarios {
+  min-width: 800px;
+}
+
+.acciones-col {
+  white-space: nowrap;
+}
+
+.table-responsive {
+  border-radius: 8px;
+}
+
+
+.content {
+  margin-left: 250px;
+}
+
+@media (max-width: 768px) {
+
+  .tabla-usuarios {
+    font-size: 13px;
+  }
+
+  .content {
+    margin-left: 70px;
+    padding: 10px;
+  }
+
+}

@@ -34,3 +34,36 @@
   color: #dc3545;
   border: 1px solid #dc3545;
 }
+
+
+
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.tabla-areas {
+  min-width: 500px;
+}
+
+.acciones-col {
+  white-space: nowrap;
+}
+
+.content {
+  margin-left: 250px;
+}
+
+
+@media (max-width: 768px) {
+
+  .tabla-areas {
+    font-size: 13px;
+  }
+
+  .content {
+    margin-left: 70px;
+    padding: 10px;
+  }
+
+}

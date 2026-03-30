@@ -35,3 +35,53 @@
   color: #dc3545;
   border: 1px solid #dc3545;
 }
+
+
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.tabla-conceptos {
+  min-width: 950px;
+}
+
+.acciones-col {
+  white-space: nowrap;
+}
+
+.badge-global {
+  padding: 5px 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.badge-global.si {
+  background-color: #d1f2df;
+  color: #198754;
+  border: 1px solid #198754;
+}
+
+.badge-global.no {
+  background-color: #f8d7da;
+  color: #dc3545;
+  border: 1px solid #dc3545;
+}
+
+.content {
+  margin-left: 250px;
+}
+
+@media (max-width: 768px) {
+
+  .tabla-conceptos {
+    font-size: 13px;
+  }
+
+  .content {
+    margin-left: 70px;
+    padding: 10px;
+  }
+
+}
