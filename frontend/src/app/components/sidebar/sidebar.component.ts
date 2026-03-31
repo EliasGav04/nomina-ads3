@@ -7,4 +7,16 @@ import { Component } from '@angular/core';
 })
 export class SidebarComponent {
 
+  sidebarOpen = false;
+
+  toggleSidebar() {
+    this.sidebarOpen = !this.sidebarOpen;
+  }
+
+  closeSidebarMobile() {
+    if (window.innerWidth <= 768) {
+      this.sidebarOpen = false;
+    }
+  }
+
 }

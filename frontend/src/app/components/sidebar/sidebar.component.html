@@ -1,40 +1,79 @@
-<nav class="sidebar text-white p-3" 
-     style="width: 220px; height: 100vh; position: fixed; left: 0; overflow-y: auto;">
-    <ul class="nav flex-column">
-      <li class="nav-item">
-        <a routerLink="/dashboard" routerLinkActive="active" class="nav-link text-white">
-          <i class="bi bi-speedometer2"></i> Dashboard
-        </a>
-      </li>
-      <li class="nav-item">
-        <a routerLink="/usuarios" routerLinkActive="active" class="nav-link text-white">
-          <i class="bi bi-people"></i> Usuarios
-        </a>
-      </li>
-      <li class="nav-item">
-        <a routerLink="/infoempresa" routerLinkActive="active" class="nav-link text-white">
-          <i class="bi bi-building"></i> Empresa
-        </a>
-      </li>
-      <li class="nav-item">
-        <a routerLink="/areas" routerLinkActive="active" class="nav-link text-white">
-          <i class="bi bi-building"></i> Áreas
-        </a>
-      </li>
-      <li class="nav-item">
-        <a routerLink="/conceptos" routerLinkActive="active" class="nav-link text-white">
-          <i class="bi bi-building"></i> Conceptos
-        </a>
-      </li>
-      <li class="nav-item">
-        <a routerLink="/empleados" routerLinkActive="active" class="nav-link text-white">
-          <i class="bi bi-building"></i> Empleados
-        </a>
-      </li>
-      <li class="nav-item">
-        <a routerLink="/empleado-conceptos" routerLinkActive="active" class="nav-link text-white">
-          <i class="bi bi-building"></i> Conceptos de Empleados
-        </a>
-      </li>
-    </ul>
+
+<div 
+  class="sidebar-overlay"
+  *ngIf="sidebarOpen"
+  (click)="closeSidebarMobile()">
+</div>
+
+
+<nav class="sidebar text-white p-3"
+     [class.sidebar-open]="sidebarOpen">
+
+  <ul class="nav flex-column">
+
+    <li class="nav-item">
+      <a routerLink="/dashboard"
+         routerLinkActive="active"
+         class="nav-link text-white"
+         (click)="closeSidebarMobile()">
+        <i class="bi bi-speedometer2"></i> Dashboard
+      </a>
+    </li>
+
+    <li class="nav-item">
+      <a routerLink="/usuarios"
+         routerLinkActive="active"
+         class="nav-link text-white"
+         (click)="closeSidebarMobile()">
+        <i class="bi bi-people"></i> Usuarios
+      </a>
+    </li>
+
+    <li class="nav-item">
+      <a routerLink="/infoempresa"
+         routerLinkActive="active"
+         class="nav-link text-white"
+         (click)="closeSidebarMobile()">
+        <i class="bi bi-building"></i> Empresa
+      </a>
+    </li>
+
+    <li class="nav-item">
+      <a routerLink="/areas"
+         routerLinkActive="active"
+         class="nav-link text-white"
+         (click)="closeSidebarMobile()">
+        <i class="bi bi-building"></i> Áreas
+      </a>
+    </li>
+
+    <li class="nav-item">
+      <a routerLink="/conceptos"
+         routerLinkActive="active"
+         class="nav-link text-white"
+         (click)="closeSidebarMobile()">
+        <i class="bi bi-building"></i> Conceptos
+      </a>
+    </li>
+
+    <li class="nav-item">
+      <a routerLink="/empleados"
+         routerLinkActive="active"
+         class="nav-link text-white"
+         (click)="closeSidebarMobile()">
+        <i class="bi bi-building"></i> Empleados
+      </a>
+    </li>
+
+    <li class="nav-item">
+      <a routerLink="/empleado-conceptos"
+         routerLinkActive="active"
+         class="nav-link text-white"
+         (click)="closeSidebarMobile()">
+        <i class="bi bi-building"></i> Conceptos de Empleados
+      </a>
+    </li>
+
+  </ul>
+
 </nav>

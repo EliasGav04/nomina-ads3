@@ -30,3 +30,27 @@
 .navbar-right button:hover {
   background-color: #8a87a9;
 }
+
+
+.menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 26px;
+  color: white;
+  margin-right: 10px;
+}
+
+/*Version de Celular*/
+
+@media (max-width: 768px) {
+
+  .menu-toggle {
+    display: block;
+  }
+
+  .fecha {
+    display: none;
+  }
+
+}
