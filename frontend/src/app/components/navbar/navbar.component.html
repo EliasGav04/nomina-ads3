@@ -1,7 +1,22 @@
-<nav class="navbar">
-    <div class="navbar-left">
-      <h1>Sistema de Gestión de Nómina</h1>
-    </div>
-    <div class="navbar-right">
-      <button (click)="logout()">Cerrar sesión</button>
-    </div>
+<nav class="navbar fixed-navbar">
+
+  <button class="menu-toggle"
+          (click)="sidebar.toggleSidebar()">
+    <i class="bi bi-list"></i>
+  </button>
+
+  <div class="navbar-left">
+    <h1>Sistema de Gestión de Nómina</h1>
+  </div>
+
+  <span class="fecha">
+    {{ fechaActual | date:'fullDate' }}
+  </span>
+
+  <div class="navbar-right">
+    <button (click)="logout()">Cerrar sesión</button>
+  </div>
+
+</nav>
+
+<app-sidebar #sidebar></app-sidebar>

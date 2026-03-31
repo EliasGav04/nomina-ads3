@@ -1,51 +1,74 @@
-<h2 class="mb-3">Gestión de Empleados</h2>
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2 class="mb-3">Gestión de Empleados</h2>
 
-<button type="button" class="btn btn-primary mb-3" (click)="openModal(content)">
-  Crear Empleado
-</button>
+  <button type="button" class="btn btn-primary mb-3" (click)="openModal(content)"
+    style="background-color: #13142a; border-color: #13142a;">
+    Crear Empleado
+  </button>
+</div>
+<div class="table-container">
+  <div class="table-responsive">
 
-<table class="table table-striped table-hover table-bordered align-middle">
-  <thead class="table-dark">
-    <tr>
-      <th>ID</th>
-      <th>DNI</th>
-      <th>Nombre Completo</th>
-      <th>Cargo</th>
-      <th>Fecha Ingreso</th>
-      <th>IHSS</th>
-      <th>Cuenta Bancaria</th>
-      <th>Área</th>
-      <th>Estado</th>
-      <th>Acciones</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let e of empleados">
-      <td>{{ e.id_empleado }}</td>
-      <td>{{ e.dni }}</td>
-      <td>{{ e.nombre_completo }}</td>
-      <td>{{ e.cargo }}</td>
-      <td>{{ e.fecha_ingreso }}</td>
-      <td>{{ e.numero_ihss }}</td>
-      <td>{{ e.cta_bancaria }}</td>
-      <td>{{ e.id_area }}</td>
-      <td>{{ e.estado }}</td>
-      <td>
-        <button class="btn btn-warning btn-sm me-2" (click)="editEmpleado(e, content)">
-          Editar
-        </button>
-        <button class="btn btn-danger btn-sm" (click)="deleteEmpleado(e.id_empleado)">
-          Inactivar
-        </button>
-      </td>
-    </tr>
-  </tbody>
-</table>
+    <table class="table table-striped table-hover table-bordered align-middle tabla-empleados">
+
+      <thead class="encabezado-empleados">
+        <tr>
+          <th>ID</th>
+          <th>DNI</th>
+          <th>Nombre Completo</th>
+          <th>Cargo</th>
+          <th>Fecha Ingreso</th>
+          <th>IHSS</th>
+          <th>Cuenta Bancaria</th>
+          <th>Área</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let e of empleados">
+          <td>{{ e.id_empleado }}</td>
+          <td>{{ e.dni }}</td>
+          <td>{{ e.nombre_completo }}</td>
+          <td>{{ e.cargo }}</td>
+          <td>{{ e.fecha_ingreso }}</td>
+          <td>{{ e.numero_ihss }}</td>
+          <td>{{ e.cta_bancaria }}</td>
+          <td>{{ e.id_area }}</td>
+
+          <td>
+            <span 
+              class="estado-badge"
+              [ngClass]="e.estado === 'Activo' ? 'activo' : 'inactivo'">
+              {{ e.estado }}
+            </span>
+          </td>
+
+          <td class="acciones-col">
+            <button class="btn btn-warning btn-sm me-2 btn-edit"
+              (click)="editEmpleado(e, content)">
+              <i class="bi bi-pencil-square"></i>
+            </button>
+
+            <button class="btn btn-danger btn-sm btn-edit"
+              (click)="deleteEmpleado(e.id_empleado)">
+              <i class="bi bi-trash"></i>
+            </button>
+          </td>
+
+        </tr>
+      </tbody>
+
+    </table>
+
+  </div>
+</div>
 
 <ng-template #content let-modal>
-  <div class="modal-header">
-    <h5 class="modal-title">{{ editing ? 'Editar Empleado' : 'Crear Empleado' }}</h5>
-    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
+  <div class="modal-header" style="background-color: #32314e;">
+    <h5 class="modal-title" style="color: white;">{{ editing ? 'Editar Empleado' : 'Crear Empleado' }}</h5>
+    <button type="button" class="btn-close" aria-label="Close" data-bs-theme="dark" (click)="modal.dismiss()"></button>
   </div>
 
   <form [formGroup]="empleadoForm" (ngSubmit)="saveEmpleado()">

@@ -1,45 +1,79 @@
-<h2 class="mb-3">Gestión de Usuarios</h2>
+<div class="d-flex justify-content-between align-items-center mb-3">
 
-<button type="button" class="btn btn-primary mb-3" (click)="openModal(content)">
-  Crear Usuario
-</button>
+  <h2 class="mb-0" style="color: #13142a;">
+    Gestión de Usuarios
+  </h2>
 
-<table class="table table-striped table-hover table-bordered align-middle">
-  <thead class="table-dark">
-    <tr>
-      <th>ID</th>
-      <th>Rol</th>
-      <th>Usuario</th>
-      <th>Clave</th>
-      <th>Estado</th>
-      <th>Último acceso</th>
-      <th>Acciones</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let u of usuarios">
-      <td>{{ u.id_usuario }}</td>
-      <td>{{ u.Rol?.rol }}</td>
-      <td>{{ u.usuario }}</td>
-      <td>********</td>
-      <td>{{ u.estado }}</td>
-      <td>{{ u.ultimo_acceso | date:'short' }}</td>
-      <td>
-        <button class="btn btn-warning btn-sm me-2" (click)="editUsuario(u, content)">
-          Editar
-        </button>
-        <button class="btn btn-danger btn-sm" (click)="deleteUsuario(u.id_usuario)">
-          Inactivar
-        </button>
-      </td>
-    </tr>
-  </tbody>
-</table>
+  <button 
+    type="button" 
+    class="btn btn-primary"
+    (click)="openModal(content)"
+    style="background-color: #13142a; border-color: #13142a;"
+  >
+    Crear Usuario
+  </button>
+
+</div>
+
+<div class="table-container">
+  <div class="table-responsive">
+
+    <table class="table table-striped table-hover table-bordered align-middle tabla-usuarios">
+
+      <thead class="encabezado-usuarios">
+        <tr>
+          <th>ID</th>
+          <th>Rol</th>
+          <th>Usuario</th>
+          <th>Clave</th>
+          <th>Estado</th>
+          <th>Último acceso</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let u of usuarios">
+
+          <td>{{ u.id_usuario }}</td>
+          <td>{{ u.Rol?.rol }}</td>
+          <td>{{ u.usuario }}</td>
+          <td>********</td>
+
+          <td>
+            <span 
+              class="estado-badge"
+              [ngClass]="u.estado === 'Activo' ? 'activo' : 'inactivo'">
+              {{ u.estado }}
+            </span>
+          </td>
+
+          <td>{{ u.ultimo_acceso | date:'short' }}</td>
+
+          <td class="acciones-col">
+            <button class="btn btn-warning btn-sm me-2 btn-edit"
+              (click)="editUsuario(u, content)">
+              <i class="bi bi-pencil-square"></i>
+            </button>
+
+            <button class="btn btn-danger btn-sm btn-edit"
+              (click)="deleteUsuario(u.id_usuario)">
+              <i class="bi bi-trash"></i>
+            </button>
+          </td>
+
+        </tr>
+      </tbody>
+
+    </table>
+
+  </div>
+</div>
 
 <ng-template #content let-modal>
-  <div class="modal-header">
-    <h5 class="modal-title">{{ editing ? 'Editar Usuario' : 'Crear Usuario' }}</h5>
-    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
+  <div class="modal-header" style="background-color: #32314e;">
+    <h5 class="modal-title" style="color: white;">{{ editing ? 'Editar Usuario' : 'Crear Usuario' }}</h5>
+    <button type="button" class="btn-close" data-bs-theme="dark" aria-label="Close" (click)="modal.dismiss()" ></button>
   </div>
 
   <form [formGroup]="usuarioForm" (ngSubmit)="saveUsuario()">

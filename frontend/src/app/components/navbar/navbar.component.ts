@@ -8,7 +8,7 @@ import { AuthService } from '../../services/auth.service';
   styleUrls: ['./navbar.component.css']
 })
 export class NavbarComponent {
-
+  fechaActual: Date = new Date();
   constructor(private authService: AuthService, private router: Router) {}
 
   logout(): void {
@@ -16,3 +16,5 @@ export class NavbarComponent {
     this.router.navigate(['/login']); 
   }
 }
+
+

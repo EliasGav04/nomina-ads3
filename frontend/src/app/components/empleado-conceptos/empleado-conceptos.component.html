@@ -1,45 +1,51 @@
-<h2 class="mb-3">Asignación de Conceptos a Empleados</h2>
+<div class="d-flex justify-content-between align-items-center mb-3"> 
+  <h2 class="mb-3">Asignación de Conceptos a Empleados</h2>
 
-<button type="button" class="btn btn-primary mb-3" (click)="openModal(content)">
-  Nueva Asignación
-</button>
-
-<table class="table table-striped table-hover table-bordered align-middle">
-  <thead class="table-dark">
-    <tr>
-      <th>ID</th>
-      <th>Empleado</th>
-      <th>Concepto</th>
-      <th>Valor</th>
-      <th>Fecha Desde</th>
-      <th>Fecha Hasta</th>
-      <th>Acciones</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let a of asignaciones">
-      <td>{{ a.id_empleado_concepto }}</td>
-      <td>{{ a.Empleado?.nombre_completo || a.id_empleado }}</td>
-      <td>{{ a.Concepto?.concepto || a.id_concepto }}</td>
-      <td>{{ a.valor }}</td>
-      <td>{{ a.fecha_desde }}</td>
-      <td>{{ a.fecha_hasta || '-' }}</td>
-      <td>
-        <button class="btn btn-warning btn-sm me-2" (click)="editAsignacion(a, content)">
-          Editar
-        </button>
-        <button class="btn btn-danger btn-sm" (click)="deleteAsignacion(a.id_empleado_concepto)">
-          Eliminar
-        </button>
-      </td>
-    </tr>
-  </tbody>
-</table>
+  <button type="button" class="btn btn-primary mb-3" (click)="openModal(content)"
+  style="background-color: #13142a; border-color: #13142a;">
+    Nueva Asignación
+  </button>
+</div>
+<div class="table-container">
+  <div class="table-responsive">
+    <table class="table table-striped table-hover table-bordered align-middle">
+      <thead class="encabezado-empleadosconceptos">
+        <tr>
+          <th>ID</th>
+          <th>Empleado</th>
+          <th>Concepto</th>
+          <th>Valor</th>
+          <th>Fecha Desde</th>
+          <th>Fecha Hasta</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let a of asignaciones">
+          <td>{{ a.id_empleado_concepto }}</td>
+          <td>{{ a.Empleado?.nombre_completo || a.id_empleado }}</td>
+          <td>{{ a.Concepto?.concepto || a.id_concepto }}</td>
+          <td>{{ a.valor }}</td>
+          <td>{{ a.fecha_desde }}</td>
+          <td>{{ a.fecha_hasta || '-' }}</td>
+          <td class="acciones-col">
+            <button class="btn btn-warning btn-sm me-2 btn-edit" (click)="editAsignacion(a, content)">
+              <i class="bi bi-pencil-square"></i>
+            </button>
+            <button class="btn btn-danger btn-sm btn-edit" (click)="deleteAsignacion(a.id_empleado_concepto)">
+              <i class="bi bi-trash"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
 
 <ng-template #content let-modal>
-  <div class="modal-header">
-    <h5 class="modal-title">{{ editing ? 'Editar Asignación' : 'Nueva Asignación' }}</h5>
-    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
+  <div class="modal-header" style="background-color: #32314e;">
+    <h5 class="modal-title" style="color: white;">{{ editing ? 'Editar Asignación' : 'Nueva Asignación' }}</h5>
+    <button type="button" class="btn-close" aria-label="Close" data-bs-theme="dark" (click)="modal.dismiss()"></button>
   </div>
 
   <form [formGroup]="asignacionForm" (ngSubmit)="saveAsignacion()">
