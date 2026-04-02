@@ -72,7 +72,12 @@ export class EmpleadoConceptosComponent implements OnInit {
 
   saveAsignacion(): void {
     const data = { ...this.asignacionForm.value };
-
+  
+    if (!this.editing && data.fecha_hasta) {
+      this.showToast('No puede establecer Fecha Hasta al crear. Cree la asignación como vigente.', 'bg-warning');
+      return;
+    }
+  
     if (this.editing && this.selectedId) {
       this.empleadoConceptosService.update(this.selectedId, data).subscribe({
         next: () => {
@@ -103,8 +108,9 @@ export class EmpleadoConceptosComponent implements OnInit {
 
   deleteAsignacion(id: number): void {
     this.empleadoConceptosService.delete(id).subscribe({
-      next: () => {
-        this.showToast('Asignación eliminada correctamente', 'bg-warning');
+      next: (resp) => {
+        const fechaHasta = resp.registro?.fecha_hasta;
+        this.showToast(`Asignación desactivada el ${fechaHasta}`, 'bg-warning');
         this.loadAsignaciones();
       },
       error: () => this.showToast('Error al eliminar asignación', 'bg-danger')
@@ -116,5 +122,21 @@ export class EmpleadoConceptosComponent implements OnInit {
     this.toastColor = color;
     this.toastVisible = true;
     setTimeout(() => this.toastVisible = false, 3000);
+  }
+
+  handleEditClick(asignacion: EmpleadoConcepto, content: TemplateRef<any>): void {
+    if (asignacion.fecha_hasta) {
+      this.showToast('Asignación inactiva, cree una nueva', 'bg-warning');
+      return;
+    }
+    this.editAsignacion(asignacion, content);
+  }
+  
+  handleDeleteClick(asignacion: EmpleadoConcepto): void {
+    if (asignacion.fecha_hasta) {
+      this.showToast('La asignación ya está desactivada', 'bg-secondary');
+      return;
+    }
+    this.deleteAsignacion(asignacion.id_empleado_concepto);
   }
 }

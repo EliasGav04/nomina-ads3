@@ -9,9 +9,11 @@ module.exports = (sequelize, DataTypes) => {
   }
   EmpleadoConcepto.init({
     id_empleado_concepto: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-    valor: DataTypes.DECIMAL(10,2),
-    fecha_desde: DataTypes.DATEONLY,
-    fecha_hasta: DataTypes.DATEONLY
+    id_empleado: { type: DataTypes.INTEGER, allowNull: false },
+    id_concepto: { type: DataTypes.INTEGER, allowNull: false },
+    valor: { type: DataTypes.DECIMAL(10,2), allowNull: false },
+    fecha_desde: { type: DataTypes.DATEONLY, allowNull: false },
+    fecha_hasta: { type: DataTypes.DATEONLY, allowNull: true }
   }, {
     sequelize,
     modelName: 'EmpleadoConcepto',

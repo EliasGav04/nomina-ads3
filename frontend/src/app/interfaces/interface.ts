@@ -63,8 +63,12 @@ export interface Empleado {
   id_area: number;
   createdAt: string;
   updatedAt: string;
-}
 
+  Area?: {
+    id_area: number;
+    area: string;
+  };
+}
 
 export interface EmpleadoConcepto {
   id_empleado_concepto: number;

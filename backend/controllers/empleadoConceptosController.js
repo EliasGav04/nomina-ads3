@@ -69,8 +69,8 @@ exports.delete = async (req, res) => {
     const registro = await EmpleadoConcepto.findByPk(req.params.id);
     if (!registro) return res.status(404).json({ error: 'Asignación no encontrada' });
 
-    await registro.destroy();
-    res.json({ message: 'Asignación eliminada correctamente' });
+    await registro.update({ fecha_hasta: new Date() });
+    res.json({ message: 'Asignación desactivada correctamente', registro });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

@@ -27,12 +27,24 @@
           <td>{{ a.Concepto?.concepto || a.id_concepto }}</td>
           <td>{{ a.valor }}</td>
           <td>{{ a.fecha_desde }}</td>
-          <td>{{ a.fecha_hasta || '-' }}</td>
+          <td>
+            <span>{{ a.fecha_hasta || '-' }}</span>
+            <ng-container *ngIf="!a.fecha_hasta; else inactivo">
+              <span class="badge bg-success ms-2">Vigente</span>
+            </ng-container>
+            <ng-template #inactivo>
+              <span class="badge bg-secondary ms-2">Inactivo</span>
+            </ng-template>
+          </td>
           <td class="acciones-col">
-            <button class="btn btn-warning btn-sm me-2 btn-edit" (click)="editAsignacion(a, content)">
+            <button 
+              class="btn btn-warning btn-sm me-2 btn-edit" 
+              (click)="handleEditClick(a, content)">
               <i class="bi bi-pencil-square"></i>
             </button>
-            <button class="btn btn-danger btn-sm btn-edit" (click)="deleteAsignacion(a.id_empleado_concepto)">
+            <button 
+              class="btn btn-danger btn-sm btn-edit" 
+              (click)="handleDeleteClick(a)">
               <i class="bi bi-trash"></i>
             </button>
           </td>
@@ -78,11 +90,6 @@
       <div class="mb-3">
         <label class="form-label">Fecha Desde:</label>
         <input formControlName="fecha_desde" type="date" class="form-control" />
-      </div>
-
-      <div class="mb-3">
-        <label class="form-label">Fecha Hasta:</label>
-        <input formControlName="fecha_hasta" type="date" class="form-control" />
       </div>
     </div>
 
