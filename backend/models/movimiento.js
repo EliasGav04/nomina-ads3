@@ -11,7 +11,8 @@ module.exports = (sequelize, DataTypes) => {
   Movimiento.init({
     id_movimiento: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     monto: DataTypes.DECIMAL(10,2),
-    descripcion: DataTypes.TEXT
+    descripcion: DataTypes.TEXT,
+    estado: DataTypes.STRING(20)
   }, {
     sequelize,
     modelName: 'Movimiento',

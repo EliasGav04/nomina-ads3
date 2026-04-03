@@ -11,4 +11,8 @@ export class ConceptosService extends BaseService<Concepto> {
   constructor(http: HttpClient) {
     super(http, `${environment.apiUrl}/conceptos`);
   }
+
+  getManualesActivos() {
+    return this.http.get<Concepto[]>(`${environment.apiUrl}/conceptos/manuales-activos`);
+  }
 }

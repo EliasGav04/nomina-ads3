@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const empleadosController = require('../controllers/empleadosController');
 
+router.get('/activos', empleadosController.getActivos);
+
 router.get('/', empleadosController.getAll);
 router.get('/:id', empleadosController.getById);
 router.post('/', empleadosController.create);

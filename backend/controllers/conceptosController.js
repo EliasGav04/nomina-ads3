@@ -67,3 +67,16 @@ exports.delete = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+
+
+
+
+exports.getManualesActivos = async (req, res) => {
+  try {
+    const conceptos = await Concepto.findAll({ where: { estado: 'Activo', naturaleza: 'manual' } });
+    res.json(conceptos);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};

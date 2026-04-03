@@ -20,6 +20,7 @@ module.exports = {
       },
       monto: Sequelize.DECIMAL(10,2),
       descripcion: Sequelize.TEXT,
+      estado: Sequelize.STRING(20),
       createdAt: Sequelize.DATE,
       updatedAt: Sequelize.DATE
     });

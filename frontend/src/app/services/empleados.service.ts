@@ -11,4 +11,8 @@ export class EmpleadosService extends BaseService<Empleado> {
   constructor(http: HttpClient) {
     super(http, `${environment.apiUrl}/empleados`);
   }
+
+  getActivos() {
+    return this.http.get<Empleado[]>(`${environment.apiUrl}/empleados/activos`);
+  }
 }

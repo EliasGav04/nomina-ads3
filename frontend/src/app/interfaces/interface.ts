@@ -106,3 +106,31 @@ export interface Periodo {
 
   empleados?: number;
 }
+
+export interface Movimiento {
+  id_movimiento: number;
+  id_periodo: number;
+  id_empleado: number;
+  id_concepto: number;
+  monto: number;
+  descripcion: string;
+  estado: string;
+  createdAt: string;
+  updatedAt: string;
+
+  Periodo?: {
+    id_periodo: number;
+    periodo: string;
+    estado: string;
+  };
+  Empleado?: {
+    id_empleado: number;
+    nombre_completo: string;
+  };
+  Concepto?: {
+    id_concepto: number;
+    concepto: string;
+    tipo: string;
+    naturaleza: string;
+  };
+}

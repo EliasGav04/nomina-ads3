@@ -102,3 +102,16 @@ exports.delete = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+
+
+
+
+exports.getAbiertos = async (req, res) => {
+  try {
+    const periodos = await Periodo.findAll({ where: { estado: 'Abierto' } });
+    res.json(periodos);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};

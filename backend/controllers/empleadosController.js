@@ -75,3 +75,17 @@ exports.delete = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+
+
+
+
+
+exports.getActivos = async (req, res) => {
+  try {
+    const empleados = await Empleado.findAll({ where: { estado: 'Activo' } });
+    res.json(empleados);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
