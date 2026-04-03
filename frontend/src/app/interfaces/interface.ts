@@ -90,4 +90,19 @@ export interface EmpleadoConcepto {
     tipo: string;
     naturaleza: string;
   };
+
+}
+
+
+export interface Periodo {
+  id_periodo: number;
+  periodo: string;
+  fecha_inicio: string;
+  fecha_final: string;
+  fecha_pago: string;
+  estado: 'Abierto' | 'Procesado' | 'Cerrado';
+  createdAt: string;
+  updatedAt: string;
+
+  empleados?: number;
 }

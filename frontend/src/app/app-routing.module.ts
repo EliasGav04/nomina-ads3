@@ -14,6 +14,7 @@ import { AreasComponent } from './components/areas/areas.component';
 import { ConceptosComponent } from './components/conceptos/conceptos.component';
 import { EmpleadosComponent } from './components/empleados/empleados.component';
 import { EmpleadoConceptosComponent } from './components/empleado-conceptos/empleado-conceptos.component';
+import { PeriodosComponent } from './components/periodos/periodos.component';
 
 const routes: Routes = [
   {
@@ -58,6 +59,10 @@ const routes: Routes = [
       { 
         path: 'empleado-conceptos',
         component: EmpleadoConceptosComponent 
+      },
+      { 
+        path: 'periodos',
+        component: PeriodosComponent 
       },
       
       
