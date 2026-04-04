@@ -1,0 +1,146 @@
+<div class="card mb-3">
+  <div class="card-body">
+    <div class="row g-2 align-items-end">
+      <div class="col-12 col-md-4">
+        <label class="form-label">Empleado</label>
+        <select class="form-select" [(ngModel)]="idEmpleado">
+          <option [ngValue]="null">[Seleccionar empleado]</option>
+          <option *ngFor="let e of empleados" [ngValue]="e.id_empleado">
+            {{ e.nombre_completo }}
+          </option>
+        </select>
+      </div>
+
+      <div class="col-12 col-md-4">
+        <label class="form-label">Período</label>
+        <select class="form-select" [(ngModel)]="idPeriodo">
+          <option [ngValue]="null">[Seleccionar período]</option>
+          <option *ngFor="let p of periodos" [ngValue]="p.id_periodo">
+            {{ p.periodo }}
+          </option>
+        </select>
+      </div>
+
+      <div class="col-12 col-md-4">
+        <button class="btn btn-dark w-100" (click)="buscarBoleta()" [disabled]="loading">
+          <i class="bi bi-search me-1"></i> Buscar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="error" class="alert alert-warning">{{ error }}</div>
+
+<div class="boleta card" *ngIf="boleta as b">
+  <div class="card-body">
+    <div class="row align-items-center boleta-header">
+      <div class="col-12 col-md-8 order-2 order-md-1">
+        <div class="empresa-info">
+          <h3>{{ b.empresa?.razon_social || b.empresa?.nombre || '[RAZÓN SOCIAL DE LA EMPRESA]' }}</h3>
+          <div>RTN {{ b.empresa?.rtn || 'N/A' }} - Tel. {{ b.empresa?.telefono || 'N/A' }}</div>
+          <div>{{ b.empresa?.direccion || 'N/A' }}</div>
+          <div>{{ b.empresa?.correo || 'N/A' }} - {{ b.empresa?.sitio_web || 'N/A' }}</div>
+        </div>
+      </div>
+      <div class="col-12 col-md-4 order-1 order-md-2">
+        <div class="empresa-logo">
+          <img *ngIf="b.empresa?.logoBase64" [src]="b.empresa?.logoBase64" alt="Logo empresa" />
+        </div>
+      </div>
+    </div>
+
+    <br />
+
+    <div class="subtext subtext-wide">BOLETA DE PAGO - PERÍODO {{ b.periodo.periodo | uppercase }}</div>
+
+    <div class="row mt-3">
+      <div class="col-12 col-md-6 datos-col">
+        <h6 class="mb-2">DATOS DEL PERÍODO</h6>
+        <div class="datos-grid">
+          <div class="dato-row"><span class="dato-label">Período:</span><span class="dato-value">{{ b.periodo.fecha_inicio }} - {{ b.periodo.fecha_final }}</span></div>
+          <div class="dato-row"><span class="dato-label">Fecha Pago:</span><span class="dato-value">{{ b.periodo.fecha_pago }}</span></div>
+          <div class="dato-row"><span class="dato-label">Días Trabajados:</span><span class="dato-value">{{ diasPeriodo }}</span></div>
+        </div>
+      </div>
+      <div class="col-12 col-md-6 datos-col">
+        <h6 class="mb-2">DATOS DEL EMPLEADO</h6>
+        <div class="datos-grid">
+          <div class="dato-row"><span class="dato-label">ID:</span><span class="dato-value">{{ b.empleado.id_empleado }}</span></div>
+          <div class="dato-row"><span class="dato-label">Empleado:</span><span class="dato-value">{{ b.empleado.nombre_completo }}</span></div>
+          <div class="dato-row"><span class="dato-label">DNI:</span><span class="dato-value">{{ b.empleado.dni }}</span></div>
+          <div class="dato-row"><span class="dato-label">Cargo:</span><span class="dato-value">{{ b.empleado.cargo }}</span></div>
+          <div class="dato-row"><span class="dato-label">Área:</span><span class="dato-value">{{ b.empleado.area || 'Sin área' }}</span></div>
+          <div class="dato-row"><span class="dato-label">IHSS:</span><span class="dato-value">{{ b.empleado.numero_ihss || 'N/A' }}</span></div>
+          <div class="dato-row"><span class="dato-label">Cuenta bancaria:</span><span class="dato-value">{{ b.empleado.cta_bancaria || 'N/A' }}</span></div>
+        </div>
+      </div>
+      
+    </div>
+
+    <hr />
+
+    <div class="mb-3">
+      <h5>INGRESOS</h5>
+      <div class="table-responsive">
+        <table class="table table-sm table-bordered align-middle boleta-table">
+          <thead>
+            <tr>
+              <th>Concepto</th>
+              <th class="text-end">Valor (L)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let i of b.ingresos">
+              <td>{{ i.concepto }}</td>
+              <td class="text-end">{{ i.monto | number:'1.2-2' }}</td>
+            </tr>
+            <tr *ngIf="b.ingresos.length === 0">
+              <td colspan="2" class="text-center text-muted">Sin ingresos</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <h5>DEDUCCIONES</h5>
+      <div class="table-responsive">
+        <table class="table table-sm table-bordered align-middle boleta-table">
+          <thead>
+            <tr>
+              <th>Concepto</th>
+              <th class="text-end">Valor (L)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let d of b.deducciones">
+              <td>{{ d.concepto }}</td>
+              <td class="text-end">{{ d.monto | number:'1.2-2' }}</td>
+            </tr>
+            <tr *ngIf="b.deducciones.length === 0">
+              <td colspan="2" class="text-center text-muted">Sin deducciones</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="resumen-wrap">
+      <div class="resumen">
+        <div class="resumen-row">
+          <span>Total Ingresos:</span>
+          <strong>L {{ b.resumen.total_ingresos | number:'1.2-2' }}</strong>
+        </div>
+        <div class="resumen-row">
+          <span>Total Deducciones:</span>
+          <strong>L {{ b.resumen.total_deducciones | number:'1.2-2' }}</strong>
+        </div>
+        <div class="resumen-row neto">
+          <span>Salario Neto:</span>
+          <strong>L {{ b.resumen.salario_neto | number:'1.2-2' }}</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

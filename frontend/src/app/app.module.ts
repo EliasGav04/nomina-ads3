@@ -25,6 +25,7 @@ import { AreasComponent } from './components/areas/areas.component';
 import { EmpleadoConceptosComponent } from './components/empleado-conceptos/empleado-conceptos.component';
 import { MovimientosComponent } from './components/movimientos/movimientos.component';
 import { NominaComponent } from './components/nomina/nomina.component';
+import { BoletapagoComponent } from './components/boletapago/boletapago.component';
 
 @NgModule({
   declarations: [
@@ -44,6 +45,7 @@ import { NominaComponent } from './components/nomina/nomina.component';
     EmpleadoConceptosComponent,
     MovimientosComponent,
     NominaComponent,
+    BoletapagoComponent,
   ],
   imports: [
     FormsModule,
