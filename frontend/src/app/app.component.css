@@ -1,0 +1,45 @@
+.session-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  background: rgba(15, 23, 42, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.session-modal {
+  width: 100%;
+  max-width: 460px;
+  background: #ffffff;
+  border-radius: 0.75rem;
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.18);
+  overflow: hidden;
+}
+
+.session-modal-header,
+.session-modal-body,
+.session-modal-footer {
+  padding: 1rem 1.25rem;
+}
+
+.session-modal-header {
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.session-modal-title {
+  margin: 0;
+  font-weight: 600;
+  color: #111827;
+}
+
+.session-modal-body {
+  color: #374151;
+}
+
+.session-modal-footer {
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: flex-end;
+}

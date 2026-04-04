@@ -1,1 +1,15 @@
 <router-outlet></router-outlet>
+
+<div class="session-modal-backdrop" *ngIf="modalVisible">
+  <div class="session-modal" role="dialog" aria-modal="true" aria-labelledby="sessionModalTitle">
+    <div class="session-modal-header">
+      <h5 id="sessionModalTitle" class="session-modal-title">Sesión expirada</h5>
+    </div>
+    <div class="session-modal-body">
+      <p class="mb-0">{{ modalMessage }}</p>
+    </div>
+    <div class="session-modal-footer">
+      <button type="button" class="btn btn-primary" (click)="closeSessionModal()">Entendido</button>
+    </div>
+  </div>
+</div>
