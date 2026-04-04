@@ -1,0 +1,49 @@
+.meta-box {
+  border: 1px solid #dde2ea;
+  border-radius: 8px;
+  padding: 12px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 10px;
+  background: #fbfcff;
+}
+
+.meta-item small {
+  color: #6c757d;
+  display: block;
+}
+
+.meta-item strong {
+  font-size: 1.02rem;
+}
+
+.table thead th {
+  background: #eef3fb;
+  color: #23395d;
+}
+
+.resumen {
+  margin-left: auto;
+  max-width: 360px;
+  border: 1px solid #d2d9e6;
+  border-radius: 8px;
+  padding: 10px 12px;
+  background: #fff;
+}
+
+.resumen > div {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #e9edf4;
+  padding: 4px 0;
+}
+
+.resumen > div:last-child {
+  border-bottom: 0;
+}
+
+.resumen .neto {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0d1b4d;
+}
