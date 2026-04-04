@@ -19,6 +19,17 @@ export interface ReporteArea {
 
 export interface ReporteResponse {
   tipo: TipoReporte;
+  empresa: {
+    id_empresa: number;
+    nombre: string;
+    razon_social: string;
+    rtn: string;
+    direccion: string;
+    telefono: string;
+    correo: string;
+    sitio_web: string;
+    logoBase64: string | null;
+  } | null;
   meta: {
     periodo: string;
     area: string;

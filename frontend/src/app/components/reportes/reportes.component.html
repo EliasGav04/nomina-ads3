@@ -55,7 +55,7 @@
         <strong>{{ r.meta.total_empleados }}</strong>
       </div>
       <div class="meta-item">
-        <small>Fecha Generación:</small>
+        <small>Fecha Generación Reporte:</small>
         <strong>{{ r.meta.fecha_generacion | date:'dd/MM/yyyy' }}</strong>
       </div>
     </div>
@@ -89,7 +89,7 @@
       <table class="table table-bordered table-striped align-middle">
         <thead>
           <tr>
-            <th>Área / Departamento</th>
+            <th>Área</th>
             <th class="text-end">Empleados</th>
             <th class="text-end">Salario Base</th>
             <th class="text-end">Ingresos</th>
@@ -140,6 +140,15 @@
       <div><span>Total Ingresos:</span> <strong>{{ r.resumen.ingresos | number:'1.2-2' }}</strong></div>
       <div><span>Total Deducciones:</span> <strong>{{ r.resumen.deducciones | number:'1.2-2' }}</strong></div>
       <div class="neto"><span>Total Neto:</span> <strong>{{ r.resumen.neto | number:'1.2-2' }}</strong></div>
+    </div>
+
+    <div class="d-flex justify-content-end gap-2 mt-3">
+      <button class="btn btn-danger" (click)="exportarPdf()">
+        <i class="bi bi-file-earmark-pdf me-1"></i> Exportar PDF
+      </button>
+      <button class="btn btn-success" (click)="exportarExcel()">
+        <i class="bi bi-file-earmark-excel me-1"></i> Exportar Excel
+      </button>
     </div>
   </div>
 </div>

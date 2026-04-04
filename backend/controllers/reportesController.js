@@ -1,6 +1,6 @@
 'use strict';
 
-const { Area, Empleado, NominaRegistro, Periodo } = require('../models');
+const { Area, Empleado, NominaRegistro, Periodo, Infoempresa } = require('../models');
 const { Op } = require('sequelize');
 
 const n = (v) => {
@@ -92,6 +92,7 @@ exports.generar = async (req, res) => {
 
     const areaSeleccionada =
       Number.isFinite(idArea) ? await Area.findByPk(idArea, { attributes: ['id_area', 'area'] }) : null;
+    const empresa = await Infoempresa.findByPk(1);
 
     const baseRows = registros.map((r) => {
       const salarioBase = n(r.Empleado?.salario_base);
@@ -180,6 +181,19 @@ exports.generar = async (req, res) => {
 
     res.json({
       tipo,
+      empresa: empresa
+        ? {
+            id_empresa: empresa.id_empresa,
+            nombre: empresa.nombre,
+            razon_social: empresa.razon_social,
+            rtn: empresa.rtn,
+            direccion: empresa.direccion,
+            telefono: empresa.telefono,
+            correo: empresa.correo,
+            sitio_web: empresa.sitio_web,
+            logoBase64: empresa.logo ? `data:${empresa.logo_mime};base64,${empresa.logo.toString('base64')}` : null
+          }
+        : null,
       meta: {
         periodo:
           tipo === 'anual_general'
