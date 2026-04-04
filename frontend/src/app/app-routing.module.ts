@@ -16,6 +16,7 @@ import { EmpleadosComponent } from './components/empleados/empleados.component';
 import { EmpleadoConceptosComponent } from './components/empleado-conceptos/empleado-conceptos.component';
 import { PeriodosComponent } from './components/periodos/periodos.component';
 import { MovimientosComponent } from './components/movimientos/movimientos.component';
+import { NominaComponent } from './components/nomina/nomina.component';
 
 const routes: Routes = [
   {
@@ -68,6 +69,10 @@ const routes: Routes = [
       { 
         path: 'movimientos',
         component: MovimientosComponent 
+      },
+      {
+        path: 'nomina',
+        component: NominaComponent
       },
       
       

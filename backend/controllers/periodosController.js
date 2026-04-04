@@ -1,5 +1,6 @@
 const { Periodo, NominaRegistro, Empleado } = require('../models');
 
+
 exports.getAll = async (req, res) => {
     try {
       const periodos = await Periodo.findAll({

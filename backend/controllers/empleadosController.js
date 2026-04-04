@@ -25,7 +25,7 @@ exports.getById = async (req, res) => {
 
 exports.create = async (req, res) => {
   try {
-    const { dni, nombre_completo, cargo, fecha_ingreso, numero_ihss, cta_bancaria, estado, id_area } = req.body;
+    const { dni, nombre_completo, cargo, fecha_ingreso, numero_ihss, cta_bancaria, salario_base, estado, id_area } = req.body;
     const nuevoEmpleado = await Empleado.create({
       dni,
       nombre_completo,
@@ -33,6 +33,7 @@ exports.create = async (req, res) => {
       fecha_ingreso,
       numero_ihss,
       cta_bancaria,
+      salario_base: salario_base != null ? salario_base : 0,
       estado: estado || 'Activo',
       id_area
     });
@@ -47,7 +48,7 @@ exports.update = async (req, res) => {
     const empleado = await Empleado.findByPk(req.params.id);
     if (!empleado) return res.status(404).json({ error: 'Empleado no encontrado' });
 
-    const { dni, nombre_completo, cargo, fecha_ingreso, numero_ihss, cta_bancaria, estado, id_area } = req.body;
+    const { dni, nombre_completo, cargo, fecha_ingreso, numero_ihss, cta_bancaria, salario_base, estado, id_area } = req.body;
     await empleado.update({
       dni,
       nombre_completo,
@@ -55,6 +56,7 @@ exports.update = async (req, res) => {
       fecha_ingreso,
       numero_ihss,
       cta_bancaria,
+      salario_base: salario_base != null ? salario_base : empleado.salario_base,
       estado: estado || 'Activo',
       id_area
     });

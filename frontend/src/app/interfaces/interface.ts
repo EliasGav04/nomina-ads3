@@ -59,6 +59,7 @@ export interface Empleado {
   fecha_ingreso: string; 
   numero_ihss: string;
   cta_bancaria: string;
+  salario_base: number;
   estado: string;
   id_area: number;
   createdAt: string;

@@ -18,6 +18,7 @@
           <th>Nombre Completo</th>
           <th>Cargo</th>
           <th>Fecha Ingreso</th>
+          <th>Salario base</th>
           <th>IHSS</th>
           <th>Cuenta Bancaria</th>
           <th>Área</th>
@@ -33,6 +34,7 @@
           <td>{{ e.nombre_completo }}</td>
           <td>{{ e.cargo }}</td>
           <td>{{ e.fecha_ingreso }}</td>
+          <td>{{ e.salario_base | number:'1.2-2' }}</td>
           <td>{{ e.numero_ihss }}</td>
           <td>{{ e.cta_bancaria }}</td>
           <td>{{ e.Area?.area || 'Sin área' }}</td>
@@ -91,6 +93,11 @@
       <div class="mb-3">
         <label class="form-label">Fecha Ingreso:</label>
         <input formControlName="fecha_ingreso" type="date" class="form-control" />
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Salario base:</label>
+        <input formControlName="salario_base" type="number" min="0" step="0.01" class="form-control" />
       </div>
 
       <div class="mb-3">

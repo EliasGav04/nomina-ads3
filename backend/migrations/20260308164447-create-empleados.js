@@ -18,6 +18,7 @@ module.exports = {
       },
       numero_ihss: Sequelize.STRING(30),
       cta_bancaria: Sequelize.STRING(40),
+      salario_base: { type: Sequelize.DECIMAL(10, 2), allowNull: false, defaultValue: 0 },
       estado: Sequelize.STRING(20),
       createdAt: Sequelize.DATE,
       updatedAt: Sequelize.DATE

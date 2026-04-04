@@ -37,6 +37,7 @@ export class EmpleadosComponent implements OnInit {
       fecha_ingreso: [''],
       numero_ihss: [''],
       cta_bancaria: [''],
+      salario_base: [0],
       estado: ['Activo'],
       id_area: [null]
     });
@@ -57,7 +58,7 @@ export class EmpleadosComponent implements OnInit {
 
   openModal(content: TemplateRef<any>): void {
     this.editing = false;
-    this.empleadoForm.reset({ estado: 'Activo' });
+    this.empleadoForm.reset({ estado: 'Activo', salario_base: 0 });
     this.modalRef = this.modalService.open(content, { backdrop: 'static' });
   }
 

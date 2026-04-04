@@ -10,6 +10,8 @@ module.exports = (sequelize, DataTypes) => {
   }
   NominaRegistro.init({
     id_registro: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+    id_periodo: { type: DataTypes.INTEGER, allowNull: false },
+    id_empleado: { type: DataTypes.INTEGER, allowNull: false },
     salario_bruto: DataTypes.DECIMAL(10,2),
     total_deducciones: DataTypes.DECIMAL(10,2),
     salario_neto: DataTypes.DECIMAL(10,2)

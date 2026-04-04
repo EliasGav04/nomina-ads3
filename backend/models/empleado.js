@@ -17,6 +17,7 @@ module.exports = (sequelize, DataTypes) => {
     fecha_ingreso: DataTypes.DATEONLY,
     numero_ihss: DataTypes.STRING(30),
     cta_bancaria: DataTypes.STRING(40),
+    salario_base: DataTypes.DECIMAL(10, 2),
     estado: DataTypes.STRING(20)
   }, {
     sequelize,

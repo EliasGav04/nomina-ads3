@@ -9,6 +9,8 @@ module.exports = (sequelize, DataTypes) => {
   }
   NominaDetalle.init({
     id_detalle: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+    id_registro: { type: DataTypes.INTEGER, allowNull: false },
+    id_concepto: { type: DataTypes.INTEGER, allowNull: false },
     monto: DataTypes.DECIMAL(10,2)
   }, {
     sequelize,

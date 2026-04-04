@@ -1,0 +1,38 @@
+.card-title {
+  font-weight: 600;
+}
+
+.periodo-detalle {
+  border: 1px solid #e1e1e1;
+  border-radius: 6px;
+  padding: 10px 12px;
+  background: #fafafa;
+}
+
+.estado-box {
+  border: 1px solid #e7dd99;
+  background: #fff8d9;
+  border-radius: 6px;
+  padding: 10px 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.estado-label {
+  font-weight: 600;
+}
+
+.estado-value {
+  background: #f3efcc;
+  border: 1px solid #ddd8aa;
+  border-radius: 4px;
+  padding: 6px 10px;
+}
+
+.check-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
