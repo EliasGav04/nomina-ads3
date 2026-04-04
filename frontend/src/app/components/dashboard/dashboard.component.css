@@ -1,0 +1,44 @@
+.resumen-card {
+  border: 1px solid #dbe1ea;
+  border-radius: 8px;
+  background: #fff;
+  padding: 1rem 1.2rem;
+  min-height: 110px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.resumen-label {
+  color: #6b7280;
+  font-size: 0.95rem;
+  margin-bottom: 0.35rem;
+}
+
+.resumen-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #121827;
+  line-height: 1.1;
+}
+
+.bienvenida-card {
+  border: 1px solid #dbe1ea;
+  border-radius: 8px;
+}
+
+.bienvenida-card .card-body {
+  padding: 3rem 1.2rem;
+}
+
+.bienvenida-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.bienvenida-text {
+  margin-top: 0.8rem;
+  color: #4b5563;
+  font-size: 1.05rem;
+}

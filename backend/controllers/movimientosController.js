@@ -34,6 +34,12 @@ exports.getById = async (req, res) => {
 exports.create = async (req, res) => {
   try {
     const { id_periodo, id_empleado, id_concepto, monto, descripcion } = req.body;
+    const periodo = await Periodo.findByPk(id_periodo, { attributes: ['estado'] });
+    if (!periodo) return res.status(404).json({ error: 'Período no encontrado' });
+    if (periodo.estado !== 'Abierto') {
+      return res.status(400).json({ error: 'Solo se pueden crear movimientos en períodos Abiertos' });
+    }
+
     const nuevoMovimiento = await Movimiento.create({
       id_periodo,
       id_empleado,

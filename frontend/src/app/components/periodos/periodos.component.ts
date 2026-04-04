@@ -52,12 +52,17 @@ export class PeriodosComponent implements OnInit {
   loadPeriodos(): void {
     this.periodosService.getAll().subscribe(data => {
       this.periodos = data;
-      this.periodoActual = this.periodos.find(p => p.estado === 'Abierto') || null;
+      this.periodoActual =
+        this.periodos.find(p => p.estado === 'Abierto') ||
+        this.periodos.find(p => p.estado === 'Procesado') ||
+        null;
       if (this.periodoActual?.fecha_pago) {
         const hoy = new Date();
         const fechaPago = new Date(this.periodoActual.fecha_pago);
         const diff = Math.ceil((fechaPago.getTime() - hoy.getTime()) / (1000 * 60 * 60 * 24));
         this.diasRestantes = diff > 0 ? diff : 0;
+      } else {
+        this.diasRestantes = 0;
       }
     });
   }
@@ -109,6 +114,10 @@ export class PeriodosComponent implements OnInit {
 
   cerrarPeriodo(id: number | undefined): void {
     if (!id) return;
+    if (this.periodoActual?.estado !== 'Procesado') {
+      this.showToast('Primero debe ejecutar nómina para pasar el período a Procesado', 'bg-primary');
+      return;
+    }
     this.periodosService.delete(id).subscribe({
       next: () => {
         this.showToast('Período cerrado correctamente', 'bg-warning');

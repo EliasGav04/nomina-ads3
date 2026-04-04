@@ -1,66 +1,84 @@
 <!-- Bloque superior: Período actual -->
-<div class="card mb-4">
-    <div class="card-body">
-      <h4 class="card-title">Período Actual: {{ periodoActual?.periodo }}</h4>
-      <p><strong>Fechas:</strong> {{ periodoActual?.fecha_inicio }} - {{ periodoActual?.fecha_final }}</p>
-      <p><strong>Empleados:</strong> {{ periodoActual?.empleados }}</p>
-      <p><strong>Fecha de Pago:</strong> {{ periodoActual?.fecha_pago }}</p>
-      <p><strong>Días Restantes:</strong> {{ diasRestantes }} días</p>
-      <p><strong>Estado:</strong> 
-        <span class="estado-badge" [ngClass]="periodoActual?.estado === 'Abierto' ? 'activo' : (periodoActual?.estado === 'Procesado' ? 'procesado' : 'inactivo')">
-          {{ periodoActual?.estado }}
-        </span>
-      </p>
-      <button class="btn btn-danger me-2" (click)="cerrarPeriodo(periodoActual?.id_periodo)">
-        Cerrar Período
+<div class="card periodo-actual-card mb-4">
+  <div class="card-body">
+    <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+      <div>
+        <div class="titulo-seccion">Período Actual</div>
+        <h3 class="periodo-nombre mb-1">{{ periodoActual?.periodo || 'Sin período disponible' }}</h3>
+        <div class="periodo-rango">{{ periodoActual?.fecha_inicio }} - {{ periodoActual?.fecha_final }}</div>
+      </div>
+      <span
+        class="estado-badge estado-top"
+        [ngClass]="periodoActual?.estado === 'Abierto' ? 'activo' : (periodoActual?.estado === 'Procesado' ? 'procesado' : 'inactivo')">
+        {{ periodoActual?.estado || 'N/A' }}
+      </span>
+    </div>
+
+    <hr class="my-3" />
+
+    <div class="row g-3 metricas-row">
+      <div class="col-12 col-md-4">
+        <div class="metrica-label">Empleados</div>
+        <div class="metrica-valor">{{ periodoActual?.empleados ?? 0 }}</div>
+      </div>
+      <div class="col-12 col-md-4">
+        <div class="metrica-label">Fecha de Pago</div>
+        <div class="metrica-valor">{{ periodoActual?.fecha_pago || 'N/A' }}</div>
+      </div>
+      <div class="col-12 col-md-4">
+        <div class="metrica-label">Días Restantes</div>
+        <div class="metrica-valor">{{ diasRestantes }} días</div>
+      </div>
+    </div>
+
+    <div class="d-flex flex-wrap gap-2 mt-4">
+      <button
+        class="btn btn-outline-dark"
+        (click)="cerrarPeriodo(periodoActual?.id_periodo)"
+        [disabled]="periodoActual?.estado !== 'Procesado'">
+        <i class="bi bi-lock me-1"></i> Cerrar Período
       </button>
-      <button class="btn btn-primary" (click)="openModal(content)">
-        Crear Período
+      <button class="btn btn-dark" (click)="openModal(content)">
+        <i class="bi bi-plus-circle me-1"></i> Crear Período
       </button>
     </div>
   </div>
-  
-  <!-- Bloque inferior: Historial -->
-  <div class="table-container">
-    <div class="table-responsive">
-      <table class="table table-striped table-hover table-bordered align-middle tabla-periodos">
-        <thead class="encabezado-periodos">
-          <tr>
-            <th>ID</th>
-            <th>Periodo</th>
-            <th>Fecha Inicio</th>
-            <th>Fecha Final</th>
-            <th>Fecha Pago</th>
-            <th>Empleados</th>
-            <th>Estado</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let p of periodos">
-            <td>{{ p.id_periodo }}</td>
-            <td>{{ p.periodo }}</td>
-            <td>{{ p.fecha_inicio }}</td>
-            <td>{{ p.fecha_final }}</td>
-            <td>{{ p.fecha_pago }}</td>
-            <td>{{ p.empleados }}</td>
-            <td>
-              <span class="estado-badge" 
-                [ngClass]="p.estado === 'Abierto' ? 'activo' : (p.estado === 'Procesado' ? 'procesado' : 'inactivo')">
-                {{ estadoLabels[p.estado] }}
-              </span>
-            </td>
-            <td class="acciones-col">
-                <button class="btn btn-warning btn-sm me-2 btn-edit"
-                  (click)="handleEditClick(p, content)">
-                  <i class="bi bi-pencil-square"></i>
-                </button>
-              </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+</div>
+
+<!-- Bloque inferior: Historial -->
+<div class="card historial-card">
+  <div class="card-header">Historial de Períodos</div>
+  <div class="table-responsive">
+    <table class="table table-bordered align-middle tabla-periodos mb-0">
+      <thead class="encabezado-periodos">
+        <tr>
+          <th>ID Período</th>
+          <th>Nombre</th>
+          <th>Fecha Inicio</th>
+          <th>Fecha Fin</th>
+          <th>Fecha Pago</th>
+          <th>Empleados</th>
+          <th>Estado</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let p of periodos">
+          <td>{{ p.id_periodo }}</td>
+          <td>{{ p.periodo }}</td>
+          <td>{{ p.fecha_inicio }}</td>
+          <td>{{ p.fecha_final }}</td>
+          <td>{{ p.fecha_pago }}</td>
+          <td>{{ p.empleados }}</td>
+          <td>
+            <span class="estado-badge" [ngClass]="p.estado === 'Abierto' ? 'activo' : (p.estado === 'Procesado' ? 'procesado' : 'inactivo')">
+              {{ estadoLabels[p.estado] }}
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
+</div>
   
   <!-- Modal -->
   <ng-template #content let-modal>

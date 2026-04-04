@@ -22,6 +22,7 @@ const movimientosRoutes = require('./routes/movimientos');
 const nominaRoutes = require('./routes/nomina');
 const boletapagoRoutes = require('./routes/boletapago');
 const reportesRoutes = require('./routes/reportes');
+const dashboardRoutes = require('./routes/dashboard');
 
 const app = express();
 
@@ -48,6 +49,7 @@ app.use('/api/movimientos', movimientosRoutes);
 app.use('/api/nomina', nominaRoutes);
 app.use('/api/boleta-pago', boletapagoRoutes);
 app.use('/api/reportes', reportesRoutes);
+app.use('/api/dashboard', dashboardRoutes);
 
 //conexion BD
 sequelize.authenticate()

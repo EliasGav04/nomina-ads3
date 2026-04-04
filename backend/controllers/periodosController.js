@@ -4,6 +4,7 @@ const { Periodo, NominaRegistro, Empleado } = require('../models');
 exports.getAll = async (req, res) => {
     try {
       const periodos = await Periodo.findAll({
+        order: [['fecha_inicio', 'DESC']],
         include: [
           {
             model: NominaRegistro,
@@ -60,12 +61,21 @@ exports.getAll = async (req, res) => {
 exports.create = async (req, res) => {
   try {
     const { periodo, fecha_inicio, fecha_final, fecha_pago, estado } = req.body;
+    const estadoNuevo = estado || 'Abierto';
+
+    if (estadoNuevo === 'Abierto') {
+      const abierto = await Periodo.findOne({ where: { estado: 'Abierto' } });
+      if (abierto) {
+        return res.status(400).json({ error: 'Ya existe un período Abierto. Debe procesarlo/cerrarlo antes de crear otro.' });
+      }
+    }
+
     const nuevoPeriodo = await Periodo.create({
       periodo,
       fecha_inicio,
       fecha_final,
       fecha_pago,
-      estado: estado || 'Abierto'
+      estado: estadoNuevo
     });
     res.status(201).json(nuevoPeriodo);
   } catch (error) {
@@ -77,14 +87,16 @@ exports.update = async (req, res) => {
   try {
     const periodo = await Periodo.findByPk(req.params.id);
     if (!periodo) return res.status(404).json({ error: 'Periodo no encontrado' });
+    if (periodo.estado !== 'Abierto') {
+      return res.status(400).json({ error: 'Solo se pueden editar períodos en estado Abierto' });
+    }
 
-    const { periodo: nombre, fecha_inicio, fecha_final, fecha_pago, estado } = req.body;
+    const { periodo: nombre, fecha_inicio, fecha_final, fecha_pago } = req.body;
     await periodo.update({
       periodo: nombre,
       fecha_inicio,
       fecha_final,
-      fecha_pago,
-      estado
+      fecha_pago
     });
     res.json(periodo);
   } catch (error) {
@@ -96,6 +108,9 @@ exports.delete = async (req, res) => {
   try {
     const periodo = await Periodo.findByPk(req.params.id);
     if (!periodo) return res.status(404).json({ error: 'Periodo no encontrado' });
+    if (periodo.estado !== 'Procesado') {
+      return res.status(400).json({ error: 'Solo se puede cerrar un período Procesado' });
+    }
 
     await periodo.update({ estado: 'Cerrado' });
     res.json({ message: 'Periodo marcado como Cerrado' });

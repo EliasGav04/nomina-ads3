@@ -1,1 +1,29 @@
-<p>dashboard works!</p>
+<div class="row g-3 mb-4">
+  <div class="col-12 col-md-4">
+    <div class="resumen-card">
+      <div class="resumen-label">Total Empleados</div>
+      <div class="resumen-value">{{ resumen.total_empleados }}</div>
+    </div>
+  </div>
+  <div class="col-12 col-md-4">
+    <div class="resumen-card">
+      <div class="resumen-label">Aproximado nómina del mes</div>
+      <div class="resumen-value">L {{ resumen.nomina_mes | number:'1.2-2' }}</div>
+    </div>
+  </div>
+  <div class="col-12 col-md-4">
+    <div class="resumen-card">
+      <div class="resumen-label">Período Actual</div>
+      <div class="resumen-value">{{ resumen.periodo_actual?.periodo || 'Sin período' }}</div>
+    </div>
+  </div>
+</div>
+
+<div class="card bienvenida-card">
+  <div class="card-body text-center">
+    <h2 class="bienvenida-title">Bienvenido, {{ nombreUsuario }} al Sistema de Gestión de Nómina</h2>
+    <p class="bienvenida-text mb-0">
+      Gestiona períodos, ejecuta nómina, emite boletas y genera reportes desde un solo lugar.
+    </p>
+  </div>
+</div>
