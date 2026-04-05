@@ -56,7 +56,7 @@
       </div>
       <div class="meta-item">
         <small>Fecha Generación Reporte:</small>
-        <strong>{{ r.meta.fecha_generacion | date:'dd/MM/yyyy' }}</strong>
+        <strong>{{ formatDateDMY(r.meta.fecha_generacion) }}</strong>
       </div>
     </div>
 

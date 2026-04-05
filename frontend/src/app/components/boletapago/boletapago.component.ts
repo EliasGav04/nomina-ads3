@@ -7,6 +7,7 @@ import {
 } from '../../services/boletapago.service';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { formatDateDMY } from '../../utils/date.utils';
 
 @Component({
   selector: 'app-boletapago',
@@ -21,6 +22,7 @@ export class BoletapagoComponent implements OnInit {
   boleta: BoletaResponse | null = null;
   loading = false;
   error = '';
+  formatDateDMY = formatDateDMY;
 
   constructor(private boletaPagoService: BoletapagoService) {}
 
@@ -155,8 +157,8 @@ export class BoletapagoComponent implements OnInit {
 
     doc.setFontSize(9.5);
     const periodoRows: Array<[string, string]> = [
-      ['Período:', `${b.periodo.fecha_inicio} - ${b.periodo.fecha_final}`],
-      ['Fecha Pago:', `${b.periodo.fecha_pago}`],
+      ['Período:', `${formatDateDMY(b.periodo.fecha_inicio)} - ${formatDateDMY(b.periodo.fecha_final)}`],
+      ['Fecha Pago:', `${formatDateDMY(b.periodo.fecha_pago)}`],
       ['Días Trabajados:', `${this.diasPeriodo}`]
     ];
     const empleadoRows: Array<[string, string]> = [

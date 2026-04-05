@@ -9,6 +9,7 @@ import {
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import * as XLSX from 'xlsx';
+import { formatDateDMY } from '../../utils/date.utils';
 
 @Component({
   selector: 'app-reportes',
@@ -30,6 +31,7 @@ export class ReportesComponent implements OnInit {
   reporte: ReporteResponse | null = null;
   loading = false;
   error = '';
+  formatDateDMY = formatDateDMY;
 
   constructor(private reportesService: ReportesService) {}
 
@@ -203,7 +205,7 @@ export class ReportesComponent implements OnInit {
     doc.setFont('helvetica', 'bold');
     doc.text('Fecha Generación Reporte:', margin + contentWidth / 2, y);
     doc.setFont('helvetica', 'normal');
-    doc.text(new Date(r.meta.fecha_generacion).toLocaleDateString(), margin + contentWidth / 2 + 45, y);
+    doc.text(formatDateDMY(r.meta.fecha_generacion), margin + contentWidth / 2 + 45, y);
 
     y += 6;
     const { headers, rows } = this.getTableForExport(r);
@@ -271,7 +273,7 @@ export class ReportesComponent implements OnInit {
     aoa.push([this.getTipoLabel(r.tipo)]);
     aoa.push([]);
     aoa.push(['Período', r.meta.periodo, 'Área', r.meta.area]);
-    aoa.push(['Total Empleados', r.meta.total_empleados, 'Fecha Generación Reporte', new Date(r.meta.fecha_generacion).toLocaleDateString()]);
+    aoa.push(['Total Empleados', r.meta.total_empleados, 'Fecha Generación Reporte', formatDateDMY(r.meta.fecha_generacion)]);
     aoa.push([]);
     aoa.push(headers);
     rows.forEach(row => aoa.push(row));

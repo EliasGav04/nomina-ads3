@@ -58,8 +58,8 @@
       <div class="col-12 col-md-6 datos-col">
         <h6 class="mb-2">DATOS DEL PERÍODO</h6>
         <div class="datos-grid">
-          <div class="dato-row"><span class="dato-label">Período:</span><span class="dato-value">{{ b.periodo.fecha_inicio }} - {{ b.periodo.fecha_final }}</span></div>
-          <div class="dato-row"><span class="dato-label">Fecha Pago:</span><span class="dato-value">{{ b.periodo.fecha_pago }}</span></div>
+          <div class="dato-row"><span class="dato-label">Período:</span><span class="dato-value">{{ formatDateDMY(b.periodo.fecha_inicio) }} - {{ formatDateDMY(b.periodo.fecha_final) }}</span></div>
+          <div class="dato-row"><span class="dato-label">Fecha Pago:</span><span class="dato-value">{{ formatDateDMY(b.periodo.fecha_pago) }}</span></div>
           <div class="dato-row"><span class="dato-label">Días Trabajados:</span><span class="dato-value">{{ diasPeriodo }}</span></div>
         </div>
       </div>

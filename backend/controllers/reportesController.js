@@ -12,7 +12,11 @@ exports.getConfig = async (req, res) => {
   try {
     const [periodos, areas] = await Promise.all([
       Periodo.findAll({
-        where: { estado: 'Procesado' },
+        where: {
+          estado: {
+            [Op.in]: ['Procesado', 'Cerrado']
+          }
+        },
         attributes: ['id_periodo', 'periodo', 'fecha_inicio', 'fecha_final', 'fecha_pago'],
         order: [['fecha_inicio', 'DESC']]
       }),
@@ -55,7 +59,11 @@ exports.generar = async (req, res) => {
         periodoSeleccionado = await Periodo.findByPk(idPeriodo);
       } else {
         periodoSeleccionado = await Periodo.findOne({
-          where: { estado: 'Procesado' },
+          where: {
+            estado: {
+              [Op.in]: ['Procesado', 'Cerrado']
+            }
+          },
           order: [['fecha_inicio', 'DESC']]
         });
       }
@@ -67,7 +75,9 @@ exports.generar = async (req, res) => {
         [Op.gte]: `${year}-01-01`,
         [Op.lte]: `${year}-12-31`
       };
-      wherePeriodo.estado = 'Procesado';
+      wherePeriodo.estado = {
+        [Op.in]: ['Procesado', 'Cerrado']
+      };
     }
 
     const whereEmpleado = {};

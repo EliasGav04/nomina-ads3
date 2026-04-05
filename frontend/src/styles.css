@@ -1,0 +1,51 @@
+/* Badge style standard across the app */
+.badge,
+.estado-badge,
+.badge-global {
+  display: inline-block;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.badge.bg-success,
+.estado-badge.activo,
+.badge-global.si {
+  background-color: #198754 !important;
+  color: #ffffff !important;
+  border-color: #198754 !important;
+}
+
+.badge.bg-secondary,
+.estado-badge.inactivo,
+.estado-badge.procesado,
+.estado-badge.anulado,
+.badge-global.no {
+  background-color: #6c757d !important;
+  color: #ffffff !important;
+  border-color: #6c757d !important;
+}
+
+/* Action buttons standard for tables */
+.btn-action {
+  background-color: #ffffff !important;
+  border: 1px solid #b7b7b7 !important;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.btn-action:hover {
+  background-color: #f3f4f6 !important;
+}
+
+.btn-action:active {
+  transform: translateY(1px);
+}
+
+.btn-action-edit {
+  color: #ff9b00 !important;
+}
+
+.btn-action-delete {
+  color: #ed272e !important;
+}

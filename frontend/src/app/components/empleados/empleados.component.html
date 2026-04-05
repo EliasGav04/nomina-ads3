@@ -33,7 +33,7 @@
           <td>{{ e.dni }}</td>
           <td>{{ e.nombre_completo }}</td>
           <td>{{ e.cargo }}</td>
-          <td>{{ e.fecha_ingreso }}</td>
+          <td>{{ e.fecha_ingreso | date:'dd/MM/yyyy':'UTC' }}</td>
           <td>{{ e.salario_base | number:'1.2-2' }}</td>
           <td>{{ e.numero_ihss }}</td>
           <td>{{ e.cta_bancaria }}</td>
@@ -48,12 +48,12 @@
           </td>
 
           <td class="acciones-col">
-            <button class="btn btn-warning btn-sm me-2 btn-edit"
+            <button class="btn btn-sm me-2 btn-action btn-action-edit"
               (click)="editEmpleado(e, content)">
               <i class="bi bi-pencil-square"></i>
             </button>
 
-            <button class="btn btn-danger btn-sm btn-edit"
+            <button class="btn btn-sm btn-action btn-action-delete"
               (click)="deleteEmpleado(e.id_empleado)">
               <i class="bi bi-trash"></i>
             </button>

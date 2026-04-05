@@ -5,7 +5,7 @@
       <div>
         <div class="titulo-seccion">Período Actual</div>
         <h3 class="periodo-nombre mb-1">{{ periodoActual?.periodo || 'Sin período disponible' }}</h3>
-        <div class="periodo-rango">{{ periodoActual?.fecha_inicio }} - {{ periodoActual?.fecha_final }}</div>
+        <div class="periodo-rango">{{ periodoActual?.fecha_inicio | date:'dd/MM/yyyy':'UTC' }} - {{ periodoActual?.fecha_final | date:'dd/MM/yyyy':'UTC' }}</div>
       </div>
       <span
         class="estado-badge estado-top"
@@ -23,7 +23,7 @@
       </div>
       <div class="col-12 col-md-4">
         <div class="metrica-label">Fecha de Pago</div>
-        <div class="metrica-valor">{{ periodoActual?.fecha_pago || 'N/A' }}</div>
+        <div class="metrica-valor">{{ periodoActual?.fecha_pago ? (periodoActual?.fecha_pago | date:'dd/MM/yyyy':'UTC') : 'N/A' }}</div>
       </div>
       <div class="col-12 col-md-4">
         <div class="metrica-label">Días Restantes</div>
@@ -65,9 +65,9 @@
         <tr *ngFor="let p of periodos">
           <td>{{ p.id_periodo }}</td>
           <td>{{ p.periodo }}</td>
-          <td>{{ p.fecha_inicio }}</td>
-          <td>{{ p.fecha_final }}</td>
-          <td>{{ p.fecha_pago }}</td>
+          <td>{{ p.fecha_inicio | date:'dd/MM/yyyy':'UTC' }}</td>
+          <td>{{ p.fecha_final | date:'dd/MM/yyyy':'UTC' }}</td>
+          <td>{{ p.fecha_pago | date:'dd/MM/yyyy':'UTC' }}</td>
           <td>{{ p.empleados }}</td>
           <td>
             <span class="estado-badge" [ngClass]="p.estado === 'Abierto' ? 'activo' : (p.estado === 'Procesado' ? 'procesado' : 'inactivo')">

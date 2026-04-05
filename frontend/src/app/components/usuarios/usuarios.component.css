@@ -36,40 +36,6 @@ form {
     color: white;
     font-weight: 600;
   }
-.btn-edit:hover {
-    background-color: #d8d8d8;
-  }
-
-  .btn-edit{
-    background-color: white; 
-    border-color: #13142a; 
-    color: #13142a;
-  }
-  
-
-  /*Pestaña de Activos e Inactivos*/
-.estado-badge {
-  padding: 5px 12px;
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 500;
-  display: inline-block;
-}
-
-.estado-badge.activo {
-  background-color: #d1f2df;
-  color: #198754;
-  border: 1px solid #198754;
-}
-
-.estado-badge.inactivo {
-  background-color: #f8d7da;
-  color: #dc3545;
-  border: 1px solid #dc3545;
-}
-
-
-
 .table-container {
   width: 100%;
   overflow-x: auto;

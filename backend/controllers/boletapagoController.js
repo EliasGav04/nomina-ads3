@@ -1,5 +1,6 @@
 'use strict';
 
+const { Op } = require('sequelize');
 const { Infoempresa, Empleado, Periodo, NominaRegistro, NominaDetalle, Concepto, Area } = require('../models');
 
 exports.getFiltros = async (req, res) => {
@@ -11,7 +12,11 @@ exports.getFiltros = async (req, res) => {
     });
 
     const periodos = await Periodo.findAll({
-      where: { estado: 'Procesado' },
+      where: {
+        estado: {
+          [Op.in]: ['Procesado', 'Cerrado']
+        }
+      },
       attributes: ['id_periodo', 'periodo', 'fecha_inicio', 'fecha_final', 'fecha_pago', 'estado'],
       order: [['fecha_inicio', 'DESC']]
     });

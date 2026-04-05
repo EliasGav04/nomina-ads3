@@ -15,9 +15,9 @@
         </select>
 
         <div class="periodo-detalle mt-3" *ngIf="detallePeriodo as p">
-          <div><strong>Fecha Inicio:</strong> {{ p.fecha_inicio }}</div>
-          <div><strong>Fecha Fin:</strong> {{ p.fecha_final }}</div>
-          <div><strong>Fecha Pago:</strong> {{ p.fecha_pago }}</div>
+          <div><strong>Fecha Inicio:</strong> {{ p.fecha_inicio | date:'dd/MM/yyyy':'UTC' }}</div>
+          <div><strong>Fecha Fin:</strong> {{ p.fecha_final | date:'dd/MM/yyyy':'UTC' }}</div>
+          <div><strong>Fecha Pago:</strong> {{ p.fecha_pago | date:'dd/MM/yyyy':'UTC' }}</div>
         </div>
 
         <button

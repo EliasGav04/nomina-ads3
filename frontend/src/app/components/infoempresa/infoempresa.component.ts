@@ -73,6 +73,10 @@ export class InfoempresaComponent implements OnInit {
     }
   }
 
+  openLogoSelector(input: HTMLInputElement): void {
+    input.click();
+  }
+
   saveEmpresa(): void {
     const formData = new FormData();
     Object.keys(this.empresaForm.value).forEach(key => {

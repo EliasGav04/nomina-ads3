@@ -48,15 +48,15 @@
             </span>
           </td>
 
-          <td>{{ u.ultimo_acceso | date:'short' }}</td>
+          <td>{{ u.ultimo_acceso | date:'dd/MM/yyyy' }}</td>
 
           <td class="acciones-col">
-            <button class="btn btn-warning btn-sm me-2 btn-edit"
+            <button class="btn btn-sm me-2 btn-action btn-action-edit"
               (click)="editUsuario(u, content)">
               <i class="bi bi-pencil-square"></i>
             </button>
 
-            <button class="btn btn-danger btn-sm btn-edit"
+            <button class="btn btn-sm btn-action btn-action-delete"
               (click)="deleteUsuario(u.id_usuario)">
               <i class="bi bi-trash"></i>
             </button>
