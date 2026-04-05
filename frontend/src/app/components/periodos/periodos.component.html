@@ -93,23 +93,39 @@
       <div class="modal-body">
         <div class="mb-3">
           <label class="form-label">Nombre del Período:</label>
-          <input formControlName="periodo" type="text" class="form-control" />
+          <input formControlName="periodo" type="text" class="form-control" maxlength="100"
+            [ngClass]="{'is-invalid': isInvalid('periodo')}" />
+          <div class="invalid-feedback" *ngIf="isInvalid('periodo')">
+            El nombre del período es obligatorio (3 a 100 caracteres).
+          </div>
         </div>
         <div class="mb-3">
           <label class="form-label">Fecha Inicio:</label>
-          <input formControlName="fecha_inicio" type="date" class="form-control" />
+          <input formControlName="fecha_inicio" type="date" class="form-control"
+            [ngClass]="{'is-invalid': isInvalid('fecha_inicio')}" />
+          <div class="invalid-feedback" *ngIf="isInvalid('fecha_inicio')">
+            Debe seleccionar la fecha de inicio.
+          </div>
         </div>
         <div class="mb-3">
           <label class="form-label">Fecha Final:</label>
-          <input formControlName="fecha_final" type="date" class="form-control" />
+          <input formControlName="fecha_final" type="date" class="form-control"
+            [ngClass]="{'is-invalid': isInvalid('fecha_final')}" />
+          <div class="invalid-feedback" *ngIf="isInvalid('fecha_final')">
+            Debe seleccionar la fecha final.
+          </div>
         </div>
         <div class="mb-3">
           <label class="form-label">Fecha Pago:</label>
-          <input formControlName="fecha_pago" type="date" class="form-control" />
+          <input formControlName="fecha_pago" type="date" class="form-control"
+            [ngClass]="{'is-invalid': isInvalid('fecha_pago')}" />
+          <div class="invalid-feedback" *ngIf="isInvalid('fecha_pago')">
+            Debe seleccionar la fecha de pago.
+          </div>
         </div>
       </div>
       <div class="modal-footer">
-        <button type="submit" class="btn btn-success">
+        <button type="submit" class="btn btn-success" [disabled]="periodoForm.invalid">
           {{ editing ? 'Actualizar' : 'Crear' }}
         </button>
         <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Cancelar</button>

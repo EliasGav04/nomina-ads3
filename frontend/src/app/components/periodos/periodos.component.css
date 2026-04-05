@@ -58,3 +58,7 @@
   color: #374151;
 }
 
+.invalid-feedback {
+  display: block;
+}
+

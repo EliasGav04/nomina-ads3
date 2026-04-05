@@ -43,7 +43,18 @@ async function ejecutarNomina(periodoId) {
       throw new Error('El período requiere fecha_inicio y fecha_final para procesar nómina');
     }
 
+    const registrosExistentes = await NominaRegistro.count({
+      where: { id_periodo: periodoId },
+      transaction: t
+    });
+    if (registrosExistentes > 0) {
+      throw new Error('El período ya tiene registros de nómina y no puede reprocesarse.');
+    }
+
     const empleados = await Empleado.findAll({ where: { estado: 'Activo' }, transaction: t });
+    if (!empleados.length) {
+      throw new Error('No hay empleados activos para procesar en nómina.');
+    }
     const ini = periodo.fecha_inicio;
     const fin = periodo.fecha_final;
 

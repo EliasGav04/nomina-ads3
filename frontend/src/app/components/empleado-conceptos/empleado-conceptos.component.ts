@@ -1,5 +1,5 @@
 import { Component, OnInit, TemplateRef } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { EmpleadoConceptosService } from '../../services/empleado-conceptos.service';
 import { EmpleadosService } from '../../services/empleados.service';
 import { ConceptosService } from '../../services/conceptos.service';
@@ -34,10 +34,10 @@ export class EmpleadoConceptosComponent implements OnInit {
     private modalService: NgbModal
   ) {
     this.asignacionForm = this.fb.group({
-      id_empleado: [null],
-      id_concepto: [null],
-      valor: [0],
-      fecha_desde: [''],
+      id_empleado: [null, [Validators.required]],
+      id_concepto: [null, [Validators.required]],
+      valor: [0, [Validators.required, Validators.min(0.01), Validators.max(1000000)]],
+      fecha_desde: ['', [Validators.required]],
       fecha_hasta: ['']
     });
   }
@@ -66,12 +66,24 @@ export class EmpleadoConceptosComponent implements OnInit {
 
   openModal(content: TemplateRef<any>): void {
     this.editing = false;
+    this.selectedId = null;
     this.asignacionForm.reset({ valor: 0 });
     this.modalRef = this.modalService.open(content, { backdrop: 'static' });
   }
 
   saveAsignacion(): void {
+    if (this.asignacionForm.invalid) {
+      this.asignacionForm.markAllAsTouched();
+      this.showToast('Complete todos los campos obligatorios y verifique el valor', 'bg-warning');
+      return;
+    }
+
     const data = { ...this.asignacionForm.value };
+
+    if (Number(data.valor) === 0) {
+      this.showToast('El valor debe ser diferente de 0', 'bg-warning');
+      return;
+    }
   
     if (!this.editing && data.fecha_hasta) {
       this.showToast('No puede establecer Fecha Hasta al crear. Cree la asignación como vigente.', 'bg-warning');
@@ -85,7 +97,7 @@ export class EmpleadoConceptosComponent implements OnInit {
           this.modalRef?.close();
           this.loadAsignaciones();
         },
-        error: () => this.showToast('Error al actualizar asignación', 'bg-danger')
+        error: (err) => this.showToast(err?.error?.error || 'Error al actualizar asignación', 'bg-danger')
       });
     } else {
       this.empleadoConceptosService.create(data).subscribe({
@@ -94,7 +106,7 @@ export class EmpleadoConceptosComponent implements OnInit {
           this.modalRef?.close();
           this.loadAsignaciones();
         },
-        error: () => this.showToast('Error al crear asignación', 'bg-danger')
+        error: (err) => this.showToast(err?.error?.error || 'Error al crear asignación', 'bg-danger')
       });
     }
   }
@@ -138,5 +150,21 @@ export class EmpleadoConceptosComponent implements OnInit {
       return;
     }
     this.deleteAsignacion(asignacion.id_empleado_concepto);
+  }
+
+  onValorInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const normalized = input.value
+      .replace(/[^0-9.]/g, '')
+      .replace(/(\..*)\./g, '$1');
+    if (normalized !== input.value) {
+      input.value = normalized;
+      this.asignacionForm.get('valor')?.setValue(normalized, { emitEvent: false });
+    }
+  }
+
+  isInvalid(controlName: string): boolean {
+    const control = this.asignacionForm.get(controlName);
+    return !!control && control.invalid && (control.touched || control.dirty);
   }
 }

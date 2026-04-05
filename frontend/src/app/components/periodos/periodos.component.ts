@@ -1,5 +1,5 @@
 import { Component, OnInit, TemplateRef } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { PeriodosService } from '../../services/periodos.service';
 import { Periodo } from '../../interfaces/interface';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
@@ -37,10 +37,10 @@ export class PeriodosComponent implements OnInit {
     private modalService: NgbModal
   ) {
     this.periodoForm = this.fb.group({
-      periodo: [''],
-      fecha_inicio: [''],
-      fecha_final: [''],
-      fecha_pago: [''],
+      periodo: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
+      fecha_inicio: ['', [Validators.required]],
+      fecha_final: ['', [Validators.required]],
+      fecha_pago: ['', [Validators.required]],
       estado: ['Abierto']
     });
   }
@@ -87,7 +87,21 @@ export class PeriodosComponent implements OnInit {
   }
 
   savePeriodo(): void {
+    if (this.periodoForm.invalid) {
+      this.periodoForm.markAllAsTouched();
+      this.showToast('Complete correctamente todos los campos requeridos', 'bg-warning');
+      return;
+    }
+
     const data = { ...this.periodoForm.value };
+    if (data.fecha_inicio > data.fecha_final) {
+      this.showToast('La fecha de inicio no puede ser mayor que la fecha final', 'bg-warning');
+      return;
+    }
+    if (data.fecha_pago < data.fecha_final) {
+      this.showToast('La fecha de pago no puede ser anterior a la fecha final', 'bg-warning');
+      return;
+    }
   
     if (this.editing && this.selectedId) {
       // actualización
@@ -97,7 +111,7 @@ export class PeriodosComponent implements OnInit {
           this.modalRef?.close();
           this.loadPeriodos();
         },
-        error: () => this.showToast('Error al actualizar período', 'bg-danger')
+        error: (err) => this.showToast(err?.error?.error || 'Error al actualizar período', 'bg-danger')
       });
     } else {
       // creación
@@ -107,7 +121,7 @@ export class PeriodosComponent implements OnInit {
           this.modalRef?.close();
           this.loadPeriodos();
         },
-        error: () => this.showToast('Error al crear período', 'bg-danger')
+        error: (err) => this.showToast(err?.error?.error || 'Error al crear período', 'bg-danger')
       });
     }
   }
@@ -132,5 +146,10 @@ export class PeriodosComponent implements OnInit {
     this.toastColor = color;
     this.toastVisible = true;
     setTimeout(() => this.toastVisible = false, 3000);
+  }
+
+  isInvalid(controlName: string): boolean {
+    const control = this.periodoForm.get(controlName);
+    return !!control && control.invalid && (control.touched || control.dirty);
   }
 }

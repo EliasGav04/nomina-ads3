@@ -76,29 +76,58 @@
       <div class="modal-body">
         <div class="mb-3">
           <label class="form-label">Nombre del Concepto:</label>
-          <input formControlName="concepto" type="text" class="form-control" />
+          <input formControlName="concepto" type="text" class="form-control" maxlength="100"
+            (input)="onConceptoInput($event)"
+            [ngClass]="{'is-invalid': isInvalid('concepto')}" />
+          <div class="form-text">Solo letras y espacios. Mínimo 3 y máximo 100 caracteres.</div>
+          <div class="invalid-feedback" *ngIf="isInvalid('concepto')">
+            Nombre inválido del concepto.
+          </div>
         </div>
   
         <div class="mb-3">
           <label class="form-label">Tipo:</label>
-          <select formControlName="tipo" class="form-select">
+          <select formControlName="tipo" class="form-select" [ngClass]="{'is-invalid': isInvalid('tipo')}">
             <option value="ingreso">Ingreso</option>
             <option value="deduccion">Deducción</option>
           </select>
+          <div class="invalid-feedback" *ngIf="isInvalid('tipo')">
+            Debe seleccionar un tipo válido.
+          </div>
         </div>
   
         <div class="mb-3">
           <label class="form-label">Naturaleza:</label>
-          <select formControlName="naturaleza" class="form-select">
+          <select formControlName="naturaleza" class="form-select" [ngClass]="{'is-invalid': isInvalid('naturaleza')}">
             <option value="fijo">Fijo</option>
             <option value="porcentaje">Porcentaje</option>
             <option value="manual">Manual</option>
           </select>
+          <div class="invalid-feedback" *ngIf="isInvalid('naturaleza')">
+            Debe seleccionar una naturaleza válida.
+          </div>
         </div>
   
         <div class="mb-3">
-          <label class="form-label">Valor por defecto:</label>
-          <input formControlName="valor_defecto" type="number" step="0.01" class="form-control" />
+          <label class="form-label">Valor por defecto{{ isPorcentaje ? ' (%)' : '' }}:</label>
+          <div class="input-group">
+            <input
+              formControlName="valor_defecto"
+              type="number"
+              class="form-control"
+              [step]="isPorcentaje ? 1 : 0.01"
+              [min]="0"
+              [max]="isPorcentaje ? 100 : 1000000"
+              (input)="onValorInput($event)"
+              [ngClass]="{'is-invalid': isInvalid('valor_defecto')}"
+            />
+            <span class="input-group-text" *ngIf="isPorcentaje">%</span>
+          </div>
+          <div class="form-text" *ngIf="isPorcentaje">Ingrese porcentaje entero (ejemplo: 12 para 12%).</div>
+          <div class="form-text" *ngIf="!isPorcentaje">Rango permitido: 0 a 1,000,000.</div>
+          <div class="invalid-feedback d-block" *ngIf="isInvalid('valor_defecto')">
+            {{ isPorcentaje ? 'Valor inválido. Debe ser un entero entre 0 y 100.' : 'Valor inválido. Debe estar entre 0 y 1,000,000.' }}
+          </div>
         </div>
   
         <div class="mb-3 form-check">
@@ -108,7 +137,9 @@
       </div>
   
       <div class="modal-footer">
-        <button type="submit" class="btn btn-success">{{ editing ? 'Actualizar' : 'Crear' }}</button>
+        <button type="submit" class="btn btn-success" [disabled]="conceptoForm.invalid">
+          {{ editing ? 'Actualizar' : 'Crear' }}
+        </button>
         <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Cancelar</button>
       </div>
     </form>

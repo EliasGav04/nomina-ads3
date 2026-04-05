@@ -24,6 +24,9 @@ exports.getEstadoActual = async (req, res) => {
 
     const periodo = await Periodo.findByPk(idPeriodo);
     if (!periodo) return res.status(404).json({ error: 'Período no encontrado' });
+    if (periodo.estado !== 'Abierto') {
+      return res.status(400).json({ error: 'Solo se pueden consultar empleados de períodos Abiertos para procesar nómina' });
+    }
 
     const empleadosValidados = await Empleado.count({ where: { estado: 'Activo' } });
     const movimientosRegistrados = await Movimiento.count({
