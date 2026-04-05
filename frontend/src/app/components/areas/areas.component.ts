@@ -1,5 +1,5 @@
 import { Component, OnInit, TemplateRef } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AreasService } from '../../services/areas.service';
 import { Area } from '../../interfaces/interface';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
@@ -20,6 +20,7 @@ export class AreasComponent implements OnInit {
   toastMessage = '';
   toastColor = 'bg-success';
   toastVisible = false;
+  private readonly areaPattern = /^[A-Za-zÁÉÍÓÚÑáéíóúñ\s]+$/;
 
   constructor(
     private areasService: AreasService,
@@ -27,7 +28,7 @@ export class AreasComponent implements OnInit {
     private modalService: NgbModal
   ) {
     this.areaForm = this.fb.group({
-      area: [''],
+      area: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50), Validators.pattern(this.areaPattern)]],
       estado: ['Activo']
     });
   }
@@ -47,6 +48,12 @@ export class AreasComponent implements OnInit {
   }
 
   saveArea(): void {
+    if (this.areaForm.invalid) {
+      this.areaForm.markAllAsTouched();
+      this.showToast('Ingrese un nombre de área válido', 'bg-warning');
+      return;
+    }
+
     const data = { ...this.areaForm.value, estado: 'Activo' };
 
     if (this.editing && this.selectedId) {
@@ -56,7 +63,7 @@ export class AreasComponent implements OnInit {
           this.modalRef?.close();
           this.loadAreas();
         },
-        error: () => this.showToast('Error al actualizar área', 'bg-danger')
+        error: (err) => this.showToast(err?.error?.error || 'Error al actualizar área', 'bg-danger')
       });
     } else {
       this.areasService.create(data).subscribe({
@@ -65,7 +72,7 @@ export class AreasComponent implements OnInit {
           this.modalRef?.close();
           this.loadAreas();
         },
-        error: () => this.showToast('Error al crear área', 'bg-danger')
+        error: (err) => this.showToast(err?.error?.error || 'Error al crear área', 'bg-danger')
       });
     }
   }
@@ -95,5 +102,19 @@ export class AreasComponent implements OnInit {
     this.toastColor = color;
     this.toastVisible = true;
     setTimeout(() => this.toastVisible = false, 3000);
+  }
+
+  isInvalid(controlName: string): boolean {
+    const control = this.areaForm.get(controlName);
+    return !!control && control.invalid && (control.touched || control.dirty);
+  }
+
+  onAreaInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const filtered = input.value.replace(/[^A-Za-zÁÉÍÓÚÑáéíóúñ\s]/g, '');
+    if (filtered !== input.value) {
+      input.value = filtered;
+      this.areaForm.get('area')?.setValue(filtered, { emitEvent: false });
+    }
   }
 }

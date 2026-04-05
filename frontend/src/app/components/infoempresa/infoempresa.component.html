@@ -25,49 +25,83 @@
           <button type="button" class="btn btn-dark w-100 logo-btn" (click)="openLogoSelector(logoInput)">
             Cambiar Logo
           </button>
+          <div class="form-text mt-2">Tamaño máximo permitido: 5 MB.</div>
         </div>
 
         <div class="col-12 col-lg-8">
           <div class="row g-3">
             <div class="col-12">
               <label class="form-label">Nombre de la Empresa</label>
-              <input formControlName="nombre" type="text" class="form-control" />
+              <input formControlName="nombre" type="text" class="form-control" maxlength="100"
+                [ngClass]="{'is-invalid': isInvalid('nombre')}" />
+              <div class="invalid-feedback" *ngIf="isInvalid('nombre')">
+                Nombre requerido (3-100 caracteres).
+              </div>
             </div>
 
             <div class="col-12">
               <label class="form-label">Razón Social</label>
-              <input formControlName="razon_social" type="text" class="form-control" />
+              <input formControlName="razon_social" type="text" class="form-control" maxlength="150"
+                [ngClass]="{'is-invalid': isInvalid('razon_social')}" />
+              <div class="invalid-feedback" *ngIf="isInvalid('razon_social')">
+                Razón social requerida (3-150 caracteres).
+              </div>
             </div>
 
             <div class="col-12">
               <label class="form-label">RTN (Registro Tributario Nacional)</label>
-              <input formControlName="rtn" type="text" class="form-control" />
+              <input formControlName="rtn" type="text" class="form-control" maxlength="14"
+                (input)="onRtnInput($event)"
+                [ngClass]="{'is-invalid': isInvalid('rtn')}" />
+              <div class="form-text">Debe contener exactamente 14 dígitos.</div>
+              <div class="invalid-feedback" *ngIf="isInvalid('rtn')">
+                RTN inválido.
+              </div>
             </div>
 
             <div class="col-12">
               <label class="form-label">Dirección</label>
-              <textarea formControlName="direccion" class="form-control" rows="3"></textarea>
+              <textarea formControlName="direccion" class="form-control" rows="3" maxlength="250"
+                [ngClass]="{'is-invalid': isInvalid('direccion')}"></textarea>
+              <div class="invalid-feedback" *ngIf="isInvalid('direccion')">
+                Dirección requerida (10-250 caracteres).
+              </div>
             </div>
 
             <div class="col-12 col-md-6">
               <label class="form-label">Teléfono</label>
-              <input formControlName="telefono" type="text" class="form-control" />
+              <input formControlName="telefono" type="text" class="form-control" maxlength="14"
+                (input)="onTelefonoInput($event)" placeholder="+504 0000-0000"
+                [ngClass]="{'is-invalid': isInvalid('telefono')}" />
+              <div class="invalid-feedback" *ngIf="isInvalid('telefono')">
+                Formato requerido: +504 0000-0000.
+              </div>
             </div>
 
             <div class="col-12 col-md-6">
               <label class="form-label">Email</label>
-              <input formControlName="correo" type="email" class="form-control" />
+              <input formControlName="correo" type="email" class="form-control" maxlength="150"
+                [ngClass]="{'is-invalid': isInvalid('correo')}" />
+              <div class="invalid-feedback" *ngIf="isInvalid('correo')">
+                Correo electrónico inválido.
+              </div>
             </div>
 
             <div class="col-12">
               <label class="form-label">Sitio Web</label>
-              <input formControlName="sitio_web" type="text" class="form-control" />
+              <input formControlName="sitio_web" type="text" class="form-control" maxlength="150"
+                placeholder="https://www.empresa.com"
+                [ngClass]="{'is-invalid': isInvalid('sitio_web')}" />
+              <div class="form-text">Opcional</div>
+              <div class="invalid-feedback" *ngIf="isInvalid('sitio_web')">
+                Sitio web inválido.
+              </div>
             </div>
           </div>
         </div>
 
         <div class="col-12 d-flex justify-content-end">
-          <button type="submit" class="btn btn-dark px-4">
+          <button type="submit" class="btn btn-dark px-4" [disabled]="empresaForm.invalid">
             Guardar Cambios
           </button>
         </div>

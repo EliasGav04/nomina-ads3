@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { InfoempresaService } from '../../services/infoempresa.service';
 import { Infoempresa } from '../../interfaces/interface';
 
@@ -19,19 +19,26 @@ export class InfoempresaComponent implements OnInit {
   toastMessage = '';
   toastColor = 'bg-success';
   toastVisible = false;
+  private readonly namePattern = /^[A-Za-zÁÉÍÓÚÑáéíóúñ0-9.,()'"\-&\s]+$/;
+  private readonly direccionPattern = /^[A-Za-zÁÉÍÓÚÑáéíóúñ0-9.,()'"#\-/&\s]+$/;
+  private readonly rtnPattern = /^\d{14}$/;
+  private readonly telefonoPattern = /^\+504 \d{4}-\d{4}$/;
+  private readonly emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+  private readonly webPattern = /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/\S*)?$/;
+  private readonly maxLogoSizeBytes = 5 * 1024 * 1024; // 5MB
 
   constructor(
     private infoempresaService: InfoempresaService,
     private fb: FormBuilder
   ) {
     this.empresaForm = this.fb.group({
-      nombre: [''],
-      razon_social: [''],
-      rtn: [''],
-      direccion: [''],
-      telefono: [''],
-      correo: [''],
-      sitio_web: ['']
+      nombre: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100), Validators.pattern(this.namePattern)]],
+      razon_social: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(150), Validators.pattern(this.namePattern)]],
+      rtn: ['', [Validators.required, Validators.pattern(this.rtnPattern)]],
+      direccion: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(250), Validators.pattern(this.direccionPattern)]],
+      telefono: ['', [Validators.required, Validators.pattern(this.telefonoPattern)]],
+      correo: ['', [Validators.required, Validators.maxLength(150), Validators.pattern(this.emailPattern)]],
+      sitio_web: ['', [Validators.maxLength(150), Validators.pattern(this.webPattern)]]
     });
   }
 
@@ -62,7 +69,16 @@ export class InfoempresaComponent implements OnInit {
   }
 
   onFileSelected(event: any): void {
-    this.selectedFile = event.target.files[0];
+    const file = event?.target?.files?.[0] as File | undefined;
+    if (!file) return;
+
+    if (file.size > this.maxLogoSizeBytes) {
+      this.showToast('El logo excede el tamaño permitido (máximo 5 MB).', 'bg-warning');
+      event.target.value = '';
+      return;
+    }
+
+    this.selectedFile = file;
   
     if (this.selectedFile) {
       const reader = new FileReader();
@@ -77,10 +93,49 @@ export class InfoempresaComponent implements OnInit {
     input.click();
   }
 
+  onTelefonoInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const digitsOnly = input.value.replace(/\D/g, '');
+    const withoutCountry = digitsOnly.startsWith('504') ? digitsOnly.slice(3) : digitsOnly;
+    const local = withoutCountry.slice(0, 8);
+
+    if (!local.length) {
+      this.empresaForm.get('telefono')?.setValue('', { emitEvent: false });
+      return;
+    }
+
+    let masked = '+504 ';
+    if (local.length <= 4) {
+      masked += local;
+    } else {
+      masked += `${local.slice(0, 4)}-${local.slice(4)}`;
+    }
+
+    this.empresaForm.get('telefono')?.setValue(masked, { emitEvent: false });
+  }
+
+  onRtnInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const digits = input.value.replace(/\D/g, '').slice(0, 14);
+    if (digits !== input.value) {
+      input.value = digits;
+      this.empresaForm.get('rtn')?.setValue(digits, { emitEvent: false });
+    }
+  }
+
   saveEmpresa(): void {
+    if (this.empresaForm.invalid) {
+      this.empresaForm.markAllAsTouched();
+      this.showToast('Complete correctamente los campos obligatorios', 'bg-warning');
+      return;
+    }
+
     const formData = new FormData();
-    Object.keys(this.empresaForm.value).forEach(key => {
-      formData.append(key, this.empresaForm.value[key]);
+    const formValues = this.empresaForm.value;
+    Object.keys(formValues).forEach(key => {
+      const rawValue = formValues[key];
+      const value = typeof rawValue === 'string' ? rawValue.trim() : rawValue;
+      formData.append(key, value ?? '');
     });
     if (this.selectedFile) {
       formData.append('logo', this.selectedFile);
@@ -92,7 +147,7 @@ export class InfoempresaComponent implements OnInit {
           this.showToast('Empresa actualizada correctamente', 'bg-success');
           this.loadEmpresa();
         },
-        error: () => this.showToast('Error al actualizar empresa', 'bg-danger')
+        error: (err) => this.showToast(err?.error?.error || 'Error al actualizar empresa', 'bg-danger')
       });
     } else {
       this.infoempresaService.createWithFormData(formData).subscribe({
@@ -100,9 +155,14 @@ export class InfoempresaComponent implements OnInit {
           this.showToast('Empresa creada correctamente', 'bg-success');
           this.loadEmpresa();
         },
-        error: () => this.showToast('Error al crear empresa', 'bg-danger')
+        error: (err) => this.showToast(err?.error?.error || 'Error al crear empresa', 'bg-danger')
       });
     }
+  }
+
+  isInvalid(controlName: string): boolean {
+    const control = this.empresaForm.get(controlName);
+    return !!control && control.invalid && (control.touched || control.dirty);
   }
 
   showToast(message: string, color: string = 'bg-success'): void {

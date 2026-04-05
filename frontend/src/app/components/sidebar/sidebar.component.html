@@ -9,7 +9,7 @@
 <nav class="sidebar text-white p-3"
      [class.sidebar-open]="sidebarOpen">
 
-  <ul class="nav flex-column">
+  <ul class="nav flex-column sidebar-nav">
 
     <li class="nav-item">
       <a routerLink="/dashboard"
@@ -120,5 +120,11 @@
     </li>
 
   </ul>
+
+  <div class="sidebar-footer">
+    <button type="button" class="btn btn-outline-light w-100 logout-btn" (click)="logout()">
+      <i class="bi bi-box-arrow-right me-2"></i> Cerrar sesión
+    </button>
+  </div>
 
 </nav>

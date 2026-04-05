@@ -1,5 +1,5 @@
 import { Component, OnInit, TemplateRef } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { RolesService } from '../../services/roles.service';
 import { UsuariosService } from '../../services/usuarios.service';
 import { Rol, Usuario } from '../../interfaces/interface';
@@ -24,6 +24,7 @@ export class UsuariosComponent implements OnInit {
   toastMessage = '';
   toastColor = 'bg-success';
   toastVisible = false;
+  private readonly passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,30}$/;
 
   constructor(
     private usuariosService: UsuariosService,
@@ -32,10 +33,10 @@ export class UsuariosComponent implements OnInit {
     private modalService: NgbModal
   ) {
     this.usuarioForm = this.fb.group({
-      usuario: [''],
-      clave: [''],
+      usuario: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(40), Validators.pattern(/^[a-zA-Z0-9@_]+$/)]],
+      clave: ['', [Validators.required, Validators.pattern(this.passwordPattern)]],
       estado: ['Activo'],
-      id_rol: [null]
+      id_rol: [null, [Validators.required]]
     });
   }
 
@@ -54,11 +55,20 @@ export class UsuariosComponent implements OnInit {
 
   openModal(content: TemplateRef<any>): void {
     this.editing = false;
+    this.selectedId = null;
     this.usuarioForm.reset({ estado: 'Activo' });
+    this.usuarioForm.get('clave')?.setValidators([Validators.required, Validators.pattern(this.passwordPattern)]);
+    this.usuarioForm.get('clave')?.updateValueAndValidity();
     this.modalRef = this.modalService.open(content, { backdrop: 'static' });
   }
 
   saveUsuario(): void {
+    if (this.usuarioForm.invalid) {
+      this.usuarioForm.markAllAsTouched();
+      this.showToast('Complete correctamente todos los campos requeridos', 'bg-warning');
+      return;
+    }
+
     const data = { ...this.usuarioForm.value, estado: 'Activo' };
 
     if (this.editing && this.selectedId) {
@@ -68,7 +78,7 @@ export class UsuariosComponent implements OnInit {
           this.modalRef?.close();
           this.loadUsuarios();
         },
-        error: () => this.showToast('Error al actualizar usuario', 'bg-danger')
+        error: (err) => this.showToast(err?.error?.error || 'Error al actualizar usuario', 'bg-danger')
       });
     } else {
       this.usuariosService.create(data).subscribe({
@@ -77,7 +87,7 @@ export class UsuariosComponent implements OnInit {
           this.modalRef?.close();
           this.loadUsuarios();
         },
-        error: () => this.showToast('Error al crear usuario', 'bg-danger')
+        error: (err) => this.showToast(err?.error?.error || 'Error al crear usuario', 'bg-danger')
       });
     }
   }
@@ -85,6 +95,8 @@ export class UsuariosComponent implements OnInit {
   editUsuario(usuario: Usuario, content: TemplateRef<any>): void {
     this.editing = true;
     this.selectedId = usuario.id_usuario;
+    this.usuarioForm.get('clave')?.setValidators([Validators.pattern(this.passwordPattern)]);
+    this.usuarioForm.get('clave')?.updateValueAndValidity();
     this.usuarioForm.patchValue({
       usuario: usuario.usuario,
       clave: '',
@@ -108,6 +120,13 @@ export class UsuariosComponent implements OnInit {
     this.editing = false;
     this.selectedId = null;
     this.usuarioForm.reset({ estado: 'Activo' });
+    this.usuarioForm.get('clave')?.setValidators([Validators.required, Validators.pattern(this.passwordPattern)]);
+    this.usuarioForm.get('clave')?.updateValueAndValidity();
+  }
+
+  isInvalid(controlName: string): boolean {
+    const control = this.usuarioForm.get(controlName);
+    return !!control && control.invalid && (control.touched || control.dirty);
   }
 
   showToast(message: string, color: string = 'bg-success'): void {

@@ -48,7 +48,7 @@
             </span>
           </td>
 
-          <td>{{ u.ultimo_acceso | date:'dd/MM/yyyy' }}</td>
+          <td>{{ u.ultimo_acceso | date:'dd/MM/yyyy HH:mm' }}</td>
 
           <td class="acciones-col">
             <button class="btn btn-sm me-2 btn-action btn-action-edit"
@@ -80,24 +80,45 @@
     <div class="modal-body">
       <div class="mb-3">
         <label class="form-label">Rol:</label>
-        <select formControlName="id_rol" class="form-select">
+        <select formControlName="id_rol" class="form-select" [ngClass]="{'is-invalid': isInvalid('id_rol')}">
+          <option [ngValue]="null">Seleccione un rol</option>
           <option *ngFor="let r of roles" [value]="r.id_rol">{{ r.rol }}</option>
         </select>
+        <div class="invalid-feedback" *ngIf="isInvalid('id_rol')">
+          Debe seleccionar un rol.
+        </div>
       </div>
 
       <div class="mb-3">
         <label class="form-label">Usuario:</label>
-        <input formControlName="usuario" type="text" class="form-control" />
+        <input formControlName="usuario" type="text" class="form-control" maxlength="40"
+          [ngClass]="{'is-invalid': isInvalid('usuario')}" />
+        <div class="form-text">5-40 caracteres. Solo letras, números, arroba (@) y guion bajo (_).</div>
+        <div class="invalid-feedback" *ngIf="isInvalid('usuario')">
+          Usuario inválido o incompleto.
+        </div>
       </div>
 
       <div class="mb-3">
-        <label class="form-label">Clave:</label>
-        <input formControlName="clave" type="password" class="form-control" />
+        <label class="form-label">
+          Clave:
+          <span class="text-muted" *ngIf="editing">(dejar en blanco para conservar la actual)</span>
+        </label>
+        <input formControlName="clave" type="password" class="form-control" maxlength="30"
+          [ngClass]="{'is-invalid': isInvalid('clave')}" />
+        <div class="form-text">
+          8-30 caracteres, al menos 1 mayúscula, 1 minúscula, 1 número y 1 símbolo.
+        </div>
+        <div class="invalid-feedback" *ngIf="isInvalid('clave')">
+          Formato de clave inválido.
+        </div>
       </div>
     </div>
 
     <div class="modal-footer">
-      <button type="submit" class="btn btn-success">{{ editing ? 'Actualizar' : 'Crear' }}</button>
+      <button type="submit" class="btn btn-success" [disabled]="usuarioForm.invalid">
+        {{ editing ? 'Actualizar' : 'Crear' }}
+      </button>
       <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Cancelar</button>
     </div>
   </form>

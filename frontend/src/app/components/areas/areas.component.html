@@ -63,12 +63,20 @@
     <div class="modal-body">
       <div class="mb-3">
         <label class="form-label">Nombre del Área:</label>
-        <input formControlName="area" type="text" class="form-control" />
+        <input formControlName="area" type="text" class="form-control" maxlength="50"
+          (input)="onAreaInput($event)"
+          [ngClass]="{'is-invalid': isInvalid('area')}" />
+        <div class="form-text">Solo letras. Mínimo 3 y máximo 50 caracteres.</div>
+        <div class="invalid-feedback" *ngIf="isInvalid('area')">
+          Nombre inválido. Solo letras, sin números ni símbolos.
+        </div>
       </div>
     </div>
 
     <div class="modal-footer">
-      <button type="submit" class="btn btn-success">{{ editing ? 'Actualizar' : 'Crear' }}</button>
+      <button type="submit" class="btn btn-success" [disabled]="areaForm.invalid">
+        {{ editing ? 'Actualizar' : 'Crear' }}
+      </button>
       <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Cancelar</button>
     </div>
   </form>

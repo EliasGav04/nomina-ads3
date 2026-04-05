@@ -21,6 +21,10 @@
   margin-left: 250px;
 }
 
+.invalid-feedback {
+  display: block;
+}
+
 
 @media (max-width: 768px) {
 

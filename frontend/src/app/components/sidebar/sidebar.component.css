@@ -15,6 +15,8 @@
   transition: transform 0.3s ease;
 
   z-index: 2000;
+  display: flex;
+  flex-direction: column;
 }
 
   
@@ -42,6 +44,22 @@
   transition: transform 0.3s ease;
 
   z-index: 2000;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-nav {
+  flex: 1;
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  padding-top: 0.85rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.logout-btn {
+  border-color: rgba(255, 255, 255, 0.45);
 }
 
 

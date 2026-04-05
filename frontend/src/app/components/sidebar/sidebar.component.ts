@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -8,6 +9,7 @@ import { Component } from '@angular/core';
 export class SidebarComponent {
 
   sidebarOpen = false;
+  constructor(private authService: AuthService) {}
 
   toggleSidebar() {
     this.sidebarOpen = !this.sidebarOpen;
@@ -17,6 +19,11 @@ export class SidebarComponent {
     if (window.innerWidth <= 768) {
       this.sidebarOpen = false;
     }
+  }
+
+  logout(): void {
+    this.closeSidebarMobile();
+    this.authService.logout();
   }
 
 }

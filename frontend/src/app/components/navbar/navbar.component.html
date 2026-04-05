@@ -10,12 +10,8 @@
   </div>
 
   <span class="fecha">
-    {{ fechaActual | date:'fullDate' }}
+    {{ fechaActual | date:"EEEE, d 'de' MMMM 'de' y":'':'es-HN' }}
   </span>
-
-  <div class="navbar-right">
-    <button (click)="logout()">Cerrar sesión</button>
-  </div>
 
 </nav>
 

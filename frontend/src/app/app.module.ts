@@ -1,4 +1,6 @@
-import { NgModule } from '@angular/core';
+import { LOCALE_ID, NgModule } from '@angular/core';
+import { registerLocaleData } from '@angular/common';
+import localeEs from '@angular/common/locales/es';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
 
@@ -27,6 +29,8 @@ import { MovimientosComponent } from './components/movimientos/movimientos.compo
 import { NominaComponent } from './components/nomina/nomina.component';
 import { BoletapagoComponent } from './components/boletapago/boletapago.component';
 import { ReportesComponent } from './components/reportes/reportes.component';
+
+registerLocaleData(localeEs);
 
 @NgModule({
   declarations: [
@@ -57,7 +61,8 @@ import { ReportesComponent } from './components/reportes/reportes.component';
     ReactiveFormsModule
   ],
   providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    { provide: LOCALE_ID, useValue: 'es-HN' }
   ],
   bootstrap: [AppComponent]
 })
