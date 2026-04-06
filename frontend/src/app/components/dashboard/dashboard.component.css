@@ -33,8 +33,12 @@
 
 .bienvenida-title {
   font-size: 2rem;
-  font-weight: 700;
+  font-weight: 500;
   color: #111827;
+}
+
+.bienvenida-user {
+  font-weight: 700;
 }
 
 .bienvenida-text {

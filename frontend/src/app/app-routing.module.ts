@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { authGuard } from './guards/auth.guard';
+import { roleGuard } from './guards/role.guard';
 
 import { AuthLayoutComponent } from './components/auth-layout/auth-layout.component';
 import { MainLayoutComponent } from './components/main-layout/main-layout.component';
@@ -43,51 +44,75 @@ const routes: Routes = [
     children: [
       { 
         path: 'dashboard',
-        component: DashboardComponent
+        component: DashboardComponent,
+        canActivate: [roleGuard],
+        data: { roles: ['Administrador', 'RRHH', 'Consultor'] }
       },
       { 
         path: 'usuarios',
-        component: UsuariosComponent 
+        component: UsuariosComponent,
+        canActivate: [roleGuard],
+        data: { roles: ['Administrador'] }
       },
       { 
         path: 'infoempresa',
-        component: InfoempresaComponent 
+        component: InfoempresaComponent,
+        canActivate: [roleGuard],
+        data: { roles: ['Administrador'] }
       },
       { 
         path: 'areas',
-        component: AreasComponent 
+        component: AreasComponent,
+        canActivate: [roleGuard],
+        data: { roles: ['Administrador', 'RRHH'] }
       },
       { 
         path: 'conceptos',
-        component: ConceptosComponent 
+        component: ConceptosComponent,
+        canActivate: [roleGuard],
+        data: { roles: ['Administrador', 'RRHH'] }
       },
       { 
         path: 'empleados',
-        component: EmpleadosComponent 
+        component: EmpleadosComponent,
+        canActivate: [roleGuard],
+        data: { roles: ['Administrador', 'RRHH'] }
       },
       { 
         path: 'empleado-conceptos',
-        component: EmpleadoConceptosComponent 
+        component: EmpleadoConceptosComponent,
+        canActivate: [roleGuard],
+        data: { roles: ['Administrador', 'RRHH'] }
       },
       { 
         path: 'periodos',
-        component: PeriodosComponent 
+        component: PeriodosComponent,
+        canActivate: [roleGuard],
+        data: { roles: ['Administrador', 'RRHH'] }
       },
       { 
         path: 'movimientos',
-        component: MovimientosComponent 
+        component: MovimientosComponent,
+        canActivate: [roleGuard],
+        data: { roles: ['Administrador', 'RRHH'] }
       },
       {
         path: 'nomina',
-        component: NominaComponent
+        component: NominaComponent,
+        canActivate: [roleGuard],
+        data: { roles: ['Administrador', 'RRHH'] }
       },
       {
         path: 'boleta-pago',
-        component: BoletapagoComponent
+        component: BoletapagoComponent,
+        canActivate: [roleGuard],
+        data: { roles: ['Administrador', 'RRHH', 'Consultor'] }
       },
       {
         path: 'reportes',
-        component: ReportesComponent
+        component: ReportesComponent,
+        canActivate: [roleGuard],
+        data: { roles: ['Administrador', 'RRHH', 'Consultor'] }
       },
       
       

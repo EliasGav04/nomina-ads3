@@ -11,6 +11,10 @@ export class SidebarComponent {
   sidebarOpen = false;
   constructor(private authService: AuthService) {}
 
+  canAccess(roles: string[]): boolean {
+    return this.authService.hasAnyRole(roles);
+  }
+
   toggleSidebar() {
     this.sidebarOpen = !this.sidebarOpen;
   }

@@ -62,6 +62,18 @@ export class AuthService {
     return nowSeconds >= payload.exp;
   }
 
+  getCurrentRole(): string | null {
+    const token = this.getToken();
+    if (!token || this.isTokenExpired(token)) return null;
+    const payload = this.decodeToken(token);
+    return payload?.role || null;
+  }
+
+  hasAnyRole(roles: string[]): boolean {
+    const role = this.getCurrentRole();
+    return !!role && roles.includes(role);
+  }
+
   private setupSessionTimer(): void {
     this.clearLogoutTimer();
 

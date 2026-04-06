@@ -20,7 +20,7 @@
       </a>
     </li>
 
-    <li class="nav-item">
+    <li class="nav-item" *ngIf="canAccess(['Administrador'])">
       <a routerLink="/usuarios"
          routerLinkActive="active"
          class="nav-link text-white"
@@ -29,7 +29,7 @@
       </a>
     </li>
 
-    <li class="nav-item">
+    <li class="nav-item" *ngIf="canAccess(['Administrador'])">
       <a routerLink="/infoempresa"
          routerLinkActive="active"
          class="nav-link text-white"
@@ -38,7 +38,7 @@
       </a>
     </li>
 
-    <li class="nav-item">
+    <li class="nav-item" *ngIf="canAccess(['Administrador', 'RRHH'])">
       <a routerLink="/areas"
          routerLinkActive="active"
          class="nav-link text-white"
@@ -47,7 +47,7 @@
       </a>
     </li>
 
-    <li class="nav-item">
+    <li class="nav-item" *ngIf="canAccess(['Administrador', 'RRHH'])">
       <a routerLink="/conceptos"
          routerLinkActive="active"
          class="nav-link text-white"
@@ -56,7 +56,7 @@
       </a>
     </li>
 
-    <li class="nav-item">
+    <li class="nav-item" *ngIf="canAccess(['Administrador', 'RRHH'])">
       <a routerLink="/empleados"
          routerLinkActive="active"
          class="nav-link text-white"
@@ -65,7 +65,7 @@
       </a>
     </li>
 
-    <li class="nav-item">
+    <li class="nav-item" *ngIf="canAccess(['Administrador', 'RRHH'])">
       <a routerLink="/empleado-conceptos"
          routerLinkActive="active"
          class="nav-link text-white"
@@ -74,7 +74,7 @@
       </a>
     </li>
 
-    <li class="nav-item">
+    <li class="nav-item" *ngIf="canAccess(['Administrador', 'RRHH'])">
       <a routerLink="/periodos"
          routerLinkActive="active"
          class="nav-link text-white"
@@ -83,7 +83,7 @@
       </a>
     </li>
 
-    <li class="nav-item">
+    <li class="nav-item" *ngIf="canAccess(['Administrador', 'RRHH'])">
       <a routerLink="/movimientos"
          routerLinkActive="active"
          class="nav-link text-white"
@@ -92,7 +92,7 @@
       </a>
     </li>
 
-    <li class="nav-item">
+    <li class="nav-item" *ngIf="canAccess(['Administrador', 'RRHH'])">
       <a routerLink="/nomina"
          routerLinkActive="active"
          class="nav-link text-white"
@@ -101,7 +101,7 @@
       </a>
     </li>
 
-    <li class="nav-item">
+    <li class="nav-item" *ngIf="canAccess(['Administrador', 'RRHH', 'Consultor'])">
       <a routerLink="/boleta-pago"
          routerLinkActive="active"
          class="nav-link text-white"
@@ -110,7 +110,7 @@
       </a>
     </li>
 
-    <li class="nav-item">
+    <li class="nav-item" *ngIf="canAccess(['Administrador', 'RRHH', 'Consultor'])">
       <a routerLink="/reportes"
          routerLinkActive="active"
          class="nav-link text-white"
