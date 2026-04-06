@@ -21,6 +21,8 @@ export class AreasComponent implements OnInit {
   toastColor = 'bg-success';
   toastVisible = false;
   private readonly areaPattern = /^[A-Za-zÁÉÍÓÚÑáéíóúñ\s]+$/;
+  filtroTexto = '';
+  filtroEstado: 'Todos' | 'Activo' | 'Inactivo' = 'Todos';
 
   constructor(
     private areasService: AreasService,
@@ -39,6 +41,24 @@ export class AreasComponent implements OnInit {
 
   loadAreas(): void {
     this.areasService.getAll().subscribe(data => this.areas = data);
+  }
+
+  get areasFiltradas(): Area[] {
+    const texto = this.filtroTexto.trim().toLowerCase();
+    return this.areas.filter((a) => {
+      const coincideTexto = !texto || [
+        String(a.id_area || ''),
+        (a.area || ''),
+        (a.estado || '')
+      ].some(v => v.toLowerCase().includes(texto));
+      const coincideEstado = this.filtroEstado === 'Todos' || a.estado === this.filtroEstado;
+      return coincideTexto && coincideEstado;
+    });
+  }
+
+  clearFiltros(): void {
+    this.filtroTexto = '';
+    this.filtroEstado = 'Todos';
   }
 
   openModal(content: TemplateRef<any>): void {

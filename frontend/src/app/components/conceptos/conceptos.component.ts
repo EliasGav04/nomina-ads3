@@ -22,6 +22,10 @@ export class ConceptosComponent implements OnInit {
   toastColor = 'bg-success';
   toastVisible = false;
   private readonly conceptoPattern = /^[A-Za-zÁÉÍÓÚÑáéíóúñ\s]+$/;
+  filtroTexto = '';
+  filtroTipo: 'Todos' | 'ingreso' | 'deduccion' = 'Todos';
+  filtroNaturaleza: 'Todos' | 'fijo' | 'porcentaje' | 'manual' = 'Todos';
+  filtroEstado: 'Todos' | 'Activo' | 'Inactivo' = 'Todos';
 
   tipoLabels: { [key: string]: string } = {
     ingreso: 'Ingreso',
@@ -62,6 +66,30 @@ export class ConceptosComponent implements OnInit {
 
   loadConceptos(): void {
     this.conceptosService.getAll().subscribe(data => this.conceptos = data);
+  }
+
+  get conceptosFiltrados(): Concepto[] {
+    const texto = this.filtroTexto.trim().toLowerCase();
+    return this.conceptos.filter((c) => {
+      const coincideTexto = !texto || [
+        String(c.id_concepto || ''),
+        (c.concepto || ''),
+        (this.tipoLabels[c.tipo] || ''),
+        (this.naturalezaLabels[c.naturaleza] || ''),
+        (c.estado || '')
+      ].some(v => v.toLowerCase().includes(texto));
+      const coincideTipo = this.filtroTipo === 'Todos' || c.tipo === this.filtroTipo;
+      const coincideNaturaleza = this.filtroNaturaleza === 'Todos' || c.naturaleza === this.filtroNaturaleza;
+      const coincideEstado = this.filtroEstado === 'Todos' || c.estado === this.filtroEstado;
+      return coincideTexto && coincideTipo && coincideNaturaleza && coincideEstado;
+    });
+  }
+
+  clearFiltros(): void {
+    this.filtroTexto = '';
+    this.filtroTipo = 'Todos';
+    this.filtroNaturaleza = 'Todos';
+    this.filtroEstado = 'Todos';
   }
 
   openModal(content: TemplateRef<any>): void {

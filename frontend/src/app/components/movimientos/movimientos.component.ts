@@ -28,6 +28,9 @@ export class MovimientosComponent implements OnInit {
   periodosAbiertos: Periodo[] = [];
   empleadosActivos: Empleado[] = [];
   conceptosManuales: Concepto[] = [];
+  filtroTexto = '';
+  filtroPeriodo: number | 'Todos' = 'Todos';
+  filtroEstado: 'Todos' | 'Activo' | 'Anulado' = 'Todos';
 
   constructor(
     private movimientosService: MovimientosService,
@@ -59,6 +62,29 @@ export class MovimientosComponent implements OnInit {
 
   loadMovimientos(): void {
     this.movimientosService.getAll().subscribe(data => this.movimientos = data);
+  }
+
+  get movimientosFiltrados(): Movimiento[] {
+    const texto = this.filtroTexto.trim().toLowerCase();
+    return this.movimientos.filter((m) => {
+      const coincideTexto = !texto || [
+        String(m.id_movimiento || ''),
+        (m.Periodo?.periodo || ''),
+        (m.Empleado?.nombre_completo || ''),
+        (m.Concepto?.concepto || ''),
+        (m.descripcion || ''),
+        (m.estado || '')
+      ].some(v => v.toLowerCase().includes(texto));
+      const coincidePeriodo = this.filtroPeriodo === 'Todos' || m.id_periodo === this.filtroPeriodo;
+      const coincideEstado = this.filtroEstado === 'Todos' || m.estado === this.filtroEstado;
+      return coincideTexto && coincidePeriodo && coincideEstado;
+    });
+  }
+
+  clearFiltros(): void {
+    this.filtroTexto = '';
+    this.filtroPeriodo = 'Todos';
+    this.filtroEstado = 'Todos';
   }
 
   loadSelectsInfo(): void {

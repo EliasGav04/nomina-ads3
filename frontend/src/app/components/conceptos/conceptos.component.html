@@ -6,6 +6,45 @@
     Crear Concepto
   </button>
 </div>
+<div class="card mb-3">
+  <div class="card-body">
+    <div class="row g-2 align-items-end">
+      <div class="col-12 col-md-4">
+        <label class="form-label">Buscar</label>
+        <input type="text" class="form-control" [(ngModel)]="filtroTexto"
+          placeholder="ID, concepto, tipo o estado" />
+      </div>
+      <div class="col-12 col-md-2">
+        <label class="form-label">Tipo</label>
+        <select class="form-select" [(ngModel)]="filtroTipo">
+          <option [ngValue]="'Todos'">Todos</option>
+          <option [ngValue]="'ingreso'">Ingreso</option>
+          <option [ngValue]="'deduccion'">Deducción</option>
+        </select>
+      </div>
+      <div class="col-12 col-md-2">
+        <label class="form-label">Naturaleza</label>
+        <select class="form-select" [(ngModel)]="filtroNaturaleza">
+          <option [ngValue]="'Todos'">Todas</option>
+          <option [ngValue]="'fijo'">Fijo</option>
+          <option [ngValue]="'porcentaje'">Porcentaje</option>
+          <option [ngValue]="'manual'">Manual</option>
+        </select>
+      </div>
+      <div class="col-12 col-md-2">
+        <label class="form-label">Estado</label>
+        <select class="form-select" [(ngModel)]="filtroEstado">
+          <option [ngValue]="'Todos'">Todos</option>
+          <option [ngValue]="'Activo'">Activo</option>
+          <option [ngValue]="'Inactivo'">Inactivo</option>
+        </select>
+      </div>
+      <div class="col-12 col-md-2">
+        <button type="button" class="btn btn-outline-secondary w-100" (click)="clearFiltros()">Limpiar</button>
+      </div>
+    </div>
+  </div>
+</div>
 <div class="table-container">
   <div class="table-responsive">
 
@@ -25,7 +64,7 @@
       </thead>
 
       <tbody>
-        <tr *ngFor="let c of conceptos">
+        <tr *ngFor="let c of conceptosFiltrados">
           <td>{{ c.id_concepto }}</td>
           <td>{{ c.concepto }}</td>
           <td>{{ tipoLabels[c.tipo] }}</td>
@@ -66,6 +105,9 @@
             </button>
           </td>
 
+        </tr>
+        <tr *ngIf="conceptosFiltrados.length === 0">
+          <td colspan="8" class="text-center text-muted">No hay resultados para los filtros aplicados.</td>
         </tr>
       </tbody>
 

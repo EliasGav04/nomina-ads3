@@ -25,6 +25,9 @@ export class UsuariosComponent implements OnInit {
   toastColor = 'bg-success';
   toastVisible = false;
   private readonly passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,30}$/;
+  filtroTexto = '';
+  filtroRol: number | 'Todos' = 'Todos';
+  filtroEstado: 'Todos' | 'Activo' | 'Inactivo' = 'Todos';
 
   constructor(
     private usuariosService: UsuariosService,
@@ -51,6 +54,27 @@ export class UsuariosComponent implements OnInit {
 
   loadUsuarios(): void {
     this.usuariosService.getAll().subscribe(data => this.usuarios = data);
+  }
+
+  get usuariosFiltrados(): Usuario[] {
+    const texto = this.filtroTexto.trim().toLowerCase();
+    return this.usuarios.filter((u) => {
+      const coincideTexto = !texto || [
+        String(u.id_usuario || ''),
+        (u.usuario || ''),
+        (u.Rol?.rol || ''),
+        (u.estado || '')
+      ].some(v => v.toLowerCase().includes(texto));
+      const coincideRol = this.filtroRol === 'Todos' || u.id_rol === this.filtroRol;
+      const coincideEstado = this.filtroEstado === 'Todos' || u.estado === this.filtroEstado;
+      return coincideTexto && coincideRol && coincideEstado;
+    });
+  }
+
+  clearFiltros(): void {
+    this.filtroTexto = '';
+    this.filtroRol = 'Todos';
+    this.filtroEstado = 'Todos';
   }
 
   openModal(content: TemplateRef<any>): void {
@@ -112,7 +136,7 @@ export class UsuariosComponent implements OnInit {
         this.showToast('Usuario inactivado correctamente', 'bg-danger');
         this.loadUsuarios();
       },
-      error: () => this.showToast('Error al inactivar usuario', 'bg-danger')
+      error: (err) => this.showToast(err?.error?.error || 'Error al inactivar usuario', 'bg-danger')
     });
   }
 

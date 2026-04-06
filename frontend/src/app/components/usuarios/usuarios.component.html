@@ -15,6 +15,36 @@
 
 </div>
 
+<div class="card mb-3">
+  <div class="card-body">
+    <div class="row g-2 align-items-end">
+      <div class="col-12 col-md-4">
+        <label class="form-label">Buscar</label>
+        <input type="text" class="form-control" [(ngModel)]="filtroTexto"
+          placeholder="ID, usuario o rol" />
+      </div>
+      <div class="col-12 col-md-3">
+        <label class="form-label">Rol</label>
+        <select class="form-select" [(ngModel)]="filtroRol">
+          <option [ngValue]="'Todos'">Todos</option>
+          <option *ngFor="let r of roles" [ngValue]="r.id_rol">{{ r.rol }}</option>
+        </select>
+      </div>
+      <div class="col-12 col-md-3">
+        <label class="form-label">Estado</label>
+        <select class="form-select" [(ngModel)]="filtroEstado">
+          <option [ngValue]="'Todos'">Todos</option>
+          <option [ngValue]="'Activo'">Activo</option>
+          <option [ngValue]="'Inactivo'">Inactivo</option>
+        </select>
+      </div>
+      <div class="col-12 col-md-2">
+        <button type="button" class="btn btn-outline-secondary w-100" (click)="clearFiltros()">Limpiar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="table-container">
   <div class="table-responsive">
 
@@ -25,7 +55,6 @@
           <th>ID</th>
           <th>Rol</th>
           <th>Usuario</th>
-          <th>Clave</th>
           <th>Estado</th>
           <th>Último acceso</th>
           <th>Acciones</th>
@@ -33,12 +62,11 @@
       </thead>
 
       <tbody>
-        <tr *ngFor="let u of usuarios">
+        <tr *ngFor="let u of usuariosFiltrados">
 
           <td>{{ u.id_usuario }}</td>
           <td>{{ u.Rol?.rol }}</td>
           <td>{{ u.usuario }}</td>
-          <td>********</td>
 
           <td>
             <span 
@@ -62,6 +90,9 @@
             </button>
           </td>
 
+        </tr>
+        <tr *ngIf="usuariosFiltrados.length === 0">
+          <td colspan="6" class="text-center text-muted">No hay resultados para los filtros aplicados.</td>
         </tr>
       </tbody>
 

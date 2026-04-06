@@ -29,6 +29,9 @@ export class EmpleadosComponent implements OnInit {
   private readonly nombrePattern = /^[A-Za-zÁÉÍÓÚÑáéíóúñ\s]+$/;
   private readonly cargoPattern = /^[A-Za-zÁÉÍÓÚÑáéíóúñ0-9.,()\-\/\s]+$/;
   private readonly cuentaPattern = /^\d{14,20}$/;
+  filtroTexto = '';
+  filtroArea: number | 'Todos' = 'Todos';
+  filtroEstado: 'Todos' | 'Activo' | 'Inactivo' = 'Todos';
 
   constructor(
     private empleadosService: EmpleadosService,
@@ -65,6 +68,29 @@ export class EmpleadosComponent implements OnInit {
 
   loadAreas(): void {
     this.areasService.getAll().subscribe(data => this.areas = data);
+  }
+
+  get empleadosFiltrados(): Empleado[] {
+    const texto = this.filtroTexto.trim().toLowerCase();
+    return this.empleados.filter((e) => {
+      const coincideTexto = !texto || [
+        String(e.id_empleado || ''),
+        (e.dni || ''),
+        (e.nombre_completo || ''),
+        (e.cargo || ''),
+        (e.Area?.area || ''),
+        (e.estado || '')
+      ].some(v => v.toLowerCase().includes(texto));
+      const coincideArea = this.filtroArea === 'Todos' || e.id_area === this.filtroArea;
+      const coincideEstado = this.filtroEstado === 'Todos' || e.estado === this.filtroEstado;
+      return coincideTexto && coincideArea && coincideEstado;
+    });
+  }
+
+  clearFiltros(): void {
+    this.filtroTexto = '';
+    this.filtroArea = 'Todos';
+    this.filtroEstado = 'Todos';
   }
 
   openModal(content: TemplateRef<any>): void {

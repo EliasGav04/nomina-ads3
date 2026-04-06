@@ -26,6 +26,10 @@ export class EmpleadoConceptosComponent implements OnInit {
   toastMessage = '';
   toastColor = 'bg-success';
   toastVisible = false;
+  filtroTexto = '';
+  filtroEmpleado: number | 'Todos' = 'Todos';
+  filtroConcepto: number | 'Todos' = 'Todos';
+  filtroVigencia: 'Todos' | 'Vigente' | 'Inactivo' = 'Todos';
 
   constructor(
     private empleadoConceptosService: EmpleadoConceptosService,
@@ -68,6 +72,32 @@ export class EmpleadoConceptosComponent implements OnInit {
       //fijo y porcentaje
       this.conceptos = data.filter(c => c.naturaleza === 'fijo' || c.naturaleza === 'porcentaje');
     });
+  }
+
+  get asignacionesFiltradas(): EmpleadoConcepto[] {
+    const texto = this.filtroTexto.trim().toLowerCase();
+    return this.asignaciones.filter((a) => {
+      const coincideTexto = !texto || [
+        String(a.id_empleado_concepto || ''),
+        (a.Empleado?.nombre_completo || ''),
+        (a.Concepto?.concepto || ''),
+        String(a.valor || '')
+      ].some(v => v.toLowerCase().includes(texto));
+      const coincideEmpleado = this.filtroEmpleado === 'Todos' || a.id_empleado === this.filtroEmpleado;
+      const coincideConcepto = this.filtroConcepto === 'Todos' || a.id_concepto === this.filtroConcepto;
+      const esVigente = !a.fecha_hasta;
+      const coincideVigencia = this.filtroVigencia === 'Todos'
+        || (this.filtroVigencia === 'Vigente' && esVigente)
+        || (this.filtroVigencia === 'Inactivo' && !esVigente);
+      return coincideTexto && coincideEmpleado && coincideConcepto && coincideVigencia;
+    });
+  }
+
+  clearFiltros(): void {
+    this.filtroTexto = '';
+    this.filtroEmpleado = 'Todos';
+    this.filtroConcepto = 'Todos';
+    this.filtroVigencia = 'Todos';
   }
 
   openModal(content: TemplateRef<any>): void {

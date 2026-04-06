@@ -6,6 +6,35 @@
     Crear Empleado
   </button>
 </div>
+<div class="card mb-3">
+  <div class="card-body">
+    <div class="row g-2 align-items-end">
+      <div class="col-12 col-md-5">
+        <label class="form-label">Buscar</label>
+        <input type="text" class="form-control" [(ngModel)]="filtroTexto"
+          placeholder="ID, DNI, nombre, cargo o área" />
+      </div>
+      <div class="col-12 col-md-3">
+        <label class="form-label">Área</label>
+        <select class="form-select" [(ngModel)]="filtroArea">
+          <option [ngValue]="'Todos'">Todas</option>
+          <option *ngFor="let a of areas" [ngValue]="a.id_area">{{ a.area }}</option>
+        </select>
+      </div>
+      <div class="col-12 col-md-2">
+        <label class="form-label">Estado</label>
+        <select class="form-select" [(ngModel)]="filtroEstado">
+          <option [ngValue]="'Todos'">Todos</option>
+          <option [ngValue]="'Activo'">Activo</option>
+          <option [ngValue]="'Inactivo'">Inactivo</option>
+        </select>
+      </div>
+      <div class="col-12 col-md-2">
+        <button type="button" class="btn btn-outline-secondary w-100" (click)="clearFiltros()">Limpiar</button>
+      </div>
+    </div>
+  </div>
+</div>
 <div class="table-container">
   <div class="table-responsive">
 
@@ -28,7 +57,7 @@
       </thead>
 
       <tbody>
-        <tr *ngFor="let e of empleados">
+        <tr *ngFor="let e of empleadosFiltrados">
           <td>{{ e.id_empleado }}</td>
           <td>{{ e.dni }}</td>
           <td>{{ e.nombre_completo }}</td>
@@ -59,6 +88,9 @@
             </button>
           </td>
 
+        </tr>
+        <tr *ngIf="empleadosFiltrados.length === 0">
+          <td colspan="11" class="text-center text-muted">No hay resultados para los filtros aplicados.</td>
         </tr>
       </tbody>
 

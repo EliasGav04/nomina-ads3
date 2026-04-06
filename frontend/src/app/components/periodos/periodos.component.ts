@@ -24,6 +24,8 @@ export class PeriodosComponent implements OnInit {
   toastMessage = '';
   toastColor = 'bg-success';
   toastVisible = false;
+  filtroTexto = '';
+  filtroEstado: 'Todos' | 'Abierto' | 'Procesado' | 'Cerrado' = 'Todos';
 
   estadoLabels: { [key: string]: string } = {
     Abierto: 'Abierto',
@@ -65,6 +67,24 @@ export class PeriodosComponent implements OnInit {
         this.diasRestantes = 0;
       }
     });
+  }
+
+  get periodosFiltrados(): Periodo[] {
+    const texto = this.filtroTexto.trim().toLowerCase();
+    return this.periodos.filter((p) => {
+      const coincideTexto = !texto || [
+        String(p.id_periodo || ''),
+        (p.periodo || ''),
+        (p.estado || '')
+      ].some(v => v.toLowerCase().includes(texto));
+      const coincideEstado = this.filtroEstado === 'Todos' || p.estado === this.filtroEstado;
+      return coincideTexto && coincideEstado;
+    });
+  }
+
+  clearFiltros(): void {
+    this.filtroTexto = '';
+    this.filtroEstado = 'Todos';
   }
 
   openModal(content: TemplateRef<any>): void {

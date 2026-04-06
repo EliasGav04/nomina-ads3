@@ -6,6 +6,27 @@
     Crear Área
   </button>
 </div>
+<div class="card mb-3">
+  <div class="card-body">
+    <div class="row g-2 align-items-end">
+      <div class="col-12 col-md-8">
+        <label class="form-label">Buscar</label>
+        <input type="text" class="form-control" [(ngModel)]="filtroTexto" placeholder="ID, área o estado" />
+      </div>
+      <div class="col-12 col-md-2">
+        <label class="form-label">Estado</label>
+        <select class="form-select" [(ngModel)]="filtroEstado">
+          <option [ngValue]="'Todos'">Todos</option>
+          <option [ngValue]="'Activo'">Activo</option>
+          <option [ngValue]="'Inactivo'">Inactivo</option>
+        </select>
+      </div>
+      <div class="col-12 col-md-2">
+        <button type="button" class="btn btn-outline-secondary w-100" (click)="clearFiltros()">Limpiar</button>
+      </div>
+    </div>
+  </div>
+</div>
 <div class="table-container">
   <div class="table-responsive">
 
@@ -21,7 +42,7 @@
       </thead>
 
       <tbody>
-        <tr *ngFor="let a of areas">
+        <tr *ngFor="let a of areasFiltradas">
           <td>{{ a.id_area }}</td>
           <td>{{ a.area }}</td>
 
@@ -45,6 +66,9 @@
             </button>
           </td>
 
+        </tr>
+        <tr *ngIf="areasFiltradas.length === 0">
+          <td colspan="4" class="text-center text-muted">No hay resultados para los filtros aplicados.</td>
         </tr>
       </tbody>
 

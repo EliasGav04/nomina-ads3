@@ -36,7 +36,16 @@ exports.login = (req, res, next) => {
         expiresIn: process.env.JWT_EXPIRES
       });
 
-      return res.json({ message: "Login exitoso", token, usuario: user });
+      const usuarioSeguro = {
+        id_usuario: user.id_usuario,
+        usuario: user.usuario,
+        ultimo_acceso: user.ultimo_acceso,
+        estado: user.estado,
+        id_rol: user.id_rol,
+        Rol: user.Rol
+      };
+
+      return res.json({ message: "Login exitoso", token, usuario: usuarioSeguro });
     } catch (error) {
       return res.status(500).json({ message: "Error al actualizar último acceso" });
     }
