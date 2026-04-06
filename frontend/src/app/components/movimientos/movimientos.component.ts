@@ -72,13 +72,13 @@ export class MovimientosComponent implements OnInit {
   saveMovimiento(): void {
     if (this.movimientoForm.invalid) {
       this.movimientoForm.markAllAsTouched();
-      this.showToast('Complete correctamente todos los campos requeridos', 'bg-warning');
+      this.showToast('Complete correctamente todos los campos requeridos', 'bg-primary');
       return;
     }
 
     const data = { ...this.movimientoForm.value };
     if (Number(data.monto) === 0) {
-      this.showToast('El monto debe ser diferente de 0', 'bg-warning');
+      this.showToast('El monto debe ser diferente de 0', 'bg-primary');
       return;
     }
 
@@ -89,7 +89,7 @@ export class MovimientosComponent implements OnInit {
           this.modalRef?.close();
           this.loadMovimientos();
         },
-        error: (err) => this.showToast(err?.error?.error || 'Error al actualizar movimiento', 'bg-danger')
+        error: (err) => this.showToast(err?.error?.error || 'Error al actualizar movimiento', 'bg-primary')
       });
     } else {
       this.movimientosService.create(data).subscribe({
@@ -98,7 +98,7 @@ export class MovimientosComponent implements OnInit {
           this.modalRef?.close();
           this.loadMovimientos();
         },
-        error: (err) => this.showToast(err?.error?.error || 'Error al crear movimiento', 'bg-danger')
+        error: (err) => this.showToast(err?.error?.error || 'Error al crear movimiento', 'bg-primary')
       });
     }
   }
@@ -106,7 +106,7 @@ export class MovimientosComponent implements OnInit {
   editMovimiento(movimiento: Movimiento, content: TemplateRef<any>): void {
     // Validar estado del período
     if (movimiento.Periodo?.estado !== 'Abierto') {
-      this.showToast('No es posible modificar movimientos de periodos procesados o cerrados', 'bg-primary');
+      this.showToast('No es posible modificar movimientos de periodos procesados o cerrados', 'bg-secondary');
       return;
     }
   
@@ -126,19 +126,19 @@ export class MovimientosComponent implements OnInit {
   deleteMovimiento(movimiento: Movimiento): void {
     // Validar estado del movimiento
     if (movimiento.estado === 'Anulado') {
-      this.showToast('No es posible modificar un movimiento anulado', 'bg-primary');
+      this.showToast('No es posible modificar un movimiento anulado', 'bg-secondary');
       return;
     }
   
     // Validar estado del período
     if (movimiento.Periodo?.estado !== 'Abierto') {
-      this.showToast('No es posible modificar movimientos de periodos procesados o cerrados', 'bg-primary');
+      this.showToast('No es posible modificar movimientos de periodos procesados o cerrados', 'bg-secondary');
       return;
     }
   
     this.movimientosService.delete(movimiento.id_movimiento).subscribe({
       next: () => {
-        this.showToast('Movimiento anulado correctamente', 'bg-secondary');
+        this.showToast('Movimiento anulado correctamente', 'bg-danger');
         this.loadMovimientos();
       },
       error: () => this.showToast('Error al anular movimiento', 'bg-danger')

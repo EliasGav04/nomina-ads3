@@ -10,10 +10,13 @@ import { Router } from '@angular/router';
 export class LoginComponent {
   username = '';
   password = '';
+  loginError = '';
 
   constructor(private authService: AuthService, private router: Router) {}
 
   onLogin() {
+    this.loginError = '';
+
     this.authService.login(this.username, this.password).subscribe({
       next: (res) => {
         this.authService.saveToken(res.token);
@@ -22,22 +25,20 @@ export class LoginComponent {
       error: (err) => {
         switch (err.status) {
           case 0:
-            alert("No se pudo conectar al servidor.");
-            break;
-          case 401:
-            alert("Credenciales incorrectas.");
+            this.loginError = 'No se pudo conectar al servidor. Intente más tarde.';
             break;
           case 403:
-            alert("Tu usuario está inactivo. Contacta al administrador.");
+            this.loginError = 'Tu usuario está inactivo. Contacta al administrador.';
             break;
+          case 401:
           case 404:
-            alert("Usuario no encontrado.");
+            this.loginError = 'Credenciales incorrectas.';
             break;
           case 500:
-            alert("Error interno del servidor.");
+            this.loginError = 'Error interno del servidor. Intente más tarde.';
             break;
           default:
-            alert("Error inesperado. Intente nuevamente.");
+            this.loginError = err?.error?.message || 'Error inesperado. Intente nuevamente.';
         }
       }
     });

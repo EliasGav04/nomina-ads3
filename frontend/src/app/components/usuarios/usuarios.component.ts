@@ -65,7 +65,7 @@ export class UsuariosComponent implements OnInit {
   saveUsuario(): void {
     if (this.usuarioForm.invalid) {
       this.usuarioForm.markAllAsTouched();
-      this.showToast('Complete correctamente todos los campos requeridos', 'bg-warning');
+      this.showToast('Complete correctamente todos los campos requeridos', 'bg-primary');
       return;
     }
 
@@ -78,7 +78,7 @@ export class UsuariosComponent implements OnInit {
           this.modalRef?.close();
           this.loadUsuarios();
         },
-        error: (err) => this.showToast(err?.error?.error || 'Error al actualizar usuario', 'bg-danger')
+        error: (err) => this.showToast(err?.error?.error || 'Error al actualizar usuario', 'bg-primary')
       });
     } else {
       this.usuariosService.create(data).subscribe({
@@ -87,7 +87,7 @@ export class UsuariosComponent implements OnInit {
           this.modalRef?.close();
           this.loadUsuarios();
         },
-        error: (err) => this.showToast(err?.error?.error || 'Error al crear usuario', 'bg-danger')
+        error: (err) => this.showToast(err?.error?.error || 'Error al crear usuario', 'bg-primary')
       });
     }
   }
@@ -109,7 +109,7 @@ export class UsuariosComponent implements OnInit {
   deleteUsuario(id: number): void {
     this.usuariosService.delete(id).subscribe({
       next: () => {
-        this.showToast('Usuario inactivado correctamente', 'bg-warning');
+        this.showToast('Usuario inactivado correctamente', 'bg-danger');
         this.loadUsuarios();
       },
       error: () => this.showToast('Error al inactivar usuario', 'bg-danger')

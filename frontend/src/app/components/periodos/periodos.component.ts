@@ -76,7 +76,7 @@ export class PeriodosComponent implements OnInit {
 
   handleEditClick(periodo: Periodo, content: TemplateRef<any>): void {
     if (periodo.estado !== 'Abierto') {
-      this.showToast('No se puede actualizar un período Procesado o Cerrado', 'bg-primary');
+      this.showToast('No se puede actualizar un período Procesado o Cerrado', 'bg-secondary');
       return;
     }
   
@@ -88,27 +88,27 @@ export class PeriodosComponent implements OnInit {
 
   handleDeleteClick(periodo: Periodo): void {
     if (periodo.estado === 'Procesado' || periodo.estado === 'Cerrado') {
-      this.showToast('No se puede eliminar un período Procesado o Cerrado', 'bg-primary');
+      this.showToast('No se puede eliminar un período Procesado o Cerrado', 'bg-secondary');
       return;
     }
 
-    this.showToast('La eliminación de períodos Abiertos no está permitida', 'bg-primary');
+    this.showToast('La eliminación de períodos Abiertos no está permitida', 'bg-secondary');
   }
 
   savePeriodo(): void {
     if (this.periodoForm.invalid) {
       this.periodoForm.markAllAsTouched();
-      this.showToast('Complete correctamente todos los campos requeridos', 'bg-warning');
+      this.showToast('Complete correctamente todos los campos requeridos', 'bg-primary');
       return;
     }
 
     const data = { ...this.periodoForm.value };
     if (data.fecha_inicio > data.fecha_final) {
-      this.showToast('La fecha de inicio no puede ser mayor que la fecha final', 'bg-warning');
+      this.showToast('La fecha de inicio no puede ser mayor que la fecha final', 'bg-primary');
       return;
     }
     if (data.fecha_pago < data.fecha_final) {
-      this.showToast('La fecha de pago no puede ser anterior a la fecha final', 'bg-warning');
+      this.showToast('La fecha de pago no puede ser anterior a la fecha final', 'bg-primary');
       return;
     }
   
@@ -120,7 +120,7 @@ export class PeriodosComponent implements OnInit {
           this.modalRef?.close();
           this.loadPeriodos();
         },
-        error: (err) => this.showToast(err?.error?.error || 'Error al actualizar período', 'bg-danger')
+        error: (err) => this.showToast(err?.error?.error || 'Error al actualizar período', 'bg-primary')
       });
     } else {
       // creación
@@ -130,7 +130,7 @@ export class PeriodosComponent implements OnInit {
           this.modalRef?.close();
           this.loadPeriodos();
         },
-        error: (err) => this.showToast(err?.error?.error || 'Error al crear período', 'bg-danger')
+        error: (err) => this.showToast(err?.error?.error || 'Error al crear período', 'bg-primary')
       });
     }
   }
@@ -138,12 +138,12 @@ export class PeriodosComponent implements OnInit {
   cerrarPeriodo(id: number | undefined): void {
     if (!id) return;
     if (this.periodoActual?.estado !== 'Procesado') {
-      this.showToast('Primero debe ejecutar nómina para pasar el período a Procesado', 'bg-primary');
+      this.showToast('Primero debe ejecutar nómina para pasar el período a Procesado', 'bg-secondary');
       return;
     }
     this.periodosService.delete(id).subscribe({
       next: () => {
-        this.showToast('Período cerrado correctamente', 'bg-warning');
+        this.showToast('Período cerrado correctamente', 'bg-danger');
         this.loadPeriodos();
       },
       error: () => this.showToast('Error al cerrar período', 'bg-danger')

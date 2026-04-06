@@ -69,7 +69,7 @@ export class ConceptosComponent implements OnInit {
   saveConcepto(): void {
     if (this.conceptoForm.invalid) {
       this.conceptoForm.markAllAsTouched();
-      this.showToast('Complete correctamente los campos del concepto', 'bg-warning');
+      this.showToast('Complete correctamente los campos del concepto', 'bg-primary');
       return;
     }
 
@@ -82,7 +82,7 @@ export class ConceptosComponent implements OnInit {
           this.modalRef?.close();
           this.loadConceptos();
         },
-        error: (err) => this.showToast(err?.error?.error || 'Error al actualizar concepto', 'bg-danger')
+        error: (err) => this.showToast(err?.error?.error || 'Error al actualizar concepto', 'bg-primary')
       });
     } else {
       this.conceptosService.create(data).subscribe({
@@ -91,7 +91,7 @@ export class ConceptosComponent implements OnInit {
           this.modalRef?.close();
           this.loadConceptos();
         },
-        error: (err) => this.showToast(err?.error?.error || 'Error al crear concepto', 'bg-danger')
+        error: (err) => this.showToast(err?.error?.error || 'Error al crear concepto', 'bg-primary')
       });
     }
   }
@@ -107,7 +107,7 @@ export class ConceptosComponent implements OnInit {
   deleteConcepto(id: number): void {
     this.conceptosService.delete(id).subscribe({
       next: () => {
-        this.showToast('Concepto inactivado correctamente', 'bg-warning');
+        this.showToast('Concepto inactivado correctamente', 'bg-danger');
         this.loadConceptos();
       },
       error: () => this.showToast('Error al inactivar concepto', 'bg-danger')

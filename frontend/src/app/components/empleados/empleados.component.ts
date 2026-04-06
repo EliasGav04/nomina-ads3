@@ -71,13 +71,13 @@ export class EmpleadosComponent implements OnInit {
   saveEmpleado(): void {
     if (this.empleadoForm.invalid) {
       this.empleadoForm.markAllAsTouched();
-      this.showToast('Complete correctamente los campos del empleado', 'bg-warning');
+      this.showToast('Complete correctamente los campos del empleado', 'bg-primary');
       return;
     }
 
     const fechaIngreso = this.empleadoForm.get('fecha_ingreso')?.value;
     if (fechaIngreso && fechaIngreso > this.today) {
-      this.showToast('La fecha de ingreso no puede ser mayor al día actual', 'bg-warning');
+      this.showToast('La fecha de ingreso no puede ser mayor al día actual', 'bg-primary');
       return;
     }
 
@@ -90,7 +90,7 @@ export class EmpleadosComponent implements OnInit {
           this.modalRef?.close();
           this.loadEmpleados();
         },
-        error: (err) => this.showToast(err?.error?.error || 'Error al actualizar empleado', 'bg-danger')
+        error: (err) => this.showToast(err?.error?.error || 'Error al actualizar empleado', 'bg-primary')
       });
     } else {
       this.empleadosService.create(data).subscribe({
@@ -99,7 +99,7 @@ export class EmpleadosComponent implements OnInit {
           this.modalRef?.close();
           this.loadEmpleados();
         },
-        error: (err) => this.showToast(err?.error?.error || 'Error al crear empleado', 'bg-danger')
+        error: (err) => this.showToast(err?.error?.error || 'Error al crear empleado', 'bg-primary')
       });
     }
   }
@@ -114,7 +114,7 @@ export class EmpleadosComponent implements OnInit {
   deleteEmpleado(id: number): void {
     this.empleadosService.delete(id).subscribe({
       next: () => {
-        this.showToast('Empleado inactivado correctamente', 'bg-warning');
+        this.showToast('Empleado inactivado correctamente', 'bg-danger');
         this.loadEmpleados();
       },
       error: () => this.showToast('Error al inactivar empleado', 'bg-danger')

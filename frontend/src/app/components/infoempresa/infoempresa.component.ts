@@ -54,7 +54,7 @@ export class InfoempresaComponent implements OnInit {
   
         this.logoBase64 = data.logoBase64 || 'assets/no-photo.png';
       },
-      error: () => this.showToast('Error al cargar empresa', 'bg-danger')
+      error: () => this.showToast('Error al cargar empresa', 'bg-primary')
     });
   }
 
@@ -73,7 +73,7 @@ export class InfoempresaComponent implements OnInit {
     if (!file) return;
 
     if (file.size > this.maxLogoSizeBytes) {
-      this.showToast('El logo excede el tamaño permitido (máximo 5 MB).', 'bg-warning');
+      this.showToast('El logo excede el tamaño permitido (máximo 5 MB).', 'bg-primary');
       event.target.value = '';
       return;
     }
@@ -126,7 +126,7 @@ export class InfoempresaComponent implements OnInit {
   saveEmpresa(): void {
     if (this.empresaForm.invalid) {
       this.empresaForm.markAllAsTouched();
-      this.showToast('Complete correctamente los campos obligatorios', 'bg-warning');
+      this.showToast('Complete correctamente los campos obligatorios', 'bg-primary');
       return;
     }
 
@@ -147,7 +147,7 @@ export class InfoempresaComponent implements OnInit {
           this.showToast('Empresa actualizada correctamente', 'bg-success');
           this.loadEmpresa();
         },
-        error: (err) => this.showToast(err?.error?.error || 'Error al actualizar empresa', 'bg-danger')
+        error: (err) => this.showToast(err?.error?.error || 'Error al actualizar empresa', 'bg-primary')
       });
     } else {
       this.infoempresaService.createWithFormData(formData).subscribe({
@@ -155,7 +155,7 @@ export class InfoempresaComponent implements OnInit {
           this.showToast('Empresa creada correctamente', 'bg-success');
           this.loadEmpresa();
         },
-        error: (err) => this.showToast(err?.error?.error || 'Error al crear empresa', 'bg-danger')
+        error: (err) => this.showToast(err?.error?.error || 'Error al crear empresa', 'bg-primary')
       });
     }
   }

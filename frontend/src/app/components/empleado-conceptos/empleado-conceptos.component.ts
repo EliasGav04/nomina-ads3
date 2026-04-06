@@ -74,19 +74,19 @@ export class EmpleadoConceptosComponent implements OnInit {
   saveAsignacion(): void {
     if (this.asignacionForm.invalid) {
       this.asignacionForm.markAllAsTouched();
-      this.showToast('Complete todos los campos obligatorios y verifique el valor', 'bg-warning');
+      this.showToast('Complete todos los campos obligatorios y verifique el valor', 'bg-primary');
       return;
     }
 
     const data = { ...this.asignacionForm.value };
 
     if (Number(data.valor) === 0) {
-      this.showToast('El valor debe ser diferente de 0', 'bg-warning');
+      this.showToast('El valor debe ser diferente de 0', 'bg-primary');
       return;
     }
   
     if (!this.editing && data.fecha_hasta) {
-      this.showToast('No puede establecer Fecha Hasta al crear. Cree la asignación como vigente.', 'bg-warning');
+      this.showToast('No puede establecer Fecha Hasta al crear. Cree la asignación como vigente.', 'bg-primary');
       return;
     }
   
@@ -97,7 +97,7 @@ export class EmpleadoConceptosComponent implements OnInit {
           this.modalRef?.close();
           this.loadAsignaciones();
         },
-        error: (err) => this.showToast(err?.error?.error || 'Error al actualizar asignación', 'bg-danger')
+        error: (err) => this.showToast(err?.error?.error || 'Error al actualizar asignación', 'bg-primary')
       });
     } else {
       this.empleadoConceptosService.create(data).subscribe({
@@ -106,7 +106,7 @@ export class EmpleadoConceptosComponent implements OnInit {
           this.modalRef?.close();
           this.loadAsignaciones();
         },
-        error: (err) => this.showToast(err?.error?.error || 'Error al crear asignación', 'bg-danger')
+        error: (err) => this.showToast(err?.error?.error || 'Error al crear asignación', 'bg-primary')
       });
     }
   }
@@ -122,7 +122,7 @@ export class EmpleadoConceptosComponent implements OnInit {
     this.empleadoConceptosService.delete(id).subscribe({
       next: (resp) => {
         const fechaHasta = resp.registro?.fecha_hasta;
-        this.showToast(`Asignación desactivada el ${fechaHasta}`, 'bg-warning');
+        this.showToast(`Asignación desactivada el ${fechaHasta}`, 'bg-danger');
         this.loadAsignaciones();
       },
       error: () => this.showToast('Error al eliminar asignación', 'bg-danger')
@@ -138,7 +138,7 @@ export class EmpleadoConceptosComponent implements OnInit {
 
   handleEditClick(asignacion: EmpleadoConcepto, content: TemplateRef<any>): void {
     if (asignacion.fecha_hasta) {
-      this.showToast('Asignación inactiva, cree una nueva', 'bg-warning');
+      this.showToast('Asignación inactiva, cree una nueva', 'bg-secondary');
       return;
     }
     this.editAsignacion(asignacion, content);

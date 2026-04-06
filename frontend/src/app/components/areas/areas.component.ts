@@ -50,7 +50,7 @@ export class AreasComponent implements OnInit {
   saveArea(): void {
     if (this.areaForm.invalid) {
       this.areaForm.markAllAsTouched();
-      this.showToast('Ingrese un nombre de área válido', 'bg-warning');
+      this.showToast('Ingrese un nombre de área válido', 'bg-primary');
       return;
     }
 
@@ -63,7 +63,7 @@ export class AreasComponent implements OnInit {
           this.modalRef?.close();
           this.loadAreas();
         },
-        error: (err) => this.showToast(err?.error?.error || 'Error al actualizar área', 'bg-danger')
+        error: (err) => this.showToast(err?.error?.error || 'Error al actualizar área', 'bg-primary')
       });
     } else {
       this.areasService.create(data).subscribe({
@@ -72,7 +72,7 @@ export class AreasComponent implements OnInit {
           this.modalRef?.close();
           this.loadAreas();
         },
-        error: (err) => this.showToast(err?.error?.error || 'Error al crear área', 'bg-danger')
+        error: (err) => this.showToast(err?.error?.error || 'Error al crear área', 'bg-primary')
       });
     }
   }
@@ -90,7 +90,7 @@ export class AreasComponent implements OnInit {
   deleteArea(id: number): void {
     this.areasService.delete(id).subscribe({
       next: () => {
-        this.showToast('Área inactivada correctamente', 'bg-warning');
+        this.showToast('Área inactivada correctamente', 'bg-danger');
         this.loadAreas();
       },
       error: () => this.showToast('Error al inactivar área', 'bg-danger')
