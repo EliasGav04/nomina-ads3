@@ -87,13 +87,13 @@
           <thead>
             <tr>
               <th>Concepto</th>
-              <th class="text-end">Valor (L)</th>
+              <th class="text-end">Valor ({{ currencySymbol }})</th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let i of b.ingresos">
               <td>{{ i.concepto }}</td>
-              <td class="text-end">{{ i.monto | number:'1.2-2' }}</td>
+              <td class="text-end">{{ currencySymbol }} {{ i.monto | number:'1.2-2' }}</td>
             </tr>
             <tr *ngIf="b.ingresos.length === 0">
               <td colspan="2" class="text-center text-muted">Sin ingresos</td>
@@ -110,13 +110,13 @@
           <thead>
             <tr>
               <th>Concepto</th>
-              <th class="text-end">Valor (L)</th>
+              <th class="text-end">Valor ({{ currencySymbol }})</th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let d of b.deducciones">
               <td>{{ d.concepto }}</td>
-              <td class="text-end">{{ d.monto | number:'1.2-2' }}</td>
+              <td class="text-end">{{ currencySymbol }} {{ d.monto | number:'1.2-2' }}</td>
             </tr>
             <tr *ngIf="b.deducciones.length === 0">
               <td colspan="2" class="text-center text-muted">Sin deducciones</td>
@@ -130,15 +130,15 @@
       <div class="resumen">
         <div class="resumen-row">
           <span>Total Ingresos:</span>
-          <strong>L {{ b.resumen.total_ingresos | number:'1.2-2' }}</strong>
+          <strong>{{ currencySymbol }} {{ b.resumen.total_ingresos | number:'1.2-2' }}</strong>
         </div>
         <div class="resumen-row">
           <span>Total Deducciones:</span>
-          <strong>L {{ b.resumen.total_deducciones | number:'1.2-2' }}</strong>
+          <strong>{{ currencySymbol }} {{ b.resumen.total_deducciones | number:'1.2-2' }}</strong>
         </div>
         <div class="resumen-row neto">
           <span>Salario Neto:</span>
-          <strong>L {{ b.resumen.salario_neto | number:'1.2-2' }}</strong>
+          <strong>{{ currencySymbol }} {{ b.resumen.salario_neto | number:'1.2-2' }}</strong>
         </div>
       </div>
     </div>

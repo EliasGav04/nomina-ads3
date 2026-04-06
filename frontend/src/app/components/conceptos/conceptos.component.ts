@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ConceptosService } from '../../services/conceptos.service';
 import { Concepto } from '../../interfaces/interface';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { CurrencyConfigService } from '../../services/currency-config.service';
 
 @Component({
   selector: 'app-conceptos',
@@ -36,7 +37,8 @@ export class ConceptosComponent implements OnInit {
   constructor(
     private conceptosService: ConceptosService,
     private fb: FormBuilder,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private currencyConfig: CurrencyConfigService
   ) {
     this.conceptoForm = this.fb.group({
       concepto: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100), Validators.pattern(this.conceptoPattern)]],
@@ -48,6 +50,10 @@ export class ConceptosComponent implements OnInit {
     });
 
     this.conceptoForm.get('naturaleza')?.valueChanges.subscribe(() => this.applyValorValidators());
+  }
+
+  get currencySymbol(): string {
+    return this.currencyConfig.getCurrencySymbol();
   }
 
   ngOnInit(): void {
@@ -138,9 +144,13 @@ export class ConceptosComponent implements OnInit {
     const input = event.target as HTMLInputElement;
     const current = input.value;
     if (this.isPorcentaje) {
-      const digitsOnly = current.replace(/\D/g, '');
-      const max = digitsOnly ? Math.min(Number(digitsOnly), 100) : '';
-      const normalized = max === '' ? '' : String(max);
+      const normalizedRaw = current
+        .replace(/[^0-9.]/g, '')
+        .replace(/(\..*)\./g, '$1');
+      const match = normalizedRaw.match(/^(\d+)(\.(\d{0,2})?)?/);
+      const limited = match ? `${match[1]}${match[2] || ''}` : '';
+      const parsed = Number(limited);
+      const normalized = limited === '' ? '' : String(Number.isFinite(parsed) ? Math.min(parsed, 100) : '');
       if (normalized !== current) {
         input.value = normalized;
         this.conceptoForm.get('valor_defecto')?.setValue(normalized, { emitEvent: false });
@@ -169,7 +179,7 @@ export class ConceptosComponent implements OnInit {
         Validators.required,
         Validators.min(0),
         Validators.max(100),
-        Validators.pattern(/^\d+$/)
+        Validators.pattern(/^\d+(\.\d{1,2})?$/)
       ]);
     } else {
       valorControl.setValidators([

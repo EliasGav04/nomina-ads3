@@ -23,6 +23,7 @@ const rtnPattern = /^\d{14}$/;
 const telefonoPattern = /^\+504 \d{4}-\d{4}$/;
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const webPattern = /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/\S*)?$/;
+const monedaPattern = /^[A-Z]{3}$/;
 
 function sanitize(value) {
   return typeof value === 'string' ? value.trim() : '';
@@ -36,6 +37,7 @@ function validateEmpresaPayload(payload) {
   const telefono = sanitize(payload.telefono);
   const correo = sanitize(payload.correo);
   const sitio_web = sanitize(payload.sitio_web);
+  const codigo_moneda = sanitize(payload.codigo_moneda).toUpperCase() || 'HNL';
 
   if (!nombre || nombre.length < 3 || nombre.length > 100 || !namePattern.test(nombre)) {
     return { ok: false, error: 'Nombre inválido. Debe tener entre 3 y 100 caracteres.' };
@@ -58,6 +60,9 @@ function validateEmpresaPayload(payload) {
   if (sitio_web && (sitio_web.length > 150 || !webPattern.test(sitio_web))) {
     return { ok: false, error: 'Sitio web inválido.' };
   }
+  if (!monedaPattern.test(codigo_moneda)) {
+    return { ok: false, error: 'Código de moneda inválido. Debe usar formato ISO de 3 letras (ej: HNL, USD, GTQ).' };
+  }
 
   return {
     ok: true,
@@ -68,7 +73,8 @@ function validateEmpresaPayload(payload) {
       direccion,
       telefono,
       correo,
-      sitio_web: sitio_web || null
+      sitio_web: sitio_web || null,
+      codigo_moneda
     }
   };
 }

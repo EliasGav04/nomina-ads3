@@ -13,6 +13,7 @@ module.exports = {
       telefono: Sequelize.STRING(20),
       correo: Sequelize.STRING(150),
       sitio_web: Sequelize.STRING(150),
+      codigo_moneda: { type: Sequelize.STRING(3), defaultValue: 'HNL' },
       logo: Sequelize.BLOB('medium'),
       logo_mime: Sequelize.STRING(50),
       createdAt: Sequelize.DATE,

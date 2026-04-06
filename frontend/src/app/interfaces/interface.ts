@@ -24,6 +24,7 @@ export interface Infoempresa {
   telefono: string;
   correo: string;
   sitio_web: string;
+  codigo_moneda: string;
   logo?: Blob;     
   logo_mime?: string;
   logoBase64?: string;

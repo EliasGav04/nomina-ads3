@@ -76,10 +76,10 @@
           <tr *ngFor="let row of r.rows">
             <td>{{ row.codigo }}</td>
             <td>{{ row.nombre_empleado }}</td>
-            <td class="text-end">{{ row.salario_base | number:'1.2-2' }}</td>
-            <td class="text-end text-success">{{ row.ingresos | number:'1.2-2' }}</td>
-            <td class="text-end text-danger">{{ row.deducciones | number:'1.2-2' }}</td>
-            <td class="text-end fw-bold">{{ row.neto | number:'1.2-2' }}</td>
+            <td class="text-end">{{ currencySymbol }} {{ row.salario_base | number:'1.2-2' }}</td>
+            <td class="text-end text-success">{{ currencySymbol }} {{ row.ingresos | number:'1.2-2' }}</td>
+            <td class="text-end text-danger">{{ currencySymbol }} {{ row.deducciones | number:'1.2-2' }}</td>
+            <td class="text-end fw-bold">{{ currencySymbol }} {{ row.neto | number:'1.2-2' }}</td>
           </tr>
         </tbody>
       </table>
@@ -101,10 +101,10 @@
           <tr *ngFor="let row of r.rows">
             <td>{{ row.area }}</td>
             <td class="text-end">{{ row.empleados }}</td>
-            <td class="text-end">{{ row.salario_base | number:'1.2-2' }}</td>
-            <td class="text-end text-success">{{ row.ingresos | number:'1.2-2' }}</td>
-            <td class="text-end text-danger">{{ row.deducciones | number:'1.2-2' }}</td>
-            <td class="text-end fw-bold">{{ row.neto | number:'1.2-2' }}</td>
+            <td class="text-end">{{ currencySymbol }} {{ row.salario_base | number:'1.2-2' }}</td>
+            <td class="text-end text-success">{{ currencySymbol }} {{ row.ingresos | number:'1.2-2' }}</td>
+            <td class="text-end text-danger">{{ currencySymbol }} {{ row.deducciones | number:'1.2-2' }}</td>
+            <td class="text-end fw-bold">{{ currencySymbol }} {{ row.neto | number:'1.2-2' }}</td>
           </tr>
         </tbody>
       </table>
@@ -126,20 +126,20 @@
           <tr *ngFor="let row of r.rows">
             <td>{{ row.periodo }}</td>
             <td class="text-end">{{ row.empleados }}</td>
-            <td class="text-end">{{ row.salario_base | number:'1.2-2' }}</td>
-            <td class="text-end text-success">{{ row.ingresos | number:'1.2-2' }}</td>
-            <td class="text-end text-danger">{{ row.deducciones | number:'1.2-2' }}</td>
-            <td class="text-end fw-bold">{{ row.neto | number:'1.2-2' }}</td>
+            <td class="text-end">{{ currencySymbol }} {{ row.salario_base | number:'1.2-2' }}</td>
+            <td class="text-end text-success">{{ currencySymbol }} {{ row.ingresos | number:'1.2-2' }}</td>
+            <td class="text-end text-danger">{{ currencySymbol }} {{ row.deducciones | number:'1.2-2' }}</td>
+            <td class="text-end fw-bold">{{ currencySymbol }} {{ row.neto | number:'1.2-2' }}</td>
           </tr>
         </tbody>
       </table>
     </div>
 
     <div class="resumen mt-3">
-      <div><span>Total Salario Base:</span> <strong>{{ r.resumen.salario_base | number:'1.2-2' }}</strong></div>
-      <div><span>Total Ingresos:</span> <strong>{{ r.resumen.ingresos | number:'1.2-2' }}</strong></div>
-      <div><span>Total Deducciones:</span> <strong>{{ r.resumen.deducciones | number:'1.2-2' }}</strong></div>
-      <div class="neto"><span>Total Neto:</span> <strong>{{ r.resumen.neto | number:'1.2-2' }}</strong></div>
+      <div><span>Total Salario Base:</span> <strong>{{ currencySymbol }} {{ r.resumen.salario_base | number:'1.2-2' }}</strong></div>
+      <div><span>Total Ingresos:</span> <strong>{{ currencySymbol }} {{ r.resumen.ingresos | number:'1.2-2' }}</strong></div>
+      <div><span>Total Deducciones:</span> <strong>{{ currencySymbol }} {{ r.resumen.deducciones | number:'1.2-2' }}</strong></div>
+      <div class="neto"><span>Total Neto:</span> <strong>{{ currencySymbol }} {{ r.resumen.neto | number:'1.2-2' }}</strong></div>
     </div>
 
     <div class="d-flex justify-content-end gap-2 mt-3">

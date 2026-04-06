@@ -8,7 +8,7 @@
   <div class="col-12 col-md-4">
     <div class="resumen-card">
       <div class="resumen-label">Aproximado nómina del mes</div>
-      <div class="resumen-value">L {{ resumen.nomina_mes | number:'1.2-2' }}</div>
+      <div class="resumen-value">{{ currencySymbol }} {{ resumen.nomina_mes | number:'1.2-2' }}</div>
     </div>
   </div>
   <div class="col-12 col-md-4">

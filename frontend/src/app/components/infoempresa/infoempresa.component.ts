@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { InfoempresaService } from '../../services/infoempresa.service';
 import { Infoempresa } from '../../interfaces/interface';
+import { CurrencyConfigService } from '../../services/currency-config.service';
 
 @Component({
   selector: 'app-infoempresa',
@@ -25,11 +26,22 @@ export class InfoempresaComponent implements OnInit {
   private readonly telefonoPattern = /^\+504 \d{4}-\d{4}$/;
   private readonly emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
   private readonly webPattern = /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/\S*)?$/;
+  private readonly currencyPattern = /^[A-Z]{3}$/;
   private readonly maxLogoSizeBytes = 5 * 1024 * 1024; // 5MB
+  readonly currencyOptions: Array<{ code: string; label: string }> = [
+    { code: 'HNL', label: 'HNL (Honduras)' },
+    { code: 'USD', label: 'USD (Estados Unidos)' },
+    { code: 'GTQ', label: 'GTQ (Guatemala)' },
+    { code: 'CRC', label: 'CRC (Costa Rica)' },
+    { code: 'NIO', label: 'NIO (Nicaragua)' },
+    { code: 'PAB', label: 'PAB (Panamá)' },
+    { code: 'SVC', label: 'SVC (El Salvador)' }
+  ];
 
   constructor(
     private infoempresaService: InfoempresaService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private currencyConfig: CurrencyConfigService
   ) {
     this.empresaForm = this.fb.group({
       nombre: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100), Validators.pattern(this.namePattern)]],
@@ -38,7 +50,8 @@ export class InfoempresaComponent implements OnInit {
       direccion: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(250), Validators.pattern(this.direccionPattern)]],
       telefono: ['', [Validators.required, Validators.pattern(this.telefonoPattern)]],
       correo: ['', [Validators.required, Validators.maxLength(150), Validators.pattern(this.emailPattern)]],
-      sitio_web: ['', [Validators.maxLength(150), Validators.pattern(this.webPattern)]]
+      sitio_web: ['', [Validators.maxLength(150), Validators.pattern(this.webPattern)]],
+      codigo_moneda: ['HNL', [Validators.required, Validators.pattern(this.currencyPattern)]]
     });
   }
 
@@ -50,7 +63,11 @@ export class InfoempresaComponent implements OnInit {
     this.infoempresaService.getById(1).subscribe({
       next: (data) => {
         this.empresa = data;
-        this.empresaForm.patchValue(data);
+        this.empresaForm.patchValue({
+          ...data,
+          codigo_moneda: data.codigo_moneda || 'HNL'
+        });
+        this.currencyConfig.setCurrencyCode(data.codigo_moneda || 'HNL');
   
         this.logoBase64 = data.logoBase64 || 'assets/no-photo.png';
       },
@@ -145,6 +162,7 @@ export class InfoempresaComponent implements OnInit {
       this.infoempresaService.updateWithFormData(this.empresa.id_empresa, formData).subscribe({
         next: () => {
           this.showToast('Empresa actualizada correctamente', 'bg-success');
+          this.currencyConfig.setCurrencyCode(this.empresaForm.get('codigo_moneda')?.value || 'HNL');
           this.loadEmpresa();
         },
         error: (err) => this.showToast(err?.error?.error || 'Error al actualizar empresa', 'bg-primary')
@@ -153,6 +171,7 @@ export class InfoempresaComponent implements OnInit {
       this.infoempresaService.createWithFormData(formData).subscribe({
         next: () => {
           this.showToast('Empresa creada correctamente', 'bg-success');
+          this.currencyConfig.setCurrencyCode(this.empresaForm.get('codigo_moneda')?.value || 'HNL');
           this.loadEmpresa();
         },
         error: (err) => this.showToast(err?.error?.error || 'Error al crear empresa', 'bg-primary')

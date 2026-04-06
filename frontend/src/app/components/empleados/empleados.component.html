@@ -34,7 +34,7 @@
           <td>{{ e.nombre_completo }}</td>
           <td>{{ e.cargo }}</td>
           <td>{{ e.fecha_ingreso | date:'dd/MM/yyyy':'UTC' }}</td>
-          <td>{{ e.salario_base | number:'1.2-2' }}</td>
+          <td>{{ currencySymbol }} {{ e.salario_base | number:'1.2-2' }}</td>
           <td>{{ e.numero_ihss }}</td>
           <td>{{ e.cta_bancaria }}</td>
           <td>{{ e.Area?.area || 'Sin área' }}</td>

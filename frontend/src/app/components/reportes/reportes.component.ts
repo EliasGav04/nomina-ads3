@@ -10,6 +10,7 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import * as XLSX from 'xlsx';
 import { formatDateDMY } from '../../utils/date.utils';
+import { CurrencyConfigService } from '../../services/currency-config.service';
 
 @Component({
   selector: 'app-reportes',
@@ -32,12 +33,10 @@ export class ReportesComponent implements OnInit {
   loading = false;
   error = '';
   formatDateDMY = formatDateDMY;
-  private readonly moneyFormatter = new Intl.NumberFormat('en-US', {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
-  });
-
-  constructor(private reportesService: ReportesService) {}
+  constructor(
+    private reportesService: ReportesService,
+    private currencyConfig: CurrencyConfigService
+  ) {}
 
   ngOnInit(): void {
     this.cargarConfig();
@@ -90,8 +89,16 @@ export class ReportesComponent implements OnInit {
     return this.tiposReporte.find(t => t.id === tipo)?.label || 'Reporte';
   }
 
+  get currencyCode(): string {
+    return this.reporte?.empresa?.codigo_moneda || this.currencyConfig.getCurrencyCode();
+  }
+
+  get currencySymbol(): string {
+    return this.currencyConfig.getCurrencySymbol(this.currencyCode);
+  }
+
   private formatMoney(value: number): string {
-    return this.moneyFormatter.format(Number(value) || 0);
+    return this.currencyConfig.formatAmount(value, this.currencyCode);
   }
 
   private getTableForExport(r: ReporteResponse): { headers: string[]; rows: (string | number)[][] } {
@@ -261,18 +268,18 @@ export class ReportesComponent implements OnInit {
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(9.5);
     doc.text('Total Salario Base:', boxX + 3, y + 6);
-    doc.text(`L ${this.formatMoney(Number(r.resumen.salario_base || 0))}`, boxX + boxW - 3, y + 6, { align: 'right' });
+    doc.text(this.formatMoney(Number(r.resumen.salario_base || 0)), boxX + boxW - 3, y + 6, { align: 'right' });
     doc.text('Total Ingresos:', boxX + 3, y + 11);
-    doc.text(`L ${this.formatMoney(Number(r.resumen.ingresos || 0))}`, boxX + boxW - 3, y + 11, { align: 'right' });
+    doc.text(this.formatMoney(Number(r.resumen.ingresos || 0)), boxX + boxW - 3, y + 11, { align: 'right' });
     doc.text('Total Deducciones:', boxX + 3, y + 16);
-    doc.text(`L ${this.formatMoney(Number(r.resumen.deducciones || 0))}`, boxX + boxW - 3, y + 16, { align: 'right' });
+    doc.text(this.formatMoney(Number(r.resumen.deducciones || 0)), boxX + boxW - 3, y + 16, { align: 'right' });
 
     doc.setDrawColor(212, 222, 237);
     doc.line(boxX + 2, y + 19, boxX + boxW - 2, y + 19);
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(11);
     doc.text('Total Neto:', boxX + 3, y + 25);
-    doc.text(`L ${this.formatMoney(Number(r.resumen.neto || 0))}`, boxX + boxW - 3, y + 25, { align: 'right' });
+    doc.text(this.formatMoney(Number(r.resumen.neto || 0)), boxX + boxW - 3, y + 25, { align: 'right' });
 
     const base = this.getTipoLabel(r.tipo).normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, '_').toLowerCase();
     const periodo = (r.meta.periodo || 'periodo').normalize('NFD').replace(/[\u0300-\u036f]/g, '') .replace(/\s+/g, '_').toLowerCase();
@@ -300,12 +307,19 @@ export class ReportesComponent implements OnInit {
     aoa.push(['Total Empleados', r.meta.total_empleados, 'Fecha Generación Reporte', formatDateDMY(r.meta.fecha_generacion)]);
     aoa.push([]);
     aoa.push(headers);
-    rows.forEach(row => aoa.push(row));
+    rows.forEach(row => {
+      aoa.push(
+        row.map((cell, idx) => {
+          if (typeof cell === 'number' && idx >= headers.length - 4) return this.formatMoney(cell);
+          return cell;
+        })
+      );
+    });
     aoa.push([]);
-    aoa.push(['Total Salario Base', Number(r.resumen.salario_base || 0)]);
-    aoa.push(['Total Ingresos', Number(r.resumen.ingresos || 0)]);
-    aoa.push(['Total Deducciones', Number(r.resumen.deducciones || 0)]);
-    aoa.push(['Total Neto', Number(r.resumen.neto || 0)]);
+    aoa.push(['Total Salario Base', this.formatMoney(Number(r.resumen.salario_base || 0))]);
+    aoa.push(['Total Ingresos', this.formatMoney(Number(r.resumen.ingresos || 0))]);
+    aoa.push(['Total Deducciones', this.formatMoney(Number(r.resumen.deducciones || 0))]);
+    aoa.push(['Total Neto', this.formatMoney(Number(r.resumen.neto || 0))]);
 
     const ws = XLSX.utils.aoa_to_sheet(aoa);
     ws['!cols'] = headers.map((h, idx) => ({ wch: idx === 1 ? 28 : 16 }));

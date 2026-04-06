@@ -34,8 +34,9 @@ function validarPayload(payload) {
     return { ok: false, error: 'El valor por defecto es obligatorio' };
   }
   if (naturaleza === 'porcentaje') {
-    if (!Number.isInteger(valor) || valor < 0 || valor > 100) {
-      return { ok: false, error: 'Para naturaleza porcentaje, el valor debe ser entero entre 0 y 100' };
+    const tieneHastaDosDecimales = /^\d+(\.\d{1,2})?$/.test(String(payload.valor_defecto));
+    if (!tieneHastaDosDecimales || valor < 0 || valor > 100) {
+      return { ok: false, error: 'Para naturaleza porcentaje, el valor debe estar entre 0 y 100 con máximo 2 decimales' };
     }
   } else if (valor < 0 || valor > 1000000) {
     return { ok: false, error: 'El valor por defecto debe estar entre 0 y 1,000,000' };

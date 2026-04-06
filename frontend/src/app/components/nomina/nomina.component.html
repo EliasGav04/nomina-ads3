@@ -95,7 +95,7 @@
             <td>{{ e.nombre_completo }}</td>
             <td>{{ e.cargo }}</td>
             <td>{{ e.Area?.area || 'Sin área' }}</td>
-            <td>{{ e.salario_base | number:'1.2-2' }}</td>
+            <td>{{ currencySymbol }} {{ e.salario_base | number:'1.2-2' }}</td>
           </tr>
           <tr *ngIf="empleados.length === 0">
             <td colspan="6" class="text-center text-muted">No hay empleados para procesar con el filtro actual.</td>

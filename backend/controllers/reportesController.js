@@ -204,6 +204,7 @@ exports.generar = async (req, res) => {
             telefono: empresa.telefono,
             correo: empresa.correo,
             sitio_web: empresa.sitio_web,
+            codigo_moneda: empresa.codigo_moneda || 'HNL',
             logoBase64: empresa.logo ? `data:${empresa.logo_mime};base64,${empresa.logo.toString('base64')}` : null
           }
         : null,

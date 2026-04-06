@@ -15,6 +15,7 @@ module.exports = {
         telefono: '+504 2234-5600',
         correo: 'rrhh@dlc.hn',
         sitio_web: 'https://www.dlc.hn',
+        codigo_moneda: 'HNL',
         logo: null,
         logo_mime: null,
         createdAt: now,

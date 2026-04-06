@@ -6,6 +6,7 @@ import { EmpleadosService } from '../../services/empleados.service';
 import { ConceptosService } from '../../services/conceptos.service';
 import { Movimiento, Periodo, Empleado, Concepto } from '../../interfaces/interface';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { CurrencyConfigService } from '../../services/currency-config.service';
 
 @Component({
   selector: 'app-movimientos',
@@ -34,7 +35,8 @@ export class MovimientosComponent implements OnInit {
     private empleadosService: EmpleadosService,
     private conceptosService: ConceptosService,
     private fb: FormBuilder,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private currencyConfig: CurrencyConfigService
   ) {
     this.movimientoForm = this.fb.group({
       id_periodo: [null, [Validators.required]],
@@ -44,6 +46,10 @@ export class MovimientosComponent implements OnInit {
       descripcion: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(200)]],
       estado: ['Activo']
     });
+  }
+
+  get currencySymbol(): string {
+    return this.currencyConfig.getCurrencySymbol();
   }
 
   ngOnInit(): void {

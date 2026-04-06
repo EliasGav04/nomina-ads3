@@ -28,6 +28,7 @@ export interface BoletaResponse {
     telefono: string;
     correo: string;
     sitio_web: string;
+    codigo_moneda: string;
     logoBase64: string | null;
   } | null;
   empleado: {

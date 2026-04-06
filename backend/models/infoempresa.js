@@ -15,6 +15,7 @@ module.exports = (sequelize, DataTypes) => {
     telefono: DataTypes.STRING(20),
     correo: DataTypes.STRING(150),
     sitio_web: DataTypes.STRING(150),
+    codigo_moneda: DataTypes.STRING(3),
     logo: DataTypes.BLOB('medium'),
     logo_mime: DataTypes.STRING(50)
   }, {

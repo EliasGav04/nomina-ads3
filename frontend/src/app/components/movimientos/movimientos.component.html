@@ -28,7 +28,7 @@
             <td>{{ m.Periodo?.periodo || m.id_periodo }}</td>
             <td>{{ m.Empleado?.nombre_completo || m.id_empleado }}</td>
             <td>{{ m.Concepto?.concepto || m.id_concepto }}</td>
-            <td>{{ m.monto | number:'1.2-2' }}</td>
+            <td>{{ currencySymbol }} {{ m.monto | number:'1.2-2' }}</td>
             <td>{{ m.descripcion }}</td>
             <td>
               <span class="estado-badge"

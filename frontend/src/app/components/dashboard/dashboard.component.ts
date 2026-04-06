@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { DashboardResumen, DashboardService } from '../../services/dashboard.service';
+import { CurrencyConfigService } from '../../services/currency-config.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -15,7 +16,14 @@ export class DashboardComponent implements OnInit {
 
   nombreUsuario = 'Usuario';
 
-  constructor(private dashboardService: DashboardService) {}
+  constructor(
+    private dashboardService: DashboardService,
+    private currencyConfig: CurrencyConfigService
+  ) {}
+
+  get currencySymbol(): string {
+    return this.currencyConfig.getCurrencySymbol();
+  }
 
   ngOnInit(): void {
     this.cargarResumen();

@@ -5,6 +5,7 @@ import { EmpleadosService } from '../../services/empleados.service';
 import { ConceptosService } from '../../services/conceptos.service';
 import { EmpleadoConcepto, Empleado, Concepto } from '../../interfaces/interface';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { CurrencyConfigService } from '../../services/currency-config.service';
 
 @Component({
   selector: 'app-empleado-conceptos',
@@ -31,7 +32,8 @@ export class EmpleadoConceptosComponent implements OnInit {
     private empleadosService: EmpleadosService,
     private conceptosService: ConceptosService,
     private fb: FormBuilder,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private currencyConfig: CurrencyConfigService
   ) {
     this.asignacionForm = this.fb.group({
       id_empleado: [null, [Validators.required]],
@@ -40,6 +42,10 @@ export class EmpleadoConceptosComponent implements OnInit {
       fecha_desde: ['', [Validators.required]],
       fecha_hasta: ['']
     });
+  }
+
+  get currencySymbol(): string {
+    return this.currencyConfig.getCurrencySymbol();
   }
 
   ngOnInit(): void {

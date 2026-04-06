@@ -87,7 +87,18 @@
               </div>
             </div>
 
-            <div class="col-12">
+            <div class="col-12 col-md-6">
+              <label class="form-label">Código de Moneda</label>
+              <select formControlName="codigo_moneda" class="form-select"
+                [ngClass]="{'is-invalid': isInvalid('codigo_moneda')}">
+                <option *ngFor="let c of currencyOptions" [value]="c.code">{{ c.label }}</option>
+              </select>
+              <div class="invalid-feedback" *ngIf="isInvalid('codigo_moneda')">
+                Código de moneda inválido.
+              </div>
+            </div>
+
+            <div class="col-12 col-md-6">
               <label class="form-label">Sitio Web</label>
               <input formControlName="sitio_web" type="text" class="form-control" maxlength="150"
                 placeholder="https://www.empresa.com"

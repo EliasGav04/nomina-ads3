@@ -4,6 +4,7 @@ import { EmpleadosService } from '../../services/empleados.service';
 import { AreasService } from '../../services/areas.service';
 import { Empleado, Area } from '../../interfaces/interface';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { CurrencyConfigService } from '../../services/currency-config.service';
 
 @Component({
   selector: 'app-empleados',
@@ -33,7 +34,8 @@ export class EmpleadosComponent implements OnInit {
     private empleadosService: EmpleadosService,
     private areasService: AreasService,
     private fb: FormBuilder,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private currencyConfig: CurrencyConfigService
   ) {
     this.empleadoForm = this.fb.group({
       dni: ['', [Validators.required, Validators.pattern(this.dniPattern)]],
@@ -46,6 +48,10 @@ export class EmpleadosComponent implements OnInit {
       estado: ['Activo'],
       id_area: [null, [Validators.required]]
     });
+  }
+
+  get currencySymbol(): string {
+    return this.currencyConfig.getCurrencySymbol();
   }
 
   ngOnInit(): void {

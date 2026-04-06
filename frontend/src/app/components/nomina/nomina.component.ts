@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Area, Empleado, Periodo } from '../../interfaces/interface';
 import { AreasService } from '../../services/areas.service';
 import { EstadoNomina, NominaService } from '../../services/nomina.service';
+import { CurrencyConfigService } from '../../services/currency-config.service';
 
 @Component({
   selector: 'app-nomina',
@@ -29,8 +30,13 @@ export class NominaComponent implements OnInit {
 
   constructor(
     private nominaService: NominaService,
-    private areasService: AreasService
+    private areasService: AreasService,
+    private currencyConfig: CurrencyConfigService
   ) {}
+
+  get currencySymbol(): string {
+    return this.currencyConfig.getCurrencySymbol();
+  }
 
   ngOnInit(): void {
     this.cargarPeriodosAbiertos();
