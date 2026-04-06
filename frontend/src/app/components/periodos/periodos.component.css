@@ -53,11 +53,6 @@
   border-color: #dde3ed;
 }
 
-.tabla-periodos td {
-  border-color: #e8ecf3;
-  color: #374151;
-}
-
 .invalid-feedback {
   display: block;
 }

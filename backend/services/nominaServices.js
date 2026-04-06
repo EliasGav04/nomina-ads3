@@ -4,7 +4,25 @@ const { sequelize, Periodo, Empleado, Concepto, EmpleadoConcepto, Movimiento, No
 
 function salarioBaseNumerico(empleado) {
   const n = parseFloat(empleado.salario_base);
-  return Number.isFinite(n) ? n : 0;
+  return Number.isFinite(n) ? n : NaN;
+}
+
+function round2(value) {
+  return Math.round((Number(value) + Number.EPSILON) * 100) / 100;
+}
+
+function validarMontoCalculado(monto, empleado, concepto, origen) {
+  if (!Number.isFinite(monto)) {
+    throw new Error(
+      `Monto inválido en ${origen} para el empleado "${empleado.nombre_completo}" y concepto "${concepto.concepto}".`
+    );
+  }
+  if (monto < 0) {
+    throw new Error(
+      `Monto negativo no permitido en ${origen} para el empleado "${empleado.nombre_completo}" y concepto "${concepto.concepto}".`
+    );
+  }
+  return round2(monto);
 }
 
 /**
@@ -59,6 +77,11 @@ async function ejecutarNomina(periodoId) {
     const fin = periodo.fecha_final;
 
     for (const empleado of empleados) {
+      const base = salarioBaseNumerico(empleado);
+      if (!Number.isFinite(base) || base <= 0) {
+        throw new Error(`El empleado "${empleado.nombre_completo}" tiene salario base inválido. Verifique su ficha antes de procesar nómina.`);
+      }
+
       // Asignaciones que cruzan el período y concepto activo
       const asignaciones = await EmpleadoConcepto.findAll({
         where: {
@@ -92,34 +115,40 @@ async function ejecutarNomina(periodoId) {
         transaction: t
       });
 
-      let salarioBruto = salarioBaseNumerico(empleado);
+      let salarioBruto = round2(base);
       let totalDeducciones = 0;
       let detalles = [];
 
       // Procesar asignaciones
       for (const asignacion of asignaciones) {
-        const monto = calcularMonto(asignacion.Concepto, empleado, asignacion);
+        const montoCalculado = calcularMonto(asignacion.Concepto, empleado, asignacion);
+        const monto = validarMontoCalculado(montoCalculado, empleado, asignacion.Concepto, 'asignación');
+        if (monto <= 0) continue;
         detalles.push({ id_concepto: asignacion.id_concepto, monto });
-        if (asignacion.Concepto.tipo === 'ingreso') salarioBruto += monto;
-        else totalDeducciones += monto;
+        if (asignacion.Concepto.tipo === 'ingreso') salarioBruto = round2(salarioBruto + monto);
+        else totalDeducciones = round2(totalDeducciones + monto);
       }
 
       // Procesar globales
       for (const concepto of conceptosGlobales) {
-        const monto = calcularMonto(concepto, empleado);
+        const montoCalculado = calcularMonto(concepto, empleado);
+        const monto = validarMontoCalculado(montoCalculado, empleado, concepto, 'concepto global');
+        if (monto <= 0) continue;
         detalles.push({ id_concepto: concepto.id_concepto, monto });
-        if (concepto.tipo === 'ingreso') salarioBruto += monto;
-        else totalDeducciones += monto;
+        if (concepto.tipo === 'ingreso') salarioBruto = round2(salarioBruto + monto);
+        else totalDeducciones = round2(totalDeducciones + monto);
       }
 
       // Procesar movimientos manuales
       for (const mov of movimientos) {
-        detalles.push({ id_concepto: mov.id_concepto, monto: parseFloat(mov.monto) });
-        if (mov.Concepto.tipo === 'ingreso') salarioBruto += parseFloat(mov.monto);
-        else totalDeducciones += parseFloat(mov.monto);
+        const monto = validarMontoCalculado(parseFloat(mov.monto), empleado, mov.Concepto, 'movimiento');
+        if (monto <= 0) continue;
+        detalles.push({ id_concepto: mov.id_concepto, monto });
+        if (mov.Concepto.tipo === 'ingreso') salarioBruto = round2(salarioBruto + monto);
+        else totalDeducciones = round2(totalDeducciones + monto);
       }
 
-      const salarioNeto = salarioBruto - totalDeducciones;
+      const salarioNeto = round2(salarioBruto - totalDeducciones);
 
       // Guardar registro
       const registro = await NominaRegistro.create({

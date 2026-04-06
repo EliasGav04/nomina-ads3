@@ -1,0 +1,14 @@
+.invalid-feedback {
+  display: block;
+}
+
+.tabla-movimientos td:nth-child(6) {
+  max-width: 320px;
+  white-space: normal;
+  word-break: break-word;
+}
+
+.acciones-col {
+  white-space: nowrap;
+  min-width: 110px;
+}

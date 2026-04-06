@@ -25,7 +25,7 @@
           <td>{{ a.id_empleado_concepto }}</td>
           <td>{{ a.Empleado?.nombre_completo || a.id_empleado }}</td>
           <td>{{ a.Concepto?.concepto || a.id_concepto }}</td>
-          <td>{{ a.valor }}</td>
+          <td>{{ a.valor | number:'1.2-2' }}</td>
           <td>{{ a.fecha_desde | date:'dd/MM/yyyy':'UTC' }}</td>
           <td>
             <span>{{ a.fecha_hasta ? (a.fecha_hasta | date:'dd/MM/yyyy':'UTC') : '-' }}</span>

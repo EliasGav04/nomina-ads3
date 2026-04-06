@@ -23,6 +23,10 @@ export class BoletapagoComponent implements OnInit {
   loading = false;
   error = '';
   formatDateDMY = formatDateDMY;
+  private readonly moneyFormatter = new Intl.NumberFormat('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
 
   constructor(private boletaPagoService: BoletapagoService) {}
 
@@ -39,6 +43,12 @@ export class BoletapagoComponent implements OnInit {
         this.idPeriodo = this.periodos.length ? this.periodos[0].id_periodo : null;
       },
       error: () => {
+        this.empleados = [];
+        this.periodos = [];
+        this.idEmpleado = null;
+        this.idPeriodo = null;
+        this.boleta = null;
+        this.loading = false;
         this.error = 'No se pudieron cargar filtros de boleta.';
       }
     });
@@ -73,11 +83,17 @@ export class BoletapagoComponent implements OnInit {
   }
 
   get diasPeriodo(): number {
-    if (!this.periodoSeleccionado?.fecha_inicio || !this.periodoSeleccionado?.fecha_final) return 0;
-    const ini = new Date(this.periodoSeleccionado.fecha_inicio);
-    const fin = new Date(this.periodoSeleccionado.fecha_final);
+    const fechaInicio = this.boleta?.periodo?.fecha_inicio || this.periodoSeleccionado?.fecha_inicio;
+    const fechaFinal = this.boleta?.periodo?.fecha_final || this.periodoSeleccionado?.fecha_final;
+    if (!fechaInicio || !fechaFinal) return 0;
+    const ini = new Date(fechaInicio);
+    const fin = new Date(fechaFinal);
     const ms = fin.getTime() - ini.getTime();
     return Math.floor(ms / (1000 * 60 * 60 * 24)) + 1;
+  }
+
+  private formatMoney(value: number): string {
+    return this.moneyFormatter.format(Number(value) || 0);
   }
 
   descargarPdf(): void {
@@ -203,7 +219,7 @@ export class BoletapagoComponent implements OnInit {
     autoTable(doc, {
       startY: y,
       head: [['Concepto', 'Valor (L)']],
-      body: b.ingresos.map(i => [i.concepto, (i.monto || 0).toFixed(2)]),
+      body: b.ingresos.map(i => [i.concepto, this.formatMoney(i.monto || 0)]),
       margin: { left: margin, right: margin },
       theme: 'grid',
       headStyles: { fillColor: [240, 240, 240], textColor: [42, 42, 42] },
@@ -222,7 +238,7 @@ export class BoletapagoComponent implements OnInit {
     autoTable(doc, {
       startY: y,
       head: [['Concepto', 'Valor (L)']],
-      body: b.deducciones.map(d => [d.concepto, (d.monto || 0).toFixed(2)]),
+      body: b.deducciones.map(d => [d.concepto, this.formatMoney(d.monto || 0)]),
       margin: { left: margin, right: margin },
       theme: 'grid',
       headStyles: { fillColor: [240, 240, 240], textColor: [42, 42, 42] },
@@ -241,16 +257,16 @@ export class BoletapagoComponent implements OnInit {
     doc.setFontSize(9.5);
     doc.setFont(fontFamily, 'normal');
     doc.text('Total Ingresos:', boxX + 3, y + 6);
-    doc.text(`L ${b.resumen.total_ingresos.toFixed(2)}`, boxX + boxW - 3, y + 6, { align: 'right' });
+    doc.text(`L ${this.formatMoney(b.resumen.total_ingresos)}`, boxX + boxW - 3, y + 6, { align: 'right' });
     doc.text('Total Deducciones:', boxX + 3, y + 11);
-    doc.text(`L ${b.resumen.total_deducciones.toFixed(2)}`, boxX + boxW - 3, y + 11, { align: 'right' });
+    doc.text(`L ${this.formatMoney(b.resumen.total_deducciones)}`, boxX + boxW - 3, y + 11, { align: 'right' });
 
     doc.setDrawColor(212, 222, 237);
     doc.line(boxX + 2, y + 14, boxX + boxW - 2, y + 14);
     doc.setFont(fontFamily, 'bold');
     doc.setFontSize(11.5);
     doc.text('Salario Neto:', boxX + 3, y + 20);
-    doc.text(`L ${b.resumen.salario_neto.toFixed(2)}`, boxX + boxW - 3, y + 20, { align: 'right' });
+    doc.text(`L ${this.formatMoney(b.resumen.salario_neto)}`, boxX + boxW - 3, y + 20, { align: 'right' });
 
     const empleadoName = (b.empleado.nombre_completo || 'empleado').replace(/\s+/g, '_');
     const periodoName = (b.periodo.periodo || 'periodo').replace(/\s+/g, '_');

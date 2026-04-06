@@ -53,6 +53,9 @@ exports.generar = async (req, res) => {
       }
       periodoSeleccionado = await Periodo.findByPk(idPeriodo);
       if (!periodoSeleccionado) return res.status(404).json({ error: 'Período no encontrado' });
+      if (!['Procesado', 'Cerrado'].includes(periodoSeleccionado.estado)) {
+        return res.status(400).json({ error: 'El período debe estar en estado Procesado o Cerrado para generar reportes' });
+      }
       wherePeriodo.id_periodo = idPeriodo;
     } else {
       if (Number.isFinite(idPeriodo)) {

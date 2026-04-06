@@ -18,7 +18,7 @@ exports.getPeriodosAbiertos = async (req, res) => {
 exports.getEstadoActual = async (req, res) => {
   try {
     const idPeriodo = Number(req.params.idPeriodo);
-    if (!Number.isFinite(idPeriodo)) {
+    if (!Number.isInteger(idPeriodo) || idPeriodo <= 0) {
       return res.status(400).json({ error: 'ID de período inválido' });
     }
 
@@ -53,12 +53,18 @@ exports.getEmpleadosProcesar = async (req, res) => {
     const idPeriodo = Number(req.query.id_periodo);
     const idArea = req.query.id_area ? Number(req.query.id_area) : null;
 
-    if (!Number.isFinite(idPeriodo)) {
+    if (!Number.isInteger(idPeriodo) || idPeriodo <= 0) {
       return res.status(400).json({ error: 'Debe enviar id_periodo válido' });
+    }
+    if (req.query.id_area && (!Number.isInteger(idArea) || idArea <= 0)) {
+      return res.status(400).json({ error: 'Debe enviar id_area válido' });
     }
 
     const periodo = await Periodo.findByPk(idPeriodo);
     if (!periodo) return res.status(404).json({ error: 'Período no encontrado' });
+    if (periodo.estado !== 'Abierto') {
+      return res.status(400).json({ error: 'Solo se pueden consultar empleados de períodos Abiertos para procesar nómina' });
+    }
 
     const where = { estado: 'Activo' };
     if (Number.isFinite(idArea)) where.id_area = idArea;
@@ -78,7 +84,7 @@ exports.getEmpleadosProcesar = async (req, res) => {
 exports.ejecutar = async (req, res) => {
   try {
     const idPeriodo = Number(req.body.id_periodo);
-    if (!Number.isFinite(idPeriodo)) {
+    if (!Number.isInteger(idPeriodo) || idPeriodo <= 0) {
       return res.status(400).json({ error: 'Debe enviar id_periodo válido' });
     }
 

@@ -113,7 +113,14 @@ export class NominaComponent implements OnInit {
   }
 
   ejecutarNomina(): void {
-    if (!this.periodoSeleccionadoId || this.ejecutando) return;
+    if (!this.periodoSeleccionadoId) {
+      alert('Seleccione un período abierto para ejecutar nómina.');
+      return;
+    }
+    if (this.ejecutando) {
+      alert('Ya hay una ejecución en curso. Espere a que finalice.');
+      return;
+    }
     if (!confirm('¿Desea ejecutar la nómina para el período seleccionado?')) return;
 
     this.ejecutando = true;

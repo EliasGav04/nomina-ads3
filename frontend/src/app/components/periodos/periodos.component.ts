@@ -76,7 +76,7 @@ export class PeriodosComponent implements OnInit {
 
   handleEditClick(periodo: Periodo, content: TemplateRef<any>): void {
     if (periodo.estado !== 'Abierto') {
-      this.showToast('Solo se pueden editar períodos Abiertos', 'bg-primary');
+      this.showToast('No se puede actualizar un período Procesado o Cerrado', 'bg-primary');
       return;
     }
   
@@ -84,6 +84,15 @@ export class PeriodosComponent implements OnInit {
     this.selectedId = periodo.id_periodo;
     this.periodoForm.patchValue(periodo);
     this.modalRef = this.modalService.open(content, { backdrop: 'static' });
+  }
+
+  handleDeleteClick(periodo: Periodo): void {
+    if (periodo.estado === 'Procesado' || periodo.estado === 'Cerrado') {
+      this.showToast('No se puede eliminar un período Procesado o Cerrado', 'bg-primary');
+      return;
+    }
+
+    this.showToast('La eliminación de períodos Abiertos no está permitida', 'bg-primary');
   }
 
   savePeriodo(): void {

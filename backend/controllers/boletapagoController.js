@@ -32,7 +32,7 @@ exports.getBoleta = async (req, res) => {
     const idEmpleado = Number(req.query.id_empleado);
     const idPeriodo = Number(req.query.id_periodo);
 
-    if (!Number.isFinite(idEmpleado) || !Number.isFinite(idPeriodo)) {
+    if (!Number.isInteger(idEmpleado) || idEmpleado <= 0 || !Number.isInteger(idPeriodo) || idPeriodo <= 0) {
       return res.status(400).json({ error: 'Debe enviar id_empleado e id_periodo válidos' });
     }
 
@@ -44,6 +44,9 @@ exports.getBoleta = async (req, res) => {
 
     if (!empleado || !periodo) {
       return res.status(404).json({ error: 'Empleado o período no encontrado' });
+    }
+    if (!['Procesado', 'Cerrado'].includes(periodo.estado)) {
+      return res.status(400).json({ error: 'La boleta solo puede consultarse para períodos Procesados o Cerrados' });
     }
 
     const registro = await NominaRegistro.findOne({

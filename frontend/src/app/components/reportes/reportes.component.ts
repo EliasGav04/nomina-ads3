@@ -32,6 +32,10 @@ export class ReportesComponent implements OnInit {
   loading = false;
   error = '';
   formatDateDMY = formatDateDMY;
+  private readonly moneyFormatter = new Intl.NumberFormat('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
 
   constructor(private reportesService: ReportesService) {}
 
@@ -45,8 +49,16 @@ export class ReportesComponent implements OnInit {
         this.periodos = r.periodos || [];
         this.areas = r.areas || [];
         this.idPeriodo = this.periodos.length ? this.periodos[0].id_periodo : null;
+        this.idArea = null;
+        this.error = '';
       },
       error: () => {
+        this.periodos = [];
+        this.areas = [];
+        this.idPeriodo = null;
+        this.idArea = null;
+        this.reporte = null;
+        this.loading = false;
         this.error = 'No se pudo cargar configuración de reportes.';
       }
     });
@@ -76,6 +88,10 @@ export class ReportesComponent implements OnInit {
 
   private getTipoLabel(tipo: TipoReporte): string {
     return this.tiposReporte.find(t => t.id === tipo)?.label || 'Reporte';
+  }
+
+  private formatMoney(value: number): string {
+    return this.moneyFormatter.format(Number(value) || 0);
   }
 
   private getTableForExport(r: ReporteResponse): { headers: string[]; rows: (string | number)[][] } {
@@ -123,6 +139,10 @@ export class ReportesComponent implements OnInit {
   exportarPdf(): void {
     if (!this.reporte) {
       this.error = 'Primero genere un reporte para exportar.';
+      return;
+    }
+    if (!this.reporte.rows?.length) {
+      this.error = 'No hay datos en el reporte para exportar.';
       return;
     }
 
@@ -214,7 +234,7 @@ export class ReportesComponent implements OnInit {
       head: [headers],
       body: rows.map(row =>
         row.map((cell, idx) => {
-          if (typeof cell === 'number' && idx >= headers.length - 4) return cell.toFixed(2);
+          if (typeof cell === 'number' && idx >= headers.length - 4) return this.formatMoney(cell);
           if (typeof cell === 'number' && (headers[idx] === 'Empleados' || headers[idx] === 'Registros')) return `${cell}`;
           return `${cell}`;
         })
@@ -241,18 +261,18 @@ export class ReportesComponent implements OnInit {
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(9.5);
     doc.text('Total Salario Base:', boxX + 3, y + 6);
-    doc.text(`L ${Number(r.resumen.salario_base || 0).toFixed(2)}`, boxX + boxW - 3, y + 6, { align: 'right' });
+    doc.text(`L ${this.formatMoney(Number(r.resumen.salario_base || 0))}`, boxX + boxW - 3, y + 6, { align: 'right' });
     doc.text('Total Ingresos:', boxX + 3, y + 11);
-    doc.text(`L ${Number(r.resumen.ingresos || 0).toFixed(2)}`, boxX + boxW - 3, y + 11, { align: 'right' });
+    doc.text(`L ${this.formatMoney(Number(r.resumen.ingresos || 0))}`, boxX + boxW - 3, y + 11, { align: 'right' });
     doc.text('Total Deducciones:', boxX + 3, y + 16);
-    doc.text(`L ${Number(r.resumen.deducciones || 0).toFixed(2)}`, boxX + boxW - 3, y + 16, { align: 'right' });
+    doc.text(`L ${this.formatMoney(Number(r.resumen.deducciones || 0))}`, boxX + boxW - 3, y + 16, { align: 'right' });
 
     doc.setDrawColor(212, 222, 237);
     doc.line(boxX + 2, y + 19, boxX + boxW - 2, y + 19);
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(11);
     doc.text('Total Neto:', boxX + 3, y + 25);
-    doc.text(`L ${Number(r.resumen.neto || 0).toFixed(2)}`, boxX + boxW - 3, y + 25, { align: 'right' });
+    doc.text(`L ${this.formatMoney(Number(r.resumen.neto || 0))}`, boxX + boxW - 3, y + 25, { align: 'right' });
 
     const base = this.getTipoLabel(r.tipo).normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, '_').toLowerCase();
     const periodo = (r.meta.periodo || 'periodo').normalize('NFD').replace(/[\u0300-\u036f]/g, '') .replace(/\s+/g, '_').toLowerCase();
@@ -262,6 +282,10 @@ export class ReportesComponent implements OnInit {
   exportarExcel(): void {
     if (!this.reporte) {
       this.error = 'Primero genere un reporte para exportar.';
+      return;
+    }
+    if (!this.reporte.rows?.length) {
+      this.error = 'No hay datos en el reporte para exportar.';
       return;
     }
 

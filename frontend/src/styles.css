@@ -49,3 +49,40 @@
 .btn-action-delete {
   color: #ed272e !important;
 }
+
+/* Standard table style across the app (reference: empleado-conceptos) */
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.table-responsive {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.table thead th {
+  background-color: #32314e !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  border-color: #4a4966 !important;
+  vertical-align: middle;
+}
+
+.table tbody td {
+  border-color: #dde2ea;
+  vertical-align: middle;
+}
+
+.table.table-striped > tbody > tr:nth-of-type(odd) > * {
+  --bs-table-accent-bg: #f7f8fc;
+}
+
+.table.table-hover > tbody > tr:hover > * {
+  --bs-table-accent-bg: #eef1f8;
+  color: inherit;
+}
+
+.acciones-col {
+  white-space: nowrap;
+}

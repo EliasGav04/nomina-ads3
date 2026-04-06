@@ -28,7 +28,7 @@
             <td>{{ m.Periodo?.periodo || m.id_periodo }}</td>
             <td>{{ m.Empleado?.nombre_completo || m.id_empleado }}</td>
             <td>{{ m.Concepto?.concepto || m.id_concepto }}</td>
-            <td>{{ m.monto }}</td>
+            <td>{{ m.monto | number:'1.2-2' }}</td>
             <td>{{ m.descripcion }}</td>
             <td>
               <span class="estado-badge"
@@ -63,43 +63,68 @@
       <div class="modal-body">
         <div class="mb-3">
           <label class="form-label">Periodo:</label>
-          <select formControlName="id_periodo" class="form-select">
+          <select formControlName="id_periodo" class="form-select" [ngClass]="{'is-invalid': isInvalid('id_periodo')}">
+            <option [ngValue]="null">Seleccione un período</option>
             <option *ngFor="let p of periodosAbiertos" [value]="p.id_periodo">
               {{ p.periodo }}
             </option>
           </select>
+          <div class="invalid-feedback" *ngIf="isInvalid('id_periodo')">
+            Debe seleccionar un período.
+          </div>
         </div>
         
         <div class="mb-3">
           <label class="form-label">Empleado:</label>
-          <select formControlName="id_empleado" class="form-select">
+          <select formControlName="id_empleado" class="form-select" [ngClass]="{'is-invalid': isInvalid('id_empleado')}">
+            <option [ngValue]="null">Seleccione un empleado</option>
             <option *ngFor="let e of empleadosActivos" [value]="e.id_empleado">
               {{ e.nombre_completo }}
             </option>
           </select>
+          <div class="invalid-feedback" *ngIf="isInvalid('id_empleado')">
+            Debe seleccionar un empleado.
+          </div>
         </div>
         
         <div class="mb-3">
           <label class="form-label">Concepto:</label>
-          <select formControlName="id_concepto" class="form-select">
+          <select formControlName="id_concepto" class="form-select" [ngClass]="{'is-invalid': isInvalid('id_concepto')}">
+            <option [ngValue]="null">Seleccione un concepto</option>
             <option *ngFor="let c of conceptosManuales" [value]="c.id_concepto">
               {{ c.concepto }}
             </option>
           </select>
+          <div class="invalid-feedback" *ngIf="isInvalid('id_concepto')">
+            Debe seleccionar un concepto.
+          </div>
         </div>
 
         <div class="mb-3">
           <label class="form-label">Monto:</label>
-          <input formControlName="monto" type="number" step="0.01" class="form-control" />
+          <input formControlName="monto" type="number" step="0.01" min="0.01" max="1000000" class="form-control"
+            (input)="onMontoInput($event)"
+            [ngClass]="{'is-invalid': isInvalid('monto')}" />
+          <div class="form-text">Debe ser mayor a 0.</div>
+          <div class="invalid-feedback" *ngIf="isInvalid('monto')">
+            Monto inválido.
+          </div>
         </div>
         
         <div class="mb-3">
           <label class="form-label">Descripción:</label>
-          <textarea formControlName="descripcion" class="form-control"></textarea>
+          <textarea formControlName="descripcion" class="form-control" maxlength="200"
+            [ngClass]="{'is-invalid': isInvalid('descripcion')}" rows="4"></textarea>
+          <div class="form-text">Mínimo 5 caracteres y máximo 200.</div>
+          <div class="invalid-feedback" *ngIf="isInvalid('descripcion')">
+            Descripción inválida.
+          </div>
         </div>
       </div>
       <div class="modal-footer">
-        <button type="submit" class="btn btn-success">{{ editing ? 'Actualizar' : 'Crear' }}</button>
+        <button type="submit" class="btn btn-success" [disabled]="movimientoForm.invalid">
+          {{ editing ? 'Actualizar' : 'Crear' }}
+        </button>
         <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Cancelar</button>
       </div>
     </form>

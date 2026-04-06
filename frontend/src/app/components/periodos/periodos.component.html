@@ -49,7 +49,7 @@
 <div class="card historial-card">
   <div class="card-header">Historial de Períodos</div>
   <div class="table-responsive">
-    <table class="table table-bordered align-middle tabla-periodos mb-0">
+    <table class="table table-striped table-hover table-bordered align-middle tabla-periodos mb-0">
       <thead class="encabezado-periodos">
         <tr>
           <th>ID Período</th>
@@ -59,6 +59,7 @@
           <th>Fecha Pago</th>
           <th>Empleados</th>
           <th>Estado</th>
+          <th>Acciones</th>
         </tr>
       </thead>
       <tbody>
@@ -73,6 +74,18 @@
             <span class="estado-badge" [ngClass]="p.estado === 'Abierto' ? 'activo' : (p.estado === 'Procesado' ? 'procesado' : 'inactivo')">
               {{ estadoLabels[p.estado] }}
             </span>
+          </td>
+          <td class="acciones-col">
+            <button
+              class="btn btn-sm me-2 btn-action btn-action-edit"
+              (click)="handleEditClick(p, content)">
+              <i class="bi bi-pencil-square"></i>
+            </button>
+            <button
+              class="btn btn-sm btn-action btn-action-delete"
+              (click)="handleDeleteClick(p)">
+              <i class="bi bi-trash"></i>
+            </button>
           </td>
         </tr>
       </tbody>

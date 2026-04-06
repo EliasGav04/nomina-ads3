@@ -30,7 +30,7 @@
           <td>{{ c.concepto }}</td>
           <td>{{ tipoLabels[c.tipo] }}</td>
           <td>{{ naturalezaLabels[c.naturaleza] }}</td>
-          <td>{{ c.valor_defecto }}</td>
+          <td>{{ c.valor_defecto | number:'1.2-2' }}</td>
 
           <td>
             <span class="badge-global"

@@ -1,5 +1,5 @@
 import { Component, OnInit, TemplateRef } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MovimientosService } from '../../services/movimientos.service';
 import { PeriodosService } from '../../services/periodos.service';
 import { EmpleadosService } from '../../services/empleados.service';
@@ -37,11 +37,11 @@ export class MovimientosComponent implements OnInit {
     private modalService: NgbModal
   ) {
     this.movimientoForm = this.fb.group({
-      id_periodo: [null],
-      id_empleado: [null],
-      id_concepto: [null],
-      monto: [0],
-      descripcion: [''],
+      id_periodo: [null, [Validators.required]],
+      id_empleado: [null, [Validators.required]],
+      id_concepto: [null, [Validators.required]],
+      monto: [0, [Validators.required, Validators.min(0.01), Validators.max(1000000)]],
+      descripcion: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(200)]],
       estado: ['Activo']
     });
   }
@@ -65,12 +65,22 @@ export class MovimientosComponent implements OnInit {
   openModal(content: TemplateRef<any>): void {
     this.editing = false;
     this.selectedId = null;
-    this.movimientoForm.reset({ monto: 0 });
+    this.movimientoForm.reset({ id_periodo: null, id_empleado: null, id_concepto: null, monto: 0, descripcion: '', estado: 'Activo' });
     this.modalRef = this.modalService.open(content, { backdrop: 'static' });
   }
 
   saveMovimiento(): void {
+    if (this.movimientoForm.invalid) {
+      this.movimientoForm.markAllAsTouched();
+      this.showToast('Complete correctamente todos los campos requeridos', 'bg-warning');
+      return;
+    }
+
     const data = { ...this.movimientoForm.value };
+    if (Number(data.monto) === 0) {
+      this.showToast('El monto debe ser diferente de 0', 'bg-warning');
+      return;
+    }
 
     if (this.editing && this.selectedId) {
       this.movimientosService.update(this.selectedId, data).subscribe({
@@ -79,7 +89,7 @@ export class MovimientosComponent implements OnInit {
           this.modalRef?.close();
           this.loadMovimientos();
         },
-        error: () => this.showToast('Error al actualizar movimiento', 'bg-danger')
+        error: (err) => this.showToast(err?.error?.error || 'Error al actualizar movimiento', 'bg-danger')
       });
     } else {
       this.movimientosService.create(data).subscribe({
@@ -88,18 +98,12 @@ export class MovimientosComponent implements OnInit {
           this.modalRef?.close();
           this.loadMovimientos();
         },
-        error: () => this.showToast('Error al crear movimiento', 'bg-danger')
+        error: (err) => this.showToast(err?.error?.error || 'Error al crear movimiento', 'bg-danger')
       });
     }
   }
 
   editMovimiento(movimiento: Movimiento, content: TemplateRef<any>): void {
-    // Validar estado del movimiento
-    if (movimiento.estado === 'Anulado') {
-      this.showToast('No es posible modificar un movimiento anulado', 'bg-primary');
-      return;
-    }
-  
     // Validar estado del período
     if (movimiento.Periodo?.estado !== 'Abierto') {
       this.showToast('No es posible modificar movimientos de periodos procesados o cerrados', 'bg-primary');
@@ -108,7 +112,14 @@ export class MovimientosComponent implements OnInit {
   
     this.editing = true;
     this.selectedId = movimiento.id_movimiento;
-    this.movimientoForm.patchValue(movimiento);
+    this.movimientoForm.patchValue({
+      id_periodo: movimiento.id_periodo,
+      id_empleado: movimiento.id_empleado,
+      id_concepto: movimiento.id_concepto,
+      monto: movimiento.monto,
+      descripcion: movimiento.descripcion,
+      estado: movimiento.estado
+    });
     this.modalRef = this.modalService.open(content, { backdrop: 'static' });
   }
 
@@ -139,5 +150,21 @@ export class MovimientosComponent implements OnInit {
     this.toastColor = color;
     this.toastVisible = true;
     setTimeout(() => this.toastVisible = false, 3000);
+  }
+
+  onMontoInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const normalized = input.value
+      .replace(/[^0-9.]/g, '')
+      .replace(/(\..*)\./g, '$1');
+    if (normalized !== input.value) {
+      input.value = normalized;
+      this.movimientoForm.get('monto')?.setValue(normalized, { emitEvent: false });
+    }
+  }
+
+  isInvalid(controlName: string): boolean {
+    const control = this.movimientoForm.get(controlName);
+    return !!control && control.invalid && (control.touched || control.dirty);
   }
 }
