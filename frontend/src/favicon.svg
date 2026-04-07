@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Nómina">
+  <!-- Icono temático: planilla / hoja de cálculo + marca verde RRHH (Bootstrap success del proyecto) -->
+  <defs>
+    <linearGradient id="nomina-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1aa059"/>
+      <stop offset="100%" stop-color="#146c43"/>
+    </linearGradient>
+  </defs>
+  <rect width="32" height="32" rx="8" fill="url(#nomina-bg)"/>
+  <!-- Adaptado de Bootstrap Icons file-earmark-spreadsheet-fill (MIT) -->
+  <g transform="translate(4.5 4) scale(1.4375)" fill="#ffffff">
+    <path d="M6 12v-2h3v2z"/>
+    <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M3 9h10v1h-3v2h3v1h-3v2H9v-2H6v2H5v-2H3v-1h2v-2H3z"/>
+  </g>
+  <!-- Acento naranja (#ff9b00 de acciones en tablas) = pago / importe -->
+  <rect x="22" y="22" width="7" height="3" rx="1" fill="#ff9b00"/>
+</svg>
