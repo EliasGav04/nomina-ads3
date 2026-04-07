@@ -83,8 +83,9 @@ exports.getBoleta = async (req, res) => {
       else deducciones.push(row);
     }
 
-    const salarioBase = parseFloat(empleado.salario_base) || 0;
+    const salarioBrutoHistorico = parseFloat(registro.salario_bruto) || 0;
     const totalIngresosExtra = ingresosDetalles.reduce((acc, it) => acc + it.monto, 0);
+    const salarioBaseHistorico = Math.max(salarioBrutoHistorico - totalIngresosExtra, 0);
 
     res.json({
       empresa: empresa
@@ -119,13 +120,13 @@ exports.getBoleta = async (req, res) => {
         estado: periodo.estado
       },
       ingresos: [
-        { concepto: 'Salario base', naturaleza: 'base', monto: salarioBase },
+        { concepto: 'Salario base', naturaleza: 'base', monto: salarioBaseHistorico },
         ...ingresosDetalles
       ],
       deducciones,
       resumen: {
-        salario_base: salarioBase,
-        total_ingresos: salarioBase + totalIngresosExtra,
+        salario_base: salarioBaseHistorico,
+        total_ingresos: salarioBaseHistorico + totalIngresosExtra,
         total_deducciones: parseFloat(registro.total_deducciones) || 0,
         salario_neto: parseFloat(registro.salario_neto) || 0
       }

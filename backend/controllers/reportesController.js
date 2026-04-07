@@ -1,6 +1,6 @@
 'use strict';
 
-const { Area, Empleado, NominaRegistro, Periodo, Infoempresa } = require('../models');
+const { Area, Empleado, NominaRegistro, NominaDetalle, Concepto, Periodo, Infoempresa } = require('../models');
 const { Op } = require('sequelize');
 
 const n = (v) => {
@@ -92,12 +92,17 @@ exports.generar = async (req, res) => {
           model: Empleado,
           where: whereEmpleado,
           include: [{ model: Area, attributes: ['id_area', 'area'] }],
-          attributes: ['id_empleado', 'nombre_completo', 'salario_base', 'id_area']
+          attributes: ['id_empleado', 'nombre_completo', 'id_area']
         },
         {
           model: Periodo,
           where: wherePeriodo,
           attributes: ['id_periodo', 'periodo', 'fecha_inicio']
+        },
+        {
+          model: NominaDetalle,
+          include: [{ model: Concepto, attributes: ['id_concepto', 'tipo'] }],
+          attributes: ['id_detalle', 'id_concepto', 'monto']
         }
       ],
       order: [['id_registro', 'ASC']]
@@ -108,9 +113,13 @@ exports.generar = async (req, res) => {
     const empresa = await Infoempresa.findByPk(1);
 
     const baseRows = registros.map((r) => {
-      const salarioBase = n(r.Empleado?.salario_base);
       const salarioBruto = n(r.salario_bruto);
-      const ingresos = Math.max(salarioBruto - salarioBase, 0);
+      const totalIngresosExtra = (r.NominaDetalles || []).reduce((acc, d) => {
+        if (!d?.Concepto || d.Concepto.tipo !== 'ingreso') return acc;
+        return acc + n(d.monto);
+      }, 0);
+      const salarioBase = Math.max(salarioBruto - totalIngresosExtra, 0);
+      const ingresos = totalIngresosExtra;
       const deducciones = n(r.total_deducciones);
       const neto = n(r.salario_neto);
 
