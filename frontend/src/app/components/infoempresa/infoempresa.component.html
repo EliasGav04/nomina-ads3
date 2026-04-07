@@ -108,6 +108,17 @@
                 Sitio web inválido.
               </div>
             </div>
+
+            <div class="col-12 col-md-6">
+              <label class="form-label">Tope Seguro Social Empleado</label>
+              <input formControlName="tope_segurosocial_empleado" type="number" class="form-control"
+                step="0.01" min="0.01" max="1000000"
+                (input)="onTopeSeguroSocialInput($event)"
+                [ngClass]="{'is-invalid': isInvalid('tope_segurosocial_empleado')}" />
+              <div class="invalid-feedback" *ngIf="isInvalid('tope_segurosocial_empleado')">
+                Tope de seguro social inválido. Debe ser mayor a 0 y menor o igual a 1,000,000.
+              </div>
+            </div>
           </div>
         </div>
 

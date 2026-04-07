@@ -16,6 +16,7 @@ module.exports = {
         correo: 'rrhh@dlc.hn',
         sitio_web: 'https://www.dlc.hn',
         codigo_moneda: 'HNL',
+        tope_segurosocial_empleado: 11903.13,
         logo: null,
         logo_mime: null,
         createdAt: now,

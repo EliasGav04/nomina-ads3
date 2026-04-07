@@ -38,6 +38,7 @@ function validateEmpresaPayload(payload) {
   const correo = sanitize(payload.correo);
   const sitio_web = sanitize(payload.sitio_web);
   const codigo_moneda = sanitize(payload.codigo_moneda).toUpperCase() || 'HNL';
+  const topeSeguroSocial = Number(payload.tope_segurosocial_empleado);
 
   if (!nombre || nombre.length < 3 || nombre.length > 100 || !namePattern.test(nombre)) {
     return { ok: false, error: 'Nombre inválido. Debe tener entre 3 y 100 caracteres.' };
@@ -63,6 +64,9 @@ function validateEmpresaPayload(payload) {
   if (!monedaPattern.test(codigo_moneda)) {
     return { ok: false, error: 'Código de moneda inválido. Debe usar formato ISO de 3 letras (ej: HNL, USD, GTQ).' };
   }
+  if (!Number.isFinite(topeSeguroSocial) || topeSeguroSocial <= 0 || topeSeguroSocial > 1000000) {
+    return { ok: false, error: 'Tope de seguro social empleado inválido. Debe ser mayor a 0 y menor o igual a 1,000,000.' };
+  }
 
   return {
     ok: true,
@@ -74,7 +78,8 @@ function validateEmpresaPayload(payload) {
       telefono,
       correo,
       sitio_web: sitio_web || null,
-      codigo_moneda
+      codigo_moneda,
+      tope_segurosocial_empleado: Number(topeSeguroSocial.toFixed(2))
     }
   };
 }

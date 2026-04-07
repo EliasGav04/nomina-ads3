@@ -25,6 +25,7 @@ export interface Infoempresa {
   correo: string;
   sitio_web: string;
   codigo_moneda: string;
+  tope_segurosocial_empleado: number;
   logo?: Blob;     
   logo_mime?: string;
   logoBase64?: string;

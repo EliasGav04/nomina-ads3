@@ -4,6 +4,12 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     const round2 = (n) => Number((Number(n) || 0).toFixed(2));
+    const [empresaRows] = await queryInterface.sequelize.query(
+      'SELECT tope_segurosocial_empleado FROM infoempresa WHERE id_empresa = 1 LIMIT 1'
+    );
+    const topeSeguroSocialEmpleado = Number(
+      empresaRows?.[0]?.tope_segurosocial_empleado ?? 11903.13
+    );
 
     const salariosBase = {
       1: 18500, 2: 24000, 3: 21000, 4: 28500, 5: 36000,
@@ -67,7 +73,7 @@ module.exports = {
         };
 
         const detalleDeduccion = {
-          5: round2(salario * 0.025),
+          5: round2(Math.min(salario, topeSeguroSocialEmpleado) * 0.05),
           6: round2(salario * 0.015),
           8: round2(prestamoPersonal[idEmpleado] || 0),
           12: round2(aporteCooperativa[idEmpleado] || 0),
