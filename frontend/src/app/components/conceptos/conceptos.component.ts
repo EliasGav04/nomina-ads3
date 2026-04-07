@@ -49,11 +49,16 @@ export class ConceptosComponent implements OnInit {
       tipo: ['ingreso', [Validators.required]],
       naturaleza: ['fijo', [Validators.required]],
       valor_defecto: [0, [Validators.required, Validators.min(0), Validators.max(1000000)]],
+      aplica_tope: [false],
+      tope_monto: [null],
       es_global: [false],
       estado: ['Activo']
     });
 
     this.conceptoForm.get('naturaleza')?.valueChanges.subscribe(() => this.applyValorValidators());
+    this.conceptoForm.get('tipo')?.valueChanges.subscribe(() => this.applyTopeValidators());
+    this.conceptoForm.get('naturaleza')?.valueChanges.subscribe(() => this.applyTopeValidators());
+    this.conceptoForm.get('aplica_tope')?.valueChanges.subscribe(() => this.applyTopeValidators());
   }
 
   get currencySymbol(): string {
@@ -95,8 +100,9 @@ export class ConceptosComponent implements OnInit {
   openModal(content: TemplateRef<any>): void {
     this.editing = false;
     this.selectedId = null;
-    this.conceptoForm.reset({ tipo: 'ingreso', naturaleza: 'fijo', valor_defecto: 0, es_global: false, estado: 'Activo' });
+    this.conceptoForm.reset({ tipo: 'ingreso', naturaleza: 'fijo', valor_defecto: 0, aplica_tope: false, tope_monto: null, es_global: false, estado: 'Activo' });
     this.applyValorValidators();
+    this.applyTopeValidators();
     this.modalRef = this.modalService.open(content, { backdrop: 'static' });
   }
 
@@ -133,8 +139,13 @@ export class ConceptosComponent implements OnInit {
   editConcepto(concepto: Concepto, content: TemplateRef<any>): void {
     this.editing = true;
     this.selectedId = concepto.id_concepto;
-    this.conceptoForm.patchValue(concepto);
+    this.conceptoForm.patchValue({
+      ...concepto,
+      aplica_tope: !!concepto.aplica_tope,
+      tope_monto: concepto.tope_monto
+    });
     this.applyValorValidators();
+    this.applyTopeValidators();
     this.modalRef = this.modalService.open(content, { backdrop: 'static' });
   }
 
@@ -157,6 +168,14 @@ export class ConceptosComponent implements OnInit {
 
   get isPorcentaje(): boolean {
     return this.conceptoForm.get('naturaleza')?.value === 'porcentaje';
+  }
+
+  get isDeduccion(): boolean {
+    return this.conceptoForm.get('tipo')?.value === 'deduccion';
+  }
+
+  get canUseTope(): boolean {
+    return this.isDeduccion && this.isPorcentaje;
   }
 
   onConceptoInput(event: Event): void {
@@ -193,6 +212,17 @@ export class ConceptosComponent implements OnInit {
     }
   }
 
+  onTopeMontoInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const normalized = input.value
+      .replace(/[^0-9.]/g, '')
+      .replace(/(\..*)\./g, '$1');
+    if (normalized !== input.value) {
+      input.value = normalized;
+      this.conceptoForm.get('tope_monto')?.setValue(normalized, { emitEvent: false });
+    }
+  }
+
   isInvalid(controlName: string): boolean {
     const control = this.conceptoForm.get(controlName);
     return !!control && control.invalid && (control.touched || control.dirty);
@@ -217,5 +247,35 @@ export class ConceptosComponent implements OnInit {
       ]);
     }
     valorControl.updateValueAndValidity({ emitEvent: false });
+  }
+
+  private applyTopeValidators(): void {
+    const aplicaTopeControl = this.conceptoForm.get('aplica_tope');
+    const topeControl = this.conceptoForm.get('tope_monto');
+    if (!aplicaTopeControl || !topeControl) return;
+
+    if (!this.canUseTope) {
+      if (aplicaTopeControl.value) {
+        aplicaTopeControl.setValue(false, { emitEvent: false });
+      }
+      topeControl.setValue(null, { emitEvent: false });
+      topeControl.clearValidators();
+      topeControl.updateValueAndValidity({ emitEvent: false });
+      return;
+    }
+
+    const aplicaTope = !!aplicaTopeControl.value;
+    if (aplicaTope) {
+      topeControl.setValidators([
+        Validators.required,
+        Validators.min(0.01),
+        Validators.max(1000000)
+      ]);
+    } else {
+      topeControl.setValue(null, { emitEvent: false });
+      topeControl.clearValidators();
+    }
+
+    topeControl.updateValueAndValidity({ emitEvent: false });
   }
 }

@@ -25,7 +25,6 @@ export interface Infoempresa {
   correo: string;
   sitio_web: string;
   codigo_moneda: string;
-  tope_segurosocial_empleado: number;
   logo?: Blob;     
   logo_mime?: string;
   logoBase64?: string;
@@ -47,6 +46,8 @@ export interface Concepto {
   tipo: 'ingreso' | 'deduccion';
   naturaleza: 'fijo' | 'porcentaje' | 'manual';
   valor_defecto: number;
+  aplica_tope: boolean;
+  tope_monto: number | null;
   es_global: boolean;
   estado: string;
   createdAt: string;

@@ -57,6 +57,7 @@
           <th>Tipo</th>
           <th>Naturaleza</th>
           <th>Valor defecto</th>
+          <th>Regla de Tope</th>
           <th>Global</th>
           <th>Estado</th>
           <th>Acciones</th>
@@ -76,6 +77,12 @@
             <ng-template #valorMoneda>
               {{ currencySymbol }} {{ c.valor_defecto | number:'1.2-2' }}
             </ng-template>
+          </td>
+          <td>
+            <ng-container *ngIf="c.aplica_tope && c.tope_monto !== null; else sinTope">
+              Tope: {{ currencySymbol }} {{ c.tope_monto | number:'1.2-2' }}
+            </ng-container>
+            <ng-template #sinTope>No aplica</ng-template>
           </td>
 
           <td>
@@ -107,7 +114,7 @@
 
         </tr>
         <tr *ngIf="conceptosFiltrados.length === 0">
-          <td colspan="8" class="text-center text-muted">No hay resultados para los filtros aplicados.</td>
+          <td colspan="9" class="text-center text-muted">No hay resultados para los filtros aplicados.</td>
         </tr>
       </tbody>
 
@@ -176,6 +183,29 @@
           <div class="form-text" *ngIf="!isPorcentaje">Rango permitido: 0 a 1,000,000.</div>
           <div class="invalid-feedback d-block" *ngIf="isInvalid('valor_defecto')">
             {{ isPorcentaje ? 'Valor inválido. Debe estar entre 0 y 100 con máximo 2 decimales.' : 'Valor inválido. Debe estar entre 0 y 1,000,000.' }}
+          </div>
+        </div>
+
+        <div class="mb-3 form-check">
+          <input formControlName="aplica_tope" type="checkbox" class="form-check-input" id="topeCheck" [disabled]="!canUseTope" />
+          <label class="form-check-label" for="topeCheck">Aplicar tope al cálculo</label>
+          <div class="form-text" *ngIf="!canUseTope">Disponible solo para deducción + porcentaje.</div>
+        </div>
+
+        <div class="mb-3" *ngIf="canUseTope && conceptoForm.get('aplica_tope')?.value">
+          <label class="form-label">Tope máximo</label>
+          <input
+            formControlName="tope_monto"
+            type="number"
+            class="form-control"
+            step="0.01"
+            min="0.01"
+            max="1000000"
+            (input)="onTopeMontoInput($event)"
+            [ngClass]="{'is-invalid': isInvalid('tope_monto')}"
+          />
+          <div class="invalid-feedback d-block" *ngIf="isInvalid('tope_monto')">
+            Tope inválido. Debe ser mayor a 0 y menor o igual a 1,000,000.
           </div>
         </div>
   

@@ -51,8 +51,7 @@ export class InfoempresaComponent implements OnInit {
       telefono: ['', [Validators.required, Validators.pattern(this.telefonoPattern)]],
       correo: ['', [Validators.required, Validators.maxLength(150), Validators.pattern(this.emailPattern)]],
       sitio_web: ['', [Validators.maxLength(150), Validators.pattern(this.webPattern)]],
-      codigo_moneda: ['HNL', [Validators.required, Validators.pattern(this.currencyPattern)]],
-      tope_segurosocial_empleado: [11903.13, [Validators.required, Validators.min(0.01), Validators.max(1000000)]]
+      codigo_moneda: ['HNL', [Validators.required, Validators.pattern(this.currencyPattern)]]
     });
   }
 
@@ -66,8 +65,7 @@ export class InfoempresaComponent implements OnInit {
         this.empresa = data;
         this.empresaForm.patchValue({
           ...data,
-          codigo_moneda: data.codigo_moneda || 'HNL',
-          tope_segurosocial_empleado: Number(data.tope_segurosocial_empleado || 11903.13)
+          codigo_moneda: data.codigo_moneda || 'HNL'
         });
         this.currencyConfig.setCurrencyCode(data.codigo_moneda || 'HNL');
   
@@ -139,17 +137,6 @@ export class InfoempresaComponent implements OnInit {
     if (digits !== input.value) {
       input.value = digits;
       this.empresaForm.get('rtn')?.setValue(digits, { emitEvent: false });
-    }
-  }
-
-  onTopeSeguroSocialInput(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const normalized = input.value
-      .replace(/[^0-9.]/g, '')
-      .replace(/(\..*)\./g, '$1');
-    if (normalized !== input.value) {
-      input.value = normalized;
-      this.empresaForm.get('tope_segurosocial_empleado')?.setValue(normalized, { emitEvent: false });
     }
   }
 

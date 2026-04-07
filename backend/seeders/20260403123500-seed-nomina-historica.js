@@ -4,12 +4,23 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     const round2 = (n) => Number((Number(n) || 0).toFixed(2));
-    const [empresaRows] = await queryInterface.sequelize.query(
-      'SELECT tope_segurosocial_empleado FROM infoempresa WHERE id_empresa = 1 LIMIT 1'
-    );
-    const topeSeguroSocialEmpleado = Number(
-      empresaRows?.[0]?.tope_segurosocial_empleado ?? 11903.13
-    );
+    const [seguroSocialRows] = await queryInterface.sequelize.query(`
+      SELECT valor_defecto, aplica_tope, tope_monto
+      FROM conceptos
+      WHERE id_concepto = 5
+      LIMIT 1
+    `);
+    const conceptoSeguroSocial = seguroSocialRows?.[0];
+    const porcentajeSeguroSocial = Number(conceptoSeguroSocial?.valor_defecto);
+    const aplicaTopeSeguroSocial = Boolean(conceptoSeguroSocial?.aplica_tope);
+    const topeSeguroSocial = Number(conceptoSeguroSocial?.tope_monto);
+
+    if (!Number.isFinite(porcentajeSeguroSocial) || porcentajeSeguroSocial < 0) {
+      throw new Error('El porcentaje del concepto de seguro social empleado es inválido.');
+    }
+    if (aplicaTopeSeguroSocial && (!Number.isFinite(topeSeguroSocial) || topeSeguroSocial <= 0)) {
+      throw new Error('El tope del concepto de seguro social empleado es inválido.');
+    }
 
     const salariosBase = {
       1: 18500, 2: 24000, 3: 21000, 4: 28500, 5: 36000,
@@ -73,7 +84,7 @@ module.exports = {
         };
 
         const detalleDeduccion = {
-          5: round2(Math.min(salario, topeSeguroSocialEmpleado) * 0.05),
+          5: round2((aplicaTopeSeguroSocial ? Math.min(salario, topeSeguroSocial) : salario) * (porcentajeSeguroSocial / 100)),
           6: round2(salario * 0.015),
           8: round2(prestamoPersonal[idEmpleado] || 0),
           12: round2(aporteCooperativa[idEmpleado] || 0),

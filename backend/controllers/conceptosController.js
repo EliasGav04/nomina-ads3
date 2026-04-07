@@ -17,6 +17,9 @@ function validarPayload(payload) {
   const tipo = sanitize(payload.tipo);
   const naturaleza = sanitize(payload.naturaleza);
   const valor = toNumber(payload.valor_defecto);
+  const aplicaTope = payload.aplica_tope === true || payload.aplica_tope === 'true' || payload.aplica_tope === 1 || payload.aplica_tope === '1';
+  const topeMontoRaw = payload.tope_monto;
+  const topeMonto = topeMontoRaw === null || topeMontoRaw === undefined || topeMontoRaw === '' ? null : toNumber(topeMontoRaw);
 
   if (!nombre || typeof nombre !== 'string') {
     return { ok: false, error: 'El nombre del concepto es obligatorio' };
@@ -42,6 +45,15 @@ function validarPayload(payload) {
     return { ok: false, error: 'El valor por defecto debe estar entre 0 y 1,000,000' };
   }
 
+  if (aplicaTope) {
+    if (!(tipo === 'deduccion' && naturaleza === 'porcentaje')) {
+      return { ok: false, error: 'El tope solo puede aplicarse a conceptos de tipo deducción y naturaleza porcentaje.' };
+    }
+    if (topeMonto === null || Number.isNaN(topeMonto) || topeMonto <= 0 || topeMonto > 1000000) {
+      return { ok: false, error: 'Tope inválido. Debe ser mayor a 0 y menor o igual a 1,000,000.' };
+    }
+  }
+
   return {
     ok: true,
     data: {
@@ -49,6 +61,8 @@ function validarPayload(payload) {
       tipo,
       naturaleza,
       valor_defecto: valor,
+      aplica_tope: aplicaTope,
+      tope_monto: aplicaTope ? topeMonto : null,
       es_global: !!payload.es_global,
       estado: sanitize(payload.estado) || 'Activo'
     }

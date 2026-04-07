@@ -14,7 +14,6 @@ module.exports = {
       correo: Sequelize.STRING(150),
       sitio_web: Sequelize.STRING(150),
       codigo_moneda: { type: Sequelize.STRING(3), defaultValue: 'HNL' },
-      tope_segurosocial_empleado: { type: Sequelize.DECIMAL(10,2), defaultValue: 11903.13 },
       logo: Sequelize.BLOB('medium'),
       logo_mime: Sequelize.STRING(50),
       createdAt: Sequelize.DATE,

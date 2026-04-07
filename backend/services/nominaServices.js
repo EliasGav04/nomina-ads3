@@ -1,6 +1,6 @@
 // services/nominaServices.js
 const { Op } = require('sequelize');
-const { sequelize, Periodo, Empleado, Concepto, EmpleadoConcepto, Movimiento, NominaRegistro, NominaDetalle, Infoempresa } = require('../models');
+const { sequelize, Periodo, Empleado, Concepto, EmpleadoConcepto, Movimiento, NominaRegistro, NominaDetalle } = require('../models');
 
 function salarioBaseNumerico(empleado) {
   const n = parseFloat(empleado.salario_base);
@@ -28,16 +28,8 @@ function validarMontoCalculado(monto, empleado, concepto, origen) {
 /**
  * Función para calcular monto según naturaleza del concepto
  */
-function isIhssEmpleadoConcept(concepto) {
-  const nombre = String(concepto?.concepto || '').toLowerCase();
-  return concepto?.tipo === 'deduccion' && nombre.includes('ihss') && nombre.includes('empleado');
-}
-
-function calcularMonto(concepto, empleado, asignacion = null, options = {}) {
+function calcularMonto(concepto, empleado, asignacion = null) {
   const base = salarioBaseNumerico(empleado);
-  const topeSeguroSocialEmpleado = Number.isFinite(options?.topeSeguroSocialEmpleado)
-    ? Number(options.topeSeguroSocialEmpleado)
-    : 11903.13;
 
   switch (concepto.naturaleza) {
     case 'fijo':
@@ -45,7 +37,11 @@ function calcularMonto(concepto, empleado, asignacion = null, options = {}) {
 
     case 'porcentaje': {
       const porcentaje = asignacion ? parseFloat(asignacion.valor) : parseFloat(concepto.valor_defecto);
-      const baseCalculo = isIhssEmpleadoConcept(concepto) ? Math.min(base, topeSeguroSocialEmpleado) : base;
+      const aplicaTope = Boolean(concepto?.aplica_tope);
+      const topeMonto = Number(concepto?.tope_monto);
+      const baseCalculo = aplicaTope && Number.isFinite(topeMonto) && topeMonto > 0
+        ? Math.min(base, topeMonto)
+        : base;
       return (baseCalculo * porcentaje) / 100;
     }
 
@@ -77,18 +73,6 @@ async function ejecutarNomina(periodoId) {
     if (registrosExistentes > 0) {
       throw new Error('El período ya tiene registros de nómina y no puede reprocesarse.');
     }
-
-    const empresa = await Infoempresa.findByPk(1, {
-      attributes: ['tope_segurosocial_empleado'],
-      transaction: t
-    });
-    const topeSeguroSocialEmpleado = Number(empresa?.tope_segurosocial_empleado);
-    const configNomina = {
-      topeSeguroSocialEmpleado:
-        Number.isFinite(topeSeguroSocialEmpleado) && topeSeguroSocialEmpleado > 0
-          ? topeSeguroSocialEmpleado
-          : 11903.13
-    };
 
     const empleados = await Empleado.findAll({ where: { estado: 'Activo' }, transaction: t });
     if (!empleados.length) {
@@ -142,7 +126,7 @@ async function ejecutarNomina(periodoId) {
 
       // Procesar asignaciones
       for (const asignacion of asignaciones) {
-        const montoCalculado = calcularMonto(asignacion.Concepto, empleado, asignacion, configNomina);
+        const montoCalculado = calcularMonto(asignacion.Concepto, empleado, asignacion);
         const monto = validarMontoCalculado(montoCalculado, empleado, asignacion.Concepto, 'asignación');
         if (monto <= 0) continue;
         detalles.push({ id_concepto: asignacion.id_concepto, monto });
@@ -152,7 +136,7 @@ async function ejecutarNomina(periodoId) {
 
       // Procesar globales
       for (const concepto of conceptosGlobales) {
-        const montoCalculado = calcularMonto(concepto, empleado, null, configNomina);
+        const montoCalculado = calcularMonto(concepto, empleado, null);
         const monto = validarMontoCalculado(montoCalculado, empleado, concepto, 'concepto global');
         if (monto <= 0) continue;
         detalles.push({ id_concepto: concepto.id_concepto, monto });

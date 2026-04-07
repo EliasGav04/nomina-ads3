@@ -14,6 +14,8 @@ module.exports = (sequelize, DataTypes) => {
     tipo: DataTypes.ENUM('ingreso','deduccion'),
     naturaleza: DataTypes.ENUM('fijo','porcentaje','manual'),
     valor_defecto: DataTypes.DECIMAL(10,2),
+    aplica_tope: DataTypes.BOOLEAN,
+    tope_monto: DataTypes.DECIMAL(12,2),
     es_global: DataTypes.BOOLEAN,
     estado: DataTypes.STRING(20)
   }, {
