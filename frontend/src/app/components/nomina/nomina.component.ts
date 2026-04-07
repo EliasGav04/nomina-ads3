@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef } from '@angular/core';
 import { Area, Empleado, Periodo } from '../../interfaces/interface';
 import { AreasService } from '../../services/areas.service';
 import { EstadoNomina, NominaService } from '../../services/nomina.service';
 import { CurrencyConfigService } from '../../services/currency-config.service';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-nomina',
@@ -19,6 +20,9 @@ export class NominaComponent implements OnInit {
   detallePeriodo: Periodo | null = null;
   totalEmpleados = 0;
   ejecutando = false;
+  private modalRef: NgbModalRef | null = null;
+  modalTitle = '';
+  modalMessage = '';
 
   estadoNomina: EstadoNomina = {
     estado: 'Pendiente de Cálculo',
@@ -31,7 +35,8 @@ export class NominaComponent implements OnInit {
   constructor(
     private nominaService: NominaService,
     private areasService: AreasService,
-    private currencyConfig: CurrencyConfigService
+    private currencyConfig: CurrencyConfigService,
+    private modalService: NgbModal
   ) {}
 
   get currencySymbol(): string {
@@ -118,28 +123,48 @@ export class NominaComponent implements OnInit {
     });
   }
 
-  ejecutarNomina(): void {
+  ejecutarNomina(confirmTemplate: TemplateRef<any>, messageTemplate: TemplateRef<any>): void {
     if (!this.periodoSeleccionadoId) {
-      alert('Seleccione un período abierto para ejecutar nómina.');
+      this.showMessageModal(messageTemplate, 'Información', 'Seleccione un período abierto para ejecutar nómina.');
       return;
     }
     if (this.ejecutando) {
-      alert('Ya hay una ejecución en curso. Espere a que finalice.');
+      this.showMessageModal(messageTemplate, 'Información', 'Ya hay una ejecución en curso. Espere a que finalice.');
       return;
     }
-    if (!confirm('¿Desea ejecutar la nómina para el período seleccionado?')) return;
+
+    this.modalRef = this.modalService.open(confirmTemplate, { backdrop: 'static' });
+  }
+
+  confirmarEjecucion(messageTemplate: TemplateRef<any>): void {
+    if (!this.periodoSeleccionadoId || this.ejecutando) {
+      this.modalRef?.close();
+      return;
+    }
+    this.modalRef?.close();
 
     this.ejecutando = true;
     this.nominaService.ejecutarNomina(this.periodoSeleccionadoId).subscribe({
       next: (r) => {
-        alert(r.message);
+        const message = r?.message || 'La nómina se ejecutó correctamente.';
+        this.showMessageModal(messageTemplate, 'Proceso completado', message);
         this.ejecutando = false;
         this.cargarPeriodosAbiertos();
       },
       error: (err) => {
-        alert(err.error?.error || 'Error al ejecutar nómina');
+        this.showMessageModal(
+          messageTemplate,
+          'Error',
+          err?.error?.error || 'Error al ejecutar nómina'
+        );
         this.ejecutando = false;
       }
     });
+  }
+
+  private showMessageModal(template: TemplateRef<any>, title: string, message: string): void {
+    this.modalTitle = title;
+    this.modalMessage = message;
+    this.modalRef = this.modalService.open(template, { backdrop: 'static' });
   }
 }

@@ -45,6 +45,8 @@ export interface Concepto {
   concepto: string;
   tipo: 'ingreso' | 'deduccion';
   naturaleza: 'fijo' | 'porcentaje' | 'manual';
+  regla_calculo: 'normal' | 'tramos';
+  tramos_json: string | null;
   valor_defecto: number;
   aplica_tope: boolean;
   tope_monto: number | null;

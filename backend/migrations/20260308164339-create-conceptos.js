@@ -9,6 +9,8 @@ module.exports = {
       concepto: Sequelize.STRING(100),
       tipo: Sequelize.ENUM('ingreso','deduccion'),
       naturaleza: Sequelize.ENUM('fijo','porcentaje','manual'),
+      regla_calculo: { type: Sequelize.STRING(20), allowNull: false, defaultValue: 'normal' },
+      tramos_json: { type: Sequelize.TEXT('long'), allowNull: true },
       valor_defecto: Sequelize.DECIMAL(10,2),
       aplica_tope: { type: Sequelize.BOOLEAN, allowNull: false, defaultValue: false },
       tope_monto: { type: Sequelize.DECIMAL(12,2), allowNull: true },

@@ -13,6 +13,8 @@ module.exports = (sequelize, DataTypes) => {
     concepto: DataTypes.STRING(100),
     tipo: DataTypes.ENUM('ingreso','deduccion'),
     naturaleza: DataTypes.ENUM('fijo','porcentaje','manual'),
+    regla_calculo: DataTypes.STRING(20),
+    tramos_json: DataTypes.TEXT('long'),
     valor_defecto: DataTypes.DECIMAL(10,2),
     aplica_tope: DataTypes.BOOLEAN,
     tope_monto: DataTypes.DECIMAL(12,2),

@@ -2,13 +2,14 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { SessionExpirationModalService } from './session-expiration-modal.service';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  private apiUrl = 'http://localhost:4000/api/auth'; 
+  private apiUrl = `${environment.apiUrl}/auth`;
   private tokenKey = 'authToken';
   private logoutTimer: any = null;
 

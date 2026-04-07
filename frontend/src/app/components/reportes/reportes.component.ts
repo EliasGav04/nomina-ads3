@@ -310,16 +310,16 @@ export class ReportesComponent implements OnInit {
     rows.forEach(row => {
       aoa.push(
         row.map((cell, idx) => {
-          if (typeof cell === 'number' && idx >= headers.length - 4) return this.formatMoney(cell);
+          if (typeof cell === 'number' && idx >= headers.length - 4) return Number(cell);
           return cell;
         })
       );
     });
     aoa.push([]);
-    aoa.push(['Total Salario Base', this.formatMoney(Number(r.resumen.salario_base || 0))]);
-    aoa.push(['Total Ingresos', this.formatMoney(Number(r.resumen.ingresos || 0))]);
-    aoa.push(['Total Deducciones', this.formatMoney(Number(r.resumen.deducciones || 0))]);
-    aoa.push(['Total Neto', this.formatMoney(Number(r.resumen.neto || 0))]);
+    aoa.push(['Total Salario Base', Number(r.resumen.salario_base || 0)]);
+    aoa.push(['Total Ingresos', Number(r.resumen.ingresos || 0)]);
+    aoa.push(['Total Deducciones', Number(r.resumen.deducciones || 0)]);
+    aoa.push(['Total Neto', Number(r.resumen.neto || 0)]);
 
     const ws = XLSX.utils.aoa_to_sheet(aoa);
     ws['!cols'] = headers.map((h, idx) => ({ wch: idx === 1 ? 28 : 16 }));

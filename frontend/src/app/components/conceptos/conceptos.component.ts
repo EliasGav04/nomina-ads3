@@ -5,6 +5,8 @@ import { Concepto } from '../../interfaces/interface';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { CurrencyConfigService } from '../../services/currency-config.service';
 
+type TramoIsr = { desde: string; hasta: string; tasa: string };
+
 @Component({
   selector: 'app-conceptos',
   templateUrl: './conceptos.component.html',
@@ -37,6 +39,7 @@ export class ConceptosComponent implements OnInit {
     porcentaje: 'Porcentaje',
     manual: 'Manual'
   };
+  tramosIsr: TramoIsr[] = [];
 
   constructor(
     private conceptosService: ConceptosService,
@@ -48,9 +51,11 @@ export class ConceptosComponent implements OnInit {
       concepto: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100), Validators.pattern(this.conceptoPattern)]],
       tipo: ['ingreso', [Validators.required]],
       naturaleza: ['fijo', [Validators.required]],
+      regla_calculo: ['normal', [Validators.required]],
       valor_defecto: [0, [Validators.required, Validators.min(0), Validators.max(1000000)]],
       aplica_tope: [false],
       tope_monto: [null],
+      tramos_json: [null],
       es_global: [false],
       estado: ['Activo']
     });
@@ -59,6 +64,7 @@ export class ConceptosComponent implements OnInit {
     this.conceptoForm.get('tipo')?.valueChanges.subscribe(() => this.applyTopeValidators());
     this.conceptoForm.get('naturaleza')?.valueChanges.subscribe(() => this.applyTopeValidators());
     this.conceptoForm.get('aplica_tope')?.valueChanges.subscribe(() => this.applyTopeValidators());
+    this.conceptoForm.get('regla_calculo')?.valueChanges.subscribe(() => this.applyReglaCalculoValidators());
   }
 
   get currencySymbol(): string {
@@ -100,9 +106,11 @@ export class ConceptosComponent implements OnInit {
   openModal(content: TemplateRef<any>): void {
     this.editing = false;
     this.selectedId = null;
-    this.conceptoForm.reset({ tipo: 'ingreso', naturaleza: 'fijo', valor_defecto: 0, aplica_tope: false, tope_monto: null, es_global: false, estado: 'Activo' });
+    this.conceptoForm.reset({ tipo: 'ingreso', naturaleza: 'fijo', regla_calculo: 'normal', valor_defecto: 0, aplica_tope: false, tope_monto: null, tramos_json: null, es_global: false, estado: 'Activo' });
+    this.tramosIsr = [];
     this.applyValorValidators();
     this.applyTopeValidators();
+    this.applyReglaCalculoValidators();
     this.modalRef = this.modalService.open(content, { backdrop: 'static' });
   }
 
@@ -113,7 +121,21 @@ export class ConceptosComponent implements OnInit {
       return;
     }
 
-    const data = { ...this.conceptoForm.value, estado: 'Activo' };
+    const raw = this.conceptoForm.getRawValue();
+    const data: any = { ...raw, estado: 'Activo' };
+    if (this.isTramosRule) {
+      const tramosNormalizados = this.validarYConstruirTramos();
+      if (!tramosNormalizados) {
+        return;
+      }
+      data.regla_calculo = 'tramos';
+      data.aplica_tope = false;
+      data.tope_monto = null;
+      data.tramos_json = JSON.stringify(tramosNormalizados);
+    } else {
+      data.regla_calculo = 'normal';
+      data.tramos_json = null;
+    }
   
     if (this.editing && this.selectedId) {
       this.conceptosService.update(this.selectedId, data).subscribe({
@@ -139,13 +161,16 @@ export class ConceptosComponent implements OnInit {
   editConcepto(concepto: Concepto, content: TemplateRef<any>): void {
     this.editing = true;
     this.selectedId = concepto.id_concepto;
+    this.tramosIsr = this.parseTramosParaFormulario(concepto.tramos_json);
     this.conceptoForm.patchValue({
       ...concepto,
+      regla_calculo: concepto.regla_calculo || 'normal',
       aplica_tope: !!concepto.aplica_tope,
       tope_monto: concepto.tope_monto
     });
     this.applyValorValidators();
     this.applyTopeValidators();
+    this.applyReglaCalculoValidators();
     this.modalRef = this.modalService.open(content, { backdrop: 'static' });
   }
 
@@ -175,7 +200,21 @@ export class ConceptosComponent implements OnInit {
   }
 
   get canUseTope(): boolean {
-    return this.isDeduccion && this.isPorcentaje;
+    return !this.isTramosRule && this.isDeduccion && this.isPorcentaje;
+  }
+
+  get isTramosRule(): boolean {
+    return this.conceptoForm.get('regla_calculo')?.value === 'tramos';
+  }
+
+  get showTramosRuleTable(): boolean {
+    return this.isTramosRule;
+  }
+
+  getReglaResumen(c: Concepto): string {
+    if (c.regla_calculo === 'tramos') return 'Cálculo por tramos';
+    if (c.aplica_tope && c.tope_monto !== null) return `Tope: ${this.currencySymbol} ${Number(c.tope_monto).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    return 'No aplica';
   }
 
   onConceptoInput(event: Event): void {
@@ -221,6 +260,22 @@ export class ConceptosComponent implements OnInit {
       input.value = normalized;
       this.conceptoForm.get('tope_monto')?.setValue(normalized, { emitEvent: false });
     }
+  }
+
+  onTramoInput(index: number, campo: 'desde' | 'hasta' | 'tasa', event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const normalized = input.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
+    this.tramosIsr[index][campo] = normalized;
+    if (normalized !== input.value) input.value = normalized;
+  }
+
+  addTramo(): void {
+    this.tramosIsr.push({ desde: '', hasta: '', tasa: '' });
+  }
+
+  removeTramo(index: number): void {
+    if (this.tramosIsr.length <= 1) return;
+    this.tramosIsr.splice(index, 1);
   }
 
   isInvalid(controlName: string): boolean {
@@ -277,5 +332,105 @@ export class ConceptosComponent implements OnInit {
     }
 
     topeControl.updateValueAndValidity({ emitEvent: false });
+  }
+
+  private applyReglaCalculoValidators(): void {
+    const aplicaTopeControl = this.conceptoForm.get('aplica_tope');
+    const topeControl = this.conceptoForm.get('tope_monto');
+    if (!aplicaTopeControl || !topeControl) return;
+
+    if (this.isTramosRule) {
+      aplicaTopeControl.setValue(false, { emitEvent: false });
+      topeControl.setValue(null, { emitEvent: false });
+      if (!this.tramosIsr.length) this.addTramo();
+    } else {
+      this.tramosIsr = [];
+    }
+
+    this.applyValorValidators();
+    this.applyTopeValidators();
+  }
+
+  private parseTramosParaFormulario(tramosJson: string | null): TramoIsr[] {
+    if (!tramosJson) return [];
+    try {
+      const parsed = JSON.parse(tramosJson);
+      if (!Array.isArray(parsed)) return [];
+      return parsed.map((t: any) => ({
+        desde: t?.desde != null ? String(t.desde) : '',
+        hasta: t?.hasta != null ? String(t.hasta) : '',
+        tasa: t?.tasa != null ? String(t.tasa) : ''
+      }));
+    } catch (_) {
+      return [];
+    }
+  }
+
+  private validarYConstruirTramos(): Array<{ desde: number; hasta: number | null; tasa: number }> | null {
+    const mensaje = 'Revise los valores ingresados en los tramos.';
+
+    if (!this.tramosIsr.length) {
+      this.showToast(mensaje, 'bg-primary');
+      return null;
+    }
+
+    const numeroRegex = /^\d+(\.\d{1,2})?$/;
+    const normalizados: Array<{ desde: number; hasta: number | null; tasa: number }> = [];
+
+    for (let i = 0; i < this.tramosIsr.length; i++) {
+      const tramo = this.tramosIsr[i];
+      const fila = i + 1;
+      const desdeRaw = (tramo.desde || '').trim();
+      const hastaRaw = (tramo.hasta || '').trim();
+      const tasaRaw = (tramo.tasa || '').trim();
+
+      if (!numeroRegex.test(desdeRaw)) {
+        this.showToast(mensaje, 'bg-primary');
+        return null;
+      }
+      if (!numeroRegex.test(tasaRaw)) {
+        this.showToast(mensaje, 'bg-primary');
+        return null;
+      }
+      if (hastaRaw && !numeroRegex.test(hastaRaw)) {
+        this.showToast(mensaje, 'bg-primary');
+        return null;
+      }
+
+      const desde = Number(desdeRaw);
+      const tasa = Number(tasaRaw);
+      const hasta = hastaRaw ? Number(hastaRaw) : null;
+
+      if (desde < 0) {
+        this.showToast(mensaje, 'bg-primary');
+        return null;
+      }
+      if (tasa < 0 || tasa > 100) {
+        this.showToast(mensaje, 'bg-primary');
+        return null;
+      }
+      if (hasta !== null && hasta <= desde) {
+        this.showToast(mensaje, 'bg-primary');
+        return null;
+      }
+
+      normalizados.push({ desde, hasta, tasa });
+    }
+
+    normalizados.sort((a, b) => a.desde - b.desde);
+    for (let i = 1; i < normalizados.length; i++) {
+      const prev = normalizados[i - 1];
+      const curr = normalizados[i];
+      if (prev.hasta === null) {
+        this.showToast(mensaje, 'bg-primary');
+        return null;
+      }
+      if (curr.desde < prev.hasta) {
+        this.showToast(mensaje, 'bg-primary');
+        return null;
+      }
+    }
+
+    return normalizados;
   }
 }

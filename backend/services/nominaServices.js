@@ -11,6 +11,44 @@ function round2(value) {
   return Math.round((Number(value) + Number.EPSILON) * 100) / 100;
 }
 
+function parseTramos(concepto) {
+  if (!concepto?.tramos_json) return [];
+  try {
+    const parsed = JSON.parse(String(concepto.tramos_json));
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (_) {
+    return [];
+  }
+}
+
+function calcularProgresivo(base, tramos) {
+  if (!Number.isFinite(base) || base <= 0 || !Array.isArray(tramos) || !tramos.length) {
+    return 0;
+  }
+
+  const ordenados = tramos
+    .map((t) => ({
+      desde: Number(t?.desde),
+      hasta: t?.hasta === null || t?.hasta === undefined || t?.hasta === '' ? null : Number(t?.hasta),
+      tasa: Number(t?.tasa)
+    }))
+    .filter((t) => Number.isFinite(t.desde) && Number.isFinite(t.tasa) && t.tasa >= 0 && t.tasa <= 100)
+    .sort((a, b) => a.desde - b.desde);
+
+  let impuesto = 0;
+  for (const tramo of ordenados) {
+    if (base <= tramo.desde) continue;
+    const limiteSuperior = tramo.hasta === null ? base : Math.min(base, tramo.hasta);
+    const baseTramo = Math.max(0, limiteSuperior - tramo.desde);
+    if (baseTramo > 0) {
+      impuesto += baseTramo * (tramo.tasa / 100);
+    }
+    if (tramo.hasta !== null && base <= tramo.hasta) break;
+  }
+
+  return round2(impuesto);
+}
+
 function validarMontoCalculado(monto, empleado, concepto, origen) {
   if (!Number.isFinite(monto)) {
     throw new Error(
@@ -28,8 +66,15 @@ function validarMontoCalculado(monto, empleado, concepto, origen) {
 /**
  * Función para calcular monto según naturaleza del concepto
  */
-function calcularMonto(concepto, empleado, asignacion = null) {
+function calcularMonto(concepto, empleado, asignacion = null, options = {}) {
   const base = salarioBaseNumerico(empleado);
+  const reglaCalculo = String(concepto?.regla_calculo || 'normal').toLowerCase();
+
+  if (reglaCalculo === 'tramos') {
+    const baseGravable = Number(options?.baseGravable);
+    const baseReferencia = Number.isFinite(baseGravable) ? baseGravable : base;
+    return calcularProgresivo(baseReferencia, parseTramos(concepto));
+  }
 
   switch (concepto.naturaleza) {
     case 'fijo':
@@ -123,9 +168,14 @@ async function ejecutarNomina(periodoId) {
       let salarioBruto = round2(base);
       let totalDeducciones = 0;
       let detalles = [];
+      const conceptosPorTramosPendientes = new Map();
 
       // Procesar asignaciones
       for (const asignacion of asignaciones) {
+        if (String(asignacion.Concepto?.regla_calculo || 'normal').toLowerCase() === 'tramos') {
+          conceptosPorTramosPendientes.set(asignacion.id_concepto, asignacion.Concepto);
+          continue;
+        }
         const montoCalculado = calcularMonto(asignacion.Concepto, empleado, asignacion);
         const monto = validarMontoCalculado(montoCalculado, empleado, asignacion.Concepto, 'asignación');
         if (monto <= 0) continue;
@@ -136,6 +186,10 @@ async function ejecutarNomina(periodoId) {
 
       // Procesar globales
       for (const concepto of conceptosGlobales) {
+        if (String(concepto?.regla_calculo || 'normal').toLowerCase() === 'tramos') {
+          conceptosPorTramosPendientes.set(concepto.id_concepto, concepto);
+          continue;
+        }
         const montoCalculado = calcularMonto(concepto, empleado, null);
         const monto = validarMontoCalculado(montoCalculado, empleado, concepto, 'concepto global');
         if (monto <= 0) continue;
@@ -146,10 +200,23 @@ async function ejecutarNomina(periodoId) {
 
       // Procesar movimientos manuales
       for (const mov of movimientos) {
+        if (String(mov.Concepto?.regla_calculo || 'normal').toLowerCase() === 'tramos') {
+          conceptosPorTramosPendientes.set(mov.id_concepto, mov.Concepto);
+          continue;
+        }
         const monto = validarMontoCalculado(parseFloat(mov.monto), empleado, mov.Concepto, 'movimiento');
         if (monto <= 0) continue;
         detalles.push({ id_concepto: mov.id_concepto, monto });
         if (mov.Concepto.tipo === 'ingreso') salarioBruto = round2(salarioBruto + monto);
+        else totalDeducciones = round2(totalDeducciones + monto);
+      }
+
+      for (const [idConcepto, concepto] of conceptosPorTramosPendientes.entries()) {
+        const montoCalculado = calcularMonto(concepto, empleado, null, { baseGravable: salarioBruto });
+        const monto = validarMontoCalculado(montoCalculado, empleado, concepto, 'regla por tramos');
+        if (monto <= 0) continue;
+        detalles.push({ id_concepto: idConcepto, monto });
+        if (concepto.tipo === 'ingreso') salarioBruto = round2(salarioBruto + monto);
         else totalDeducciones = round2(totalDeducciones + monto);
       }
 

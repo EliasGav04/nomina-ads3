@@ -12,8 +12,6 @@ module.exports = {
       { id_movimiento: 4, id_periodo: 1, id_empleado: 19, id_concepto: 4, monto: 800.00, descripcion: 'Horas extra supervision operativa enero', estado: 'Activo', createdAt: now, updatedAt: now },
       { id_movimiento: 5, id_periodo: 1, id_empleado: 5, id_concepto: 10, monto: 700.00, descripcion: 'Bono nocturno soporte enero', estado: 'Activo', createdAt: now, updatedAt: now },
       { id_movimiento: 6, id_periodo: 1, id_empleado: 16, id_concepto: 10, monto: 400.00, descripcion: 'Bono nocturno inventario enero', estado: 'Activo', createdAt: now, updatedAt: now },
-      { id_movimiento: 7, id_periodo: 1, id_empleado: 11, id_concepto: 7, monto: 850.00, descripcion: 'Ajuste ISR mensual enero', estado: 'Activo', createdAt: now, updatedAt: now },
-      { id_movimiento: 8, id_periodo: 1, id_empleado: 19, id_concepto: 7, monto: 1200.00, descripcion: 'Ajuste ISR gerencial enero', estado: 'Activo', createdAt: now, updatedAt: now },
       { id_movimiento: 9, id_periodo: 1, id_empleado: 14, id_concepto: 11, monto: 350.00, descripcion: 'Adelanto salario enero', estado: 'Activo', createdAt: now, updatedAt: now },
 
       // Febrero 2026 (cerrado)
@@ -24,8 +22,6 @@ module.exports = {
       { id_movimiento: 14, id_periodo: 2, id_empleado: 4, id_concepto: 10, monto: 650.00, descripcion: 'Bono nocturno turno especial febrero', estado: 'Activo', createdAt: now, updatedAt: now },
       { id_movimiento: 15, id_periodo: 2, id_empleado: 5, id_concepto: 10, monto: 900.00, descripcion: 'Bono nocturno soporte febrero', estado: 'Activo', createdAt: now, updatedAt: now },
       { id_movimiento: 16, id_periodo: 2, id_empleado: 16, id_concepto: 10, monto: 520.00, descripcion: 'Bono nocturno inventario febrero', estado: 'Activo', createdAt: now, updatedAt: now },
-      { id_movimiento: 17, id_periodo: 2, id_empleado: 11, id_concepto: 7, monto: 850.00, descripcion: 'Ajuste ISR mensual febrero', estado: 'Activo', createdAt: now, updatedAt: now },
-      { id_movimiento: 18, id_periodo: 2, id_empleado: 19, id_concepto: 7, monto: 1500.00, descripcion: 'Ajuste ISR gerencial febrero', estado: 'Activo', createdAt: now, updatedAt: now },
       { id_movimiento: 19, id_periodo: 2, id_empleado: 14, id_concepto: 11, monto: 500.00, descripcion: 'Adelanto salario febrero', estado: 'Activo', createdAt: now, updatedAt: now },
       { id_movimiento: 20, id_periodo: 2, id_empleado: 18, id_concepto: 11, monto: 400.00, descripcion: 'Adelanto salario emergencia febrero', estado: 'Activo', createdAt: now, updatedAt: now },
 
@@ -36,10 +32,8 @@ module.exports = {
       { id_movimiento: 24, id_periodo: 3, id_empleado: 5, id_concepto: 10, monto: 900.00, descripcion: 'Bono nocturno soporte implementacion', estado: 'Activo', createdAt: now, updatedAt: now },
       { id_movimiento: 25, id_periodo: 3, id_empleado: 7, id_concepto: 4, monto: 400.00, descripcion: 'Horas extra cierre ruta comercial', estado: 'Activo', createdAt: now, updatedAt: now },
       { id_movimiento: 26, id_periodo: 3, id_empleado: 9, id_concepto: 4, monto: 350.00, descripcion: 'Horas extra atencion cliente mayorista', estado: 'Activo', createdAt: now, updatedAt: now },
-      { id_movimiento: 27, id_periodo: 3, id_empleado: 11, id_concepto: 7, monto: 850.00, descripcion: 'Ajuste ISR mensual por variacion de ingresos', estado: 'Activo', createdAt: now, updatedAt: now },
       { id_movimiento: 28, id_periodo: 3, id_empleado: 14, id_concepto: 11, monto: 500.00, descripcion: 'Adelanto salario solicitado en marzo', estado: 'Activo', createdAt: now, updatedAt: now },
       { id_movimiento: 29, id_periodo: 3, id_empleado: 18, id_concepto: 11, monto: 400.00, descripcion: 'Adelanto salario por emergencia familiar', estado: 'Activo', createdAt: now, updatedAt: now },
-      { id_movimiento: 30, id_periodo: 3, id_empleado: 19, id_concepto: 7, monto: 1500.00, descripcion: 'Ajuste ISR mensual nivel gerencial', estado: 'Activo', createdAt: now, updatedAt: now },
       { id_movimiento: 31, id_periodo: 3, id_empleado: 2, id_concepto: 4, monto: 320.00, descripcion: 'Horas extra cierre proceso contratacion', estado: 'Activo', createdAt: now, updatedAt: now },
       { id_movimiento: 32, id_periodo: 3, id_empleado: 16, id_concepto: 10, monto: 520.00, descripcion: 'Bono nocturno inventario general', estado: 'Activo', createdAt: now, updatedAt: now }
     ], {});
@@ -48,9 +42,9 @@ module.exports = {
   async down(queryInterface, Sequelize) {
     await queryInterface.bulkDelete('movimientos', {
       id_movimiento: [
-        1, 2, 3, 4, 5, 6, 7, 8, 9,
-        10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-        21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32
+        1, 2, 3, 4, 5, 6, 9,
+        10, 11, 12, 13, 14, 15, 16, 19, 20,
+        21, 22, 23, 24, 25, 26, 28, 29, 31, 32
       ]
     }, {});
   }

@@ -4,6 +4,29 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     const round2 = (n) => Number((Number(n) || 0).toFixed(2));
+    const calcularProgresivo = (base, tramos) => {
+      if (!Number.isFinite(base) || base <= 0 || !Array.isArray(tramos) || !tramos.length) return 0;
+      const ordenados = tramos
+        .map((t) => ({
+          desde: Number(t?.desde),
+          hasta: t?.hasta === null || t?.hasta === undefined || t?.hasta === '' ? null : Number(t?.hasta),
+          tasa: Number(t?.tasa)
+        }))
+        .filter((t) => Number.isFinite(t.desde) && Number.isFinite(t.tasa) && t.tasa >= 0 && t.tasa <= 100)
+        .sort((a, b) => a.desde - b.desde);
+
+      let impuesto = 0;
+      for (const tramo of ordenados) {
+        if (base <= tramo.desde) continue;
+        const limiteSuperior = tramo.hasta === null ? base : Math.min(base, tramo.hasta);
+        const baseTramo = Math.max(0, limiteSuperior - tramo.desde);
+        if (baseTramo > 0) impuesto += baseTramo * (tramo.tasa / 100);
+        if (tramo.hasta !== null && base <= tramo.hasta) break;
+      }
+
+      return round2(impuesto);
+    };
+
     const [seguroSocialRows] = await queryInterface.sequelize.query(`
       SELECT valor_defecto, aplica_tope, tope_monto
       FROM conceptos
@@ -21,6 +44,16 @@ module.exports = {
     if (aplicaTopeSeguroSocial && (!Number.isFinite(topeSeguroSocial) || topeSeguroSocial <= 0)) {
       throw new Error('El tope del concepto de seguro social empleado es inválido.');
     }
+
+    const [isrRows] = await queryInterface.sequelize.query(`
+      SELECT regla_calculo, tramos_json
+      FROM conceptos
+      WHERE id_concepto = 7
+      LIMIT 1
+    `);
+    const conceptoIsr = isrRows?.[0];
+    const reglaIsr = String(conceptoIsr?.regla_calculo || '').toLowerCase();
+    const tramosIsr = reglaIsr === 'tramos' ? JSON.parse(conceptoIsr?.tramos_json || '[]') : [];
 
     const salariosBase = {
       1: 18500, 2: 24000, 3: 21000, 4: 28500, 5: 36000,
@@ -52,11 +85,9 @@ module.exports = {
 
     const deduccionesManualesPorPeriodo = {
       1: {
-        7: { 11: 850, 19: 1200 },                    // Isr mensual
         11: { 14: 350 }                               // Adelanto salario
       },
       2: {
-        7: { 11: 850, 19: 1500 },
         11: { 14: 500, 18: 400 }
       }
     };
@@ -83,16 +114,18 @@ module.exports = {
           10: round2(ingresosManualesPorPeriodo[periodo.id]?.[10]?.[idEmpleado] || 0)
         };
 
+        const salarioBruto = round2(Object.values(detalleIngreso).reduce((a, b) => a + b, salario));
+        const isrCalculado = reglaIsr === 'tramos' ? calcularProgresivo(salarioBruto, tramosIsr) : 0;
+
         const detalleDeduccion = {
           5: round2((aplicaTopeSeguroSocial ? Math.min(salario, topeSeguroSocial) : salario) * (porcentajeSeguroSocial / 100)),
           6: round2(salario * 0.015),
           8: round2(prestamoPersonal[idEmpleado] || 0),
           12: round2(aporteCooperativa[idEmpleado] || 0),
-          7: round2(deduccionesManualesPorPeriodo[periodo.id]?.[7]?.[idEmpleado] || 0),
+          7: round2(isrCalculado),
           11: round2(deduccionesManualesPorPeriodo[periodo.id]?.[11]?.[idEmpleado] || 0)
         };
 
-        const salarioBruto = round2(Object.values(detalleIngreso).reduce((a, b) => a + b, salario));
         const totalDeducciones = round2(Object.values(detalleDeduccion).reduce((a, b) => a + b, 0));
         const salarioNeto = round2(salarioBruto - totalDeducciones);
 
