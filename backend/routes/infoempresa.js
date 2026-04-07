@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const infoempresaController = require('../controllers/infoempresaController');
+const { checkRole } = require('../middleware/auth');
+
+router.use(checkRole('Administrador'));
 
 router.get('/', infoempresaController.getAll);
 router.get('/:id', infoempresaController.getById);

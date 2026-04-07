@@ -74,18 +74,18 @@ module.exports = {
 
     const ingresosManualesPorPeriodo = {
       1: {
-        4: { 1: 500, 3: 650, 7: 250, 19: 800 },      // Horas extra
-        10: { 5: 700, 16: 400 }                       // Bono nocturno
+        4: { 1: 500, 3: 650, 7: 250, 19: 800 },      //horas extra
+        10: { 5: 700, 16: 400 }                       //bono nocturno
       },
       2: {
-        4: { 2: 320, 3: 700, 9: 300, 11: 280 },      // Horas extra
-        10: { 4: 650, 5: 900, 16: 520 }               // Bono nocturno
+        4: { 2: 320, 3: 700, 9: 300, 11: 280 },      //horas extra
+        10: { 4: 650, 5: 900, 16: 520 }               //bono nocturno
       }
     };
 
     const deduccionesManualesPorPeriodo = {
       1: {
-        11: { 14: 350 }                               // Adelanto salario
+        11: { 14: 350 }                               //adelanto salario
       },
       2: {
         11: { 14: 500, 18: 400 }

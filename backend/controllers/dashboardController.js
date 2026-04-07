@@ -17,7 +17,7 @@ exports.getResumen = async (req, res) => {
     ]);
 
     const periodoActual = periodoAbierto || ultimoProcesado || null;
-    // Aproximado del período actual: suma base de empleados activos
+    //aproximado periodo actual con suma base empleados activos
     const totalBase = await Empleado.findOne({
       attributes: [[sequelize.fn('SUM', sequelize.col('salario_base')), 'total_base']],
       where: { estado: 'Activo' },

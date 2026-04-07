@@ -16,7 +16,7 @@ export class InfoempresaComponent implements OnInit {
   selectedFile: File | null = null;
   logoBase64: string | null = null;
 
-  // Toast
+  //toast
   toastMessage = '';
   toastColor = 'bg-success';
   toastVisible = false;
@@ -27,7 +27,7 @@ export class InfoempresaComponent implements OnInit {
   private readonly emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
   private readonly webPattern = /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/\S*)?$/;
   private readonly currencyPattern = /^[A-Z]{3}$/;
-  private readonly maxLogoSizeBytes = 5 * 1024 * 1024; // 5MB
+  private readonly maxLogoSizeBytes = 5 * 1024 * 1024; //max 5mb
   readonly currencyOptions: Array<{ code: string; label: string }> = [
     { code: 'HNL', label: 'HNL (Honduras)' },
     { code: 'USD', label: 'USD (Estados Unidos)' },

@@ -48,7 +48,7 @@ export class DashboardComponent implements OnInit {
       const payload = JSON.parse(atob(parts[1]));
       this.nombreUsuario = payload?.usuario || payload?.username || payload?.name || this.nombreUsuario;
     } catch {
-      // keep default username
+      //mantener usuario por defecto
     }
   }
 }

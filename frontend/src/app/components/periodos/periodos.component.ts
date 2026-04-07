@@ -133,7 +133,7 @@ export class PeriodosComponent implements OnInit {
     }
   
     if (this.editing && this.selectedId) {
-      // actualización
+      //actualizacion
       this.periodosService.update(this.selectedId, data).subscribe({
         next: () => {
           this.showToast('Período actualizado correctamente', 'bg-success');
@@ -143,7 +143,7 @@ export class PeriodosComponent implements OnInit {
         error: (err) => this.showToast(err?.error?.error || 'Error al actualizar período', 'bg-primary')
       });
     } else {
-      // creación
+      //creacion
       this.periodosService.create(data).subscribe({
         next: () => {
           this.showToast('Período creado correctamente', 'bg-success');

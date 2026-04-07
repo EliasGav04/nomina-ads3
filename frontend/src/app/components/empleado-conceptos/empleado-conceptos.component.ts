@@ -3,9 +3,10 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { EmpleadoConceptosService } from '../../services/empleado-conceptos.service';
 import { EmpleadosService } from '../../services/empleados.service';
 import { ConceptosService } from '../../services/conceptos.service';
-import { EmpleadoConcepto, Empleado, Concepto } from '../../interfaces/interface';
+import { EmpleadoConcepto, Empleado, Concepto, Periodo } from '../../interfaces/interface';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { CurrencyConfigService } from '../../services/currency-config.service';
+import { PeriodosService } from '../../services/periodos.service';
 
 @Component({
   selector: 'app-empleado-conceptos',
@@ -30,11 +31,15 @@ export class EmpleadoConceptosComponent implements OnInit {
   filtroEmpleado: number | 'Todos' = 'Todos';
   filtroConcepto: number | 'Todos' = 'Todos';
   filtroVigencia: 'Todos' | 'Vigente' | 'Inactivo' = 'Todos';
+  bajaAsignacionSeleccionada: EmpleadoConcepto | null = null;
+  modoBaja: 'no_aplicar_periodo_abierto' | 'fin_periodo_abierto' = 'no_aplicar_periodo_abierto';
+  periodoAbierto: Periodo | null = null;
 
   constructor(
     private empleadoConceptosService: EmpleadoConceptosService,
     private empleadosService: EmpleadosService,
     private conceptosService: ConceptosService,
+    private periodosService: PeriodosService,
     private fb: FormBuilder,
     private modalService: NgbModal,
     private currencyConfig: CurrencyConfigService
@@ -154,14 +159,18 @@ export class EmpleadoConceptosComponent implements OnInit {
     this.modalRef = this.modalService.open(content, { backdrop: 'static' });
   }
 
-  deleteAsignacion(id: number): void {
-    this.empleadoConceptosService.delete(id).subscribe({
+  deleteAsignacion(
+    id: number,
+    payload: { modo: 'no_aplicar_periodo_abierto' | 'fin_periodo_abierto' }
+  ): void {
+    this.empleadoConceptosService.deleteConFecha(id, payload).subscribe({
       next: (resp) => {
         const fechaHasta = resp.registro?.fecha_hasta;
         this.showToast(`Asignación desactivada el ${fechaHasta}`, 'bg-danger');
+        this.modalRef?.close();
         this.loadAsignaciones();
       },
-      error: () => this.showToast('Error al eliminar asignación', 'bg-danger')
+      error: (err) => this.showToast(err?.error?.error || 'Error al eliminar asignación', 'bg-danger')
     });
   }
 
@@ -174,18 +183,48 @@ export class EmpleadoConceptosComponent implements OnInit {
 
   handleEditClick(asignacion: EmpleadoConcepto, content: TemplateRef<any>): void {
     if (asignacion.fecha_hasta) {
-      this.showToast('Asignación inactiva, cree una nueva', 'bg-secondary');
+      this.showToast('Asignación inactiva, cree una nueva asignación', 'bg-secondary');
       return;
     }
     this.editAsignacion(asignacion, content);
   }
   
-  handleDeleteClick(asignacion: EmpleadoConcepto): void {
+  handleDeleteClick(asignacion: EmpleadoConcepto, modalBaja: TemplateRef<any>): void {
     if (asignacion.fecha_hasta) {
       this.showToast('La asignación ya está desactivada', 'bg-secondary');
       return;
     }
-    this.deleteAsignacion(asignacion.id_empleado_concepto);
+    this.bajaAsignacionSeleccionada = asignacion;
+    this.modoBaja = 'no_aplicar_periodo_abierto';
+    this.periodoAbierto = null;
+
+    this.periodosService.getAbiertos().subscribe({
+      next: (periodos) => {
+        this.periodoAbierto = periodos.length ? periodos[0] : null;
+      },
+      error: () => {
+        this.periodoAbierto = null;
+      }
+    });
+
+    this.modalRef = this.modalService.open(modalBaja, { backdrop: 'static' });
+  }
+
+  confirmarBajaAsignacion(): void {
+    if (!this.bajaAsignacionSeleccionada) {
+      return;
+    }
+
+    if (this.modoBaja === 'fin_periodo_abierto' && !this.periodoAbierto) {
+      this.showToast('No hay período abierto para usar como fecha efectiva.', 'bg-primary');
+      return;
+    }
+
+    const payload: { modo: 'no_aplicar_periodo_abierto' | 'fin_periodo_abierto' } = {
+      modo: this.modoBaja
+    };
+
+    this.deleteAsignacion(this.bajaAsignacionSeleccionada.id_empleado_concepto, payload);
   }
 
   onValorInput(event: Event): void {

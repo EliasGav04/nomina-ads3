@@ -3,6 +3,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const passport = require('passport');
 require('dotenv').config();
+const { ensureAuthenticated } = require('./middleware/auth');
 
 const sequelize = require('./config/database');
 
@@ -30,13 +31,15 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 app.use(helmet());
+app.use(passport.initialize());
 
 app.get('/', (req, res) => {
   res.send('API funcionando');
 });
 
-// rutas frontend
+//rutas api
 app.use('/api/auth', authRoutes);
+app.use('/api', ensureAuthenticated);
 app.use('/api/usuarios', usuariosRoutes);
 app.use('/api/roles', rolesRoutes);
 app.use('/api/infoempresa', infoempresaRoutes);

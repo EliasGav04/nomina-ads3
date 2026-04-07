@@ -88,7 +88,7 @@ export class MovimientosComponent implements OnInit {
   }
 
   loadSelectsInfo(): void {
-    // cargar listas para selects
+    //cargar listas selects
     this.periodosService.getAbiertos().subscribe(data => this.periodosAbiertos = data);
     this.empleadosService.getActivos().subscribe(data => this.empleadosActivos = data);
     this.conceptosService.getManualesActivos().subscribe(data => this.conceptosManuales = data);
@@ -136,7 +136,7 @@ export class MovimientosComponent implements OnInit {
   }
 
   editMovimiento(movimiento: Movimiento, content: TemplateRef<any>): void {
-    // Validar estado del período
+    //validar estado periodo
     if (movimiento.Periodo?.estado !== 'Abierto') {
       this.showToast('No es posible modificar movimientos de periodos procesados o cerrados', 'bg-secondary');
       return;
@@ -156,13 +156,13 @@ export class MovimientosComponent implements OnInit {
   }
 
   deleteMovimiento(movimiento: Movimiento): void {
-    // Validar estado del movimiento
+    //validar estado movimiento
     if (movimiento.estado === 'Anulado') {
       this.showToast('No es posible modificar un movimiento anulado', 'bg-secondary');
       return;
     }
   
-    // Validar estado del período
+    //validar estado periodo
     if (movimiento.Periodo?.estado !== 'Abierto') {
       this.showToast('No es posible modificar movimientos de periodos procesados o cerrados', 'bg-secondary');
       return;

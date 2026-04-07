@@ -25,7 +25,7 @@ exports.login = (req, res, next) => {
       user.ultimo_acceso = new Date();
       await user.save();
 
-      // generar JWT token
+      //generar jwt
       const payload = {
         id: user.id_usuario,
         usuario: user.usuario,

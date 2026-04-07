@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const empleadosController = require('../controllers/empleadosController');
+const { checkRole } = require('../middleware/auth');
+
+router.use(checkRole(['Administrador', 'RRHH']));
 
 router.get('/activos', empleadosController.getActivos);
 

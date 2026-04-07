@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const periodosController = require('../controllers/periodosController');
+const { checkRole } = require('../middleware/auth');
+
+router.use(checkRole(['Administrador', 'RRHH']));
 
 router.get('/abiertos', periodosController.getAbiertos);
 

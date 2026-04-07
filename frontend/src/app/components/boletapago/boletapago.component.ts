@@ -118,7 +118,7 @@ export class BoletapagoComponent implements OnInit {
     const contentWidth = pageWidth - margin * 2;
     let y = 14;
 
-    // Encabezado empresa
+    //encabezado empresa
     doc.setFont(fontFamily, 'bold');
     doc.setFontSize(13);
     doc.text(
@@ -168,7 +168,7 @@ export class BoletapagoComponent implements OnInit {
     doc.line(margin, y, margin + contentWidth, y);
     y += 5;
 
-    // Datos período y empleado
+    //datos periodo y empleado
     const leftX = margin;
     const rightX = margin + contentWidth / 2 + 2;
     const blockW = contentWidth / 2 - 4;
@@ -217,7 +217,7 @@ export class BoletapagoComponent implements OnInit {
     doc.line(margin, y, margin + contentWidth, y);
     y += 8;
 
-    // Tabla ingresos
+    //tabla ingresos
     doc.setFont(fontFamily, 'bold');
     doc.setFontSize(11);
     doc.text('INGRESOS', margin, y);
@@ -236,7 +236,7 @@ export class BoletapagoComponent implements OnInit {
 
     y = (doc as any).lastAutoTable.finalY + 7;
 
-    // Tabla deducciones
+    //tabla deducciones
     doc.setFont(fontFamily, 'bold');
     doc.setFontSize(11);
     doc.text('DEDUCCIONES', margin, y);
@@ -255,7 +255,7 @@ export class BoletapagoComponent implements OnInit {
 
     y = (doc as any).lastAutoTable.finalY + 7;
 
-    // Resumen
+    //resumen
     const boxW = 78;
     const boxX = margin + contentWidth - boxW;
     doc.setDrawColor(190);

@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const conceptosController = require('../controllers/conceptosController');
+const { checkRole } = require('../middleware/auth');
+
+router.use(checkRole(['Administrador', 'RRHH']));
 
 router.get('/manuales-activos', conceptosController.getManualesActivos);
 

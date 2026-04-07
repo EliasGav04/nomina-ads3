@@ -91,6 +91,25 @@ exports.ejecutar = async (req, res) => {
     await ejecutarNomina(idPeriodo);
     res.json({ message: 'Nómina ejecutada correctamente' });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    const rawMessage = String(error?.message || '');
+    //mensaje general para usuario final
+    let userMessage = 'No fue posible ejecutar la nómina. Revise la configuración del período y los datos cargados.';
+
+    //mapear errores internos a mensajes amigables
+    if (rawMessage.includes('Debe enviar id_periodo válido')) {
+      userMessage = 'Debe seleccionar un período válido.';
+    } else if (rawMessage.includes('Período inválido o ya procesado')) {
+      userMessage = 'El período seleccionado no está disponible para ejecutar nómina.';
+    } else if (rawMessage.includes('ya tiene registros de nómina')) {
+      userMessage = 'El período ya fue procesado anteriormente.';
+    } else if (rawMessage.includes('No hay empleados activos')) {
+      userMessage = 'No hay empleados activos para procesar.';
+    } else if (rawMessage.includes('salario neto negativo')) {
+      userMessage = 'Se detectaron deducciones mayores al salario en al menos un empleado. Revise las asignaciones y movimientos antes de ejecutar.';
+    } else if (rawMessage.includes('salario base inválido')) {
+      userMessage = 'Se detectaron empleados con salario base inválido. Revise los datos de empleados antes de ejecutar.';
+    }
+
+    res.status(400).json({ error: userMessage });
   }
 };

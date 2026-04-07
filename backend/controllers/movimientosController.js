@@ -113,7 +113,7 @@ exports.update = async (req, res) => {
     });
     if (!movimiento) return res.status(404).json({ error: 'Movimiento no encontrado' });
 
-    // Validar estado del período
+    //validar estado periodo
     if (movimiento.Periodo.estado !== 'Abierto') {
       return res.status(400).json({ error: 'No se pueden editar movimientos de un período cerrado o procesado' });
     }
@@ -137,12 +137,12 @@ exports.delete = async (req, res) => {
     });
     if (!movimiento) return res.status(404).json({ error: 'Movimiento no encontrado' });
 
-    // Validar estado del período
+    //validar estado periodo
     if (movimiento.Periodo.estado !== 'Abierto') {
       return res.status(400).json({ error: 'No se pueden eliminar movimientos de un período cerrado o procesado' });
     }
 
-    await movimiento.update({ estado: 'Anulado' }); // soft delete
+    await movimiento.update({ estado: 'Anulado' }); //baja logica
     res.json({ message: 'Movimiento marcado como Anulado' });
   } catch (error) {
     res.status(500).json({ error: error.message });

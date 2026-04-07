@@ -14,7 +14,8 @@ function ensureAuthenticated(req, res, next) {
 
 function checkRole(role) {
   return (req, res, next) => {
-    if (req.user && req.user.role === role) return next();
+    const allowedRoles = Array.isArray(role) ? role : [role];
+    if (req.user && allowedRoles.includes(req.user.role)) return next();
     res.status(403).json({ message: "Acceso denegado" });
   };
 }

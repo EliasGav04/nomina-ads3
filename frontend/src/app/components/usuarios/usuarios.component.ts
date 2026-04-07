@@ -20,7 +20,7 @@ export class UsuariosComponent implements OnInit {
 
   private modalRef: NgbModalRef | null = null;
 
-  // Toast
+  //toast
   toastMessage = '';
   toastColor = 'bg-success';
   toastVisible = false;

@@ -18,6 +18,17 @@ export class AuthInterceptor implements HttpInterceptor {
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const token = this.authService.getToken();
+    const isLoginRequest = req.url.includes('/api/auth/login');
+
+    const handleError = (error: HttpErrorResponse) => {
+      //401 cierra sesion y redirige login
+      //403 permiso denegado sin cerrar sesion
+      if (error.status === 401 && !isLoginRequest) {
+        this.authService.logout();
+      }
+      return throwError(() => error);
+    };
+
     if (token && !this.authService.isTokenExpired(token)) {
       const cloned = req.clone({
         setHeaders: {
@@ -25,21 +36,11 @@ export class AuthInterceptor implements HttpInterceptor {
         }
       });
       return next.handle(cloned).pipe(
-        catchError((error: HttpErrorResponse) => {
-          if ((error.status === 401 || error.status === 403) && !req.url.includes('/api/auth/login')) {
-            this.authService.logout();
-          }
-          return throwError(() => error);
-        })
+        catchError(handleError)
       );
     }
     return next.handle(req).pipe(
-      catchError((error: HttpErrorResponse) => {
-        if ((error.status === 401 || error.status === 403) && !req.url.includes('/api/auth/login')) {
-          this.authService.logout();
-        }
-        return throwError(() => error);
-      })
+      catchError(handleError)
     );
   }
 }

@@ -1,4 +1,4 @@
-// services/nominaServices.js
+//servicio nomina
 const { Op } = require('sequelize');
 const { sequelize, Periodo, Empleado, Concepto, EmpleadoConcepto, Movimiento, NominaRegistro, NominaDetalle } = require('../models');
 
@@ -63,9 +63,7 @@ function validarMontoCalculado(monto, empleado, concepto, origen) {
   return round2(monto);
 }
 
-/**
- * Función para calcular monto según naturaleza del concepto
- */
+//calcular monto segun naturaleza concepto
 function calcularMonto(concepto, empleado, asignacion = null, options = {}) {
   const base = salarioBaseNumerico(empleado);
   const reglaCalculo = String(concepto?.regla_calculo || 'normal').toLowerCase();
@@ -98,9 +96,7 @@ function calcularMonto(concepto, empleado, asignacion = null, options = {}) {
   }
 }
 
-/**
- * Ejecuta la nómina para un período
- */
+//ejecutar nomina periodo
 async function ejecutarNomina(periodoId) {
   return sequelize.transaction(async (t) => {
     const periodo = await Periodo.findByPk(periodoId, { transaction: t });
@@ -132,7 +128,7 @@ async function ejecutarNomina(periodoId) {
         throw new Error(`El empleado "${empleado.nombre_completo}" tiene salario base inválido. Verifique su ficha antes de procesar nómina.`);
       }
 
-      // Asignaciones que cruzan el período y concepto activo
+      //asignaciones vigentes al cierre periodo
       const asignaciones = await EmpleadoConcepto.findAll({
         where: {
           id_empleado: empleado.id_empleado,
@@ -141,7 +137,7 @@ async function ejecutarNomina(periodoId) {
             {
               [Op.or]: [
                 { fecha_hasta: null },
-                { fecha_hasta: { [Op.gte]: ini } }
+                { fecha_hasta: { [Op.gte]: fin } }
               ]
             }
           ]
@@ -170,7 +166,7 @@ async function ejecutarNomina(periodoId) {
       let detalles = [];
       const conceptosPorTramosPendientes = new Map();
 
-      // Procesar asignaciones
+      //procesar asignaciones
       for (const asignacion of asignaciones) {
         if (String(asignacion.Concepto?.regla_calculo || 'normal').toLowerCase() === 'tramos') {
           conceptosPorTramosPendientes.set(asignacion.id_concepto, asignacion.Concepto);
@@ -184,7 +180,7 @@ async function ejecutarNomina(periodoId) {
         else totalDeducciones = round2(totalDeducciones + monto);
       }
 
-      // Procesar globales
+      //procesar globales
       for (const concepto of conceptosGlobales) {
         if (String(concepto?.regla_calculo || 'normal').toLowerCase() === 'tramos') {
           conceptosPorTramosPendientes.set(concepto.id_concepto, concepto);
@@ -198,7 +194,7 @@ async function ejecutarNomina(periodoId) {
         else totalDeducciones = round2(totalDeducciones + monto);
       }
 
-      // Procesar movimientos manuales
+      //procesar movimientos manuales
       for (const mov of movimientos) {
         if (String(mov.Concepto?.regla_calculo || 'normal').toLowerCase() === 'tramos') {
           conceptosPorTramosPendientes.set(mov.id_concepto, mov.Concepto);
@@ -221,8 +217,14 @@ async function ejecutarNomina(periodoId) {
       }
 
       const salarioNeto = round2(salarioBruto - totalDeducciones);
+      if (totalDeducciones > salarioBruto || salarioNeto < 0) {
+        throw new Error(
+          `El empleado "${empleado.nombre_completo}" genera un salario neto negativo. ` +
+          `Revise asignaciones/movimientos/deducciones antes de procesar nómina.`
+        );
+      }
 
-      // Guardar registro
+      //guardar registro
       const registro = await NominaRegistro.create({
         id_periodo: periodoId,
         id_empleado: empleado.id_empleado,
@@ -231,7 +233,7 @@ async function ejecutarNomina(periodoId) {
         salario_neto: salarioNeto
       }, { transaction: t });
 
-      // Guardar detalles
+      //guardar detalles
       for (const d of detalles) {
         await NominaDetalle.create({
           id_registro: registro.id_registro,
@@ -241,7 +243,7 @@ async function ejecutarNomina(periodoId) {
       }
     }
 
-    // Actualizar estado del período
+    //actualizar estado periodo
     await periodo.update({ estado: 'Procesado' }, { transaction: t });
   });
 }

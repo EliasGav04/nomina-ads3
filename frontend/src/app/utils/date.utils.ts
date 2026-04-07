@@ -9,7 +9,7 @@ export function formatDateDMY(value: string | Date | null | undefined): string {
   const normalized = String(value).trim();
   if (!normalized) return '';
 
-  // Date-only strings from API (YYYY-MM-DD) are formatted manually to avoid timezone shifts.
+  //formato manual para fechas yyyy-mm-dd sin desfase zona horaria
   const isoDateOnly = normalized.match(/^(\d{4})-(\d{2})-(\d{2})$/);
   if (isoDateOnly) {
     const [, yyyy, mm, dd] = isoDateOnly;

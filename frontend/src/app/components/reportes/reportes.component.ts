@@ -161,7 +161,7 @@ export class ReportesComponent implements OnInit {
 
     let y = 14;
 
-    // Encabezado de empresa
+    //encabezado empresa
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(13);
     doc.text(

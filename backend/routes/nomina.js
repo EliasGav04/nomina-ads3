@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const nominaController = require('../controllers/nominaController');
+const { checkRole } = require('../middleware/auth');
+
+router.use(checkRole(['Administrador', 'RRHH']));
 
 router.get('/periodos-abiertos', nominaController.getPeriodosAbiertos);
 router.get('/estado/:idPeriodo', nominaController.getEstadoActual);

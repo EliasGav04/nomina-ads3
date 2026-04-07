@@ -1,5 +1,5 @@
 const { Op } = require('sequelize');
-const { EmpleadoConcepto, Empleado, Concepto } = require('../models');
+const { EmpleadoConcepto, Empleado, Concepto, Periodo } = require('../models');
 
 function toDateOnly(value) {
   return typeof value === 'string' ? value.trim() : '';
@@ -38,7 +38,7 @@ async function validarAsignacion(payload, registroId = null) {
     return { ok: false, error: 'Solo se permiten asignaciones para conceptos de naturaleza fijo o porcentaje' };
   }
 
-  // No permitir otro registro vigente para mismo empleado-concepto
+  //evitar otro registro vigente mismo empleado-concepto
   const vigente = await EmpleadoConcepto.findOne({
     where: {
       id_empleado: idEmpleado,
@@ -51,7 +51,7 @@ async function validarAsignacion(payload, registroId = null) {
     return { ok: false, error: 'Ya existe una asignación vigente para este empleado y concepto' };
   }
 
-  // No permitir traslape de rangos de fechas
+  //evitar traslape de rangos fechas
   const overlaps = await EmpleadoConcepto.findOne({
     where: {
       id_empleado: idEmpleado,
@@ -149,9 +149,54 @@ exports.delete = async (req, res) => {
   try {
     const registro = await EmpleadoConcepto.findByPk(req.params.id);
     if (!registro) return res.status(404).json({ error: 'Asignación no encontrada' });
+    if (registro.fecha_hasta) {
+      return res.status(409).json({ error: 'La asignación ya está desactivada' });
+    }
 
-    await registro.update({ fecha_hasta: new Date() });
-    res.json({ message: 'Asignación desactivada correctamente', registro });
+    const periodoAbierto = await Periodo.findOne({
+      where: { estado: 'Abierto' },
+      order: [['fecha_final', 'ASC']]
+    });
+    if (!periodoAbierto) {
+      return res.status(409).json({ error: 'No hay período Abierto para aplicar la baja.' });
+    }
+
+    const modo = String(req.body?.modo || 'no_aplicar_periodo_abierto').trim().toLowerCase();
+    const finPeriodoAbierto = new Date(`${periodoAbierto.fecha_final}T00:00:00`);
+    let fechaEfectiva = '';
+
+    if (modo === 'fin_periodo_abierto') {
+      fechaEfectiva = String(periodoAbierto.fecha_final);
+    } else if (modo === 'no_aplicar_periodo_abierto') {
+      //dejar sin vigencia antes cierre periodo abierto
+      const fechaNoAplicar = new Date(finPeriodoAbierto);
+      fechaNoAplicar.setDate(fechaNoAplicar.getDate() - 1);
+      const yyyy = fechaNoAplicar.getFullYear();
+      const mm = String(fechaNoAplicar.getMonth() + 1).padStart(2, '0');
+      const dd = String(fechaNoAplicar.getDate()).padStart(2, '0');
+      fechaEfectiva = `${yyyy}-${mm}-${dd}`;
+    } else {
+      return res.status(400).json({ error: 'Modo de baja inválido.' });
+    }
+
+    if (fechaEfectiva < String(registro.fecha_desde)) {
+      return res.status(409).json({ error: 'La fecha efectiva no puede ser menor que la fecha desde de la asignación.' });
+    }
+
+    const periodoObjetivo = await Periodo.findOne({
+      where: {
+        fecha_inicio: { [Op.lte]: fechaEfectiva },
+        fecha_final: { [Op.gte]: fechaEfectiva }
+      }
+    });
+    if (periodoObjetivo && periodoObjetivo.estado !== 'Abierto') {
+      return res.status(409).json({
+        error: 'No puede dar de baja con una fecha que cae en un período Procesado/Cerrado.'
+      });
+    }
+
+    await registro.update({ fecha_hasta: fechaEfectiva });
+    res.json({ message: 'Asignación desactivada correctamente', registro, fecha_efectiva: fechaEfectiva });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

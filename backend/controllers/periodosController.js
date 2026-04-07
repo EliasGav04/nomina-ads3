@@ -56,11 +56,11 @@ exports.getAll = async (req, res) => {
         const plain = p.toJSON();
   
         if (plain.estado === 'Abierto') {
-          // contar empleados activos
+          //contar empleados activos
           const activos = await Empleado.count({ where: { estado: 'Activo' } });
           plain.empleados = activos;
         } else {
-          // contar registros de nómina
+          //contar registros nomina
           plain.empleados = plain.NominaRegistros ? plain.NominaRegistros.length : 0;
         }
   

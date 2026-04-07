@@ -1,12 +1,12 @@
 const { Infoempresa } = require('../models');
 const multer = require('multer');
 
-// Configuración de multer para memoria 
+//config multer en memoria
 const storage = multer.memoryStorage();
 
 const upload = multer({
   storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, 
+  limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     const allowed = ['image/jpeg', 'image/png', 'image/gif'];
     if (allowed.includes(file.mimetype)) {
@@ -125,7 +125,7 @@ exports.create = (req, res) => {
       let logoMime = null;
 
       if (req.file) {
-        logoBuffer = req.file.buffer;   // directo desde memoria
+        logoBuffer = req.file.buffer; //logo desde memoria
         logoMime = req.file.mimetype;
       }
 
@@ -162,7 +162,7 @@ exports.update = (req, res) => {
       let logoMime = empresa.logo_mime;
 
       if (req.file) {
-        logoBuffer = req.file.buffer;   // directo desde memoria
+        logoBuffer = req.file.buffer; //logo desde memoria
         logoMime = req.file.mimetype;
       }
 
