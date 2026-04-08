@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { InfoempresaService } from '../../services/infoempresa.service';
 import { Infoempresa } from '../../interfaces/interface';
 import { CurrencyConfigService } from '../../services/currency-config.service';
@@ -24,6 +24,7 @@ export class InfoempresaComponent implements OnInit {
   private readonly direccionPattern = /^[A-Za-zÁÉÍÓÚÑáéíóúñ0-9.,()'"#\-/&\s]+$/;
   private readonly rtnPattern = /^\d{14}$/;
   private readonly telefonoMaxLen = 20;
+  private readonly telefonoPattern = /^\+ \d{3} \d{4}-\d{4}$/;
   private readonly emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
   private readonly webPattern = /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/\S*)?$/;
   private readonly currencyPattern = /^[A-Z]{3}$/;
@@ -48,7 +49,7 @@ export class InfoempresaComponent implements OnInit {
       razon_social: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(150), Validators.pattern(this.namePattern)]],
       rtn: ['', [Validators.required, Validators.pattern(this.rtnPattern)]],
       direccion: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(250), Validators.pattern(this.direccionPattern)]],
-      telefono: ['', [Validators.required, Validators.maxLength(this.telefonoMaxLen), this.telefonoIntlValidator.bind(this)]],
+      telefono: ['', [Validators.required, Validators.maxLength(this.telefonoMaxLen), Validators.pattern(this.telefonoPattern)]],
       correo: ['', [Validators.required, Validators.maxLength(150), Validators.pattern(this.emailPattern)]],
       sitio_web: ['', [Validators.maxLength(150), Validators.pattern(this.webPattern)]],
       codigo_moneda: ['HNL', [Validators.required, Validators.pattern(this.currencyPattern)]]
@@ -65,11 +66,10 @@ export class InfoempresaComponent implements OnInit {
         this.empresa = data;
         this.empresaForm.patchValue({
           ...data,
-          telefono: this.telefonoUnSoloGuion((data.telefono || '').trim()),
           codigo_moneda: data.codigo_moneda || 'HNL'
         });
         this.currencyConfig.setCurrencyCode(data.codigo_moneda || 'HNL');
-  
+
         this.logoBase64 = data.logoBase64 || 'assets/no-photo.png';
       },
       error: () => this.showToast('Error al cargar empresa', 'bg-primary')
@@ -109,48 +109,6 @@ export class InfoempresaComponent implements OnInit {
 
   openLogoSelector(input: HTMLInputElement): void {
     input.click();
-  }
-
-  // Deja solo el primer guion
-  private telefonoUnSoloGuion(v: string): string {
-    const i = v.indexOf('-');
-    if (i === -1) return v;
-    return v.slice(0, i + 1) + v.slice(i + 1).replace(/-/g, '');
-  }
-
-  private telefonoIntlValidator(control: AbstractControl): ValidationErrors | null {
-    const v = this.telefonoUnSoloGuion((control.value || '').trim());
-    if (!v.startsWith('+')) return { telefonoIntl: true };
-    const digits = v.slice(1).replace(/\D/g, '');
-    if (digits.length < 7 || digits.length > 15 || digits[0] === '0') return { telefonoIntl: true };
-    if (v.length > this.telefonoMaxLen) return { telefonoIntl: true };
-    return null;
-  }
-
-  onTelefonoInput(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const sel = input.selectionStart ?? 0;
-    const oldLen = input.value.length;
-
-    let v = input.value.replace(/[^\d+\s\-]/g, '');
-    const plus = v.indexOf('+');
-    if (plus > 0) v = v.slice(plus);
-    if (v.length > 0 && !v.startsWith('+')) {
-      v = '+' + v.replace(/\+/g, '');
-    }
-    //sin trim final
-    v = v.replace(/^\s+/, '').replace(/\s+/g, ' ');
-    v = this.telefonoUnSoloGuion(v);
-    if (v.length > this.telefonoMaxLen) v = v.slice(0, this.telefonoMaxLen);
-
-    this.empresaForm.get('telefono')?.setValue(v, { emitEvent: false });
-    input.value = v;
-
-    const delta = v.length - oldLen;
-    let pos = sel + delta;
-    if (delta === 0 && v.length === oldLen) pos = sel;
-    pos = Math.max(0, Math.min(v.length, pos));
-    requestAnimationFrame(() => input.setSelectionRange(pos, pos));
   }
 
   onRtnInput(event: Event): void {

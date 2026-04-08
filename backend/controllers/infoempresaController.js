@@ -29,17 +29,10 @@ function sanitize(value) {
   return typeof value === 'string' ? value.trim() : '';
 }
 
-function telefonoUnSoloGuion(s) {
-  const i = s.indexOf('-');
-  if (i === -1) return s;
-  return s.slice(0, i + 1) + s.slice(i + 1).replace(/-/g, '');
-}
+const telefonoPattern = /^\+ \d{3} \d{4}-\d{4}$/;
 
 function telefonoValido(s) {
-  if (!s.startsWith('+')) return false;
-  const digits = s.slice(1).replace(/\D/g, '');
-  if (digits.length < 7 || digits.length > 15 || digits[0] === '0') return false;
-  return s.length <= telefonoMaxLen;
+  return telefonoPattern.test(s) && s.length <= telefonoMaxLen;
 }
 
 function validateEmpresaPayload(payload) {
@@ -47,7 +40,7 @@ function validateEmpresaPayload(payload) {
   const razon_social = sanitize(payload.razon_social);
   const rtn = sanitize(payload.rtn);
   const direccion = sanitize(payload.direccion);
-  const telefono = telefonoUnSoloGuion(sanitize(payload.telefono));
+  const telefono = sanitize(payload.telefono);
   const correo = sanitize(payload.correo);
   const sitio_web = sanitize(payload.sitio_web);
   const codigo_moneda = sanitize(payload.codigo_moneda).toUpperCase() || 'HNL';
@@ -65,7 +58,7 @@ function validateEmpresaPayload(payload) {
     return { ok: false, error: 'Dirección inválida. Debe tener entre 10 y 250 caracteres.' };
   }
   if (!telefonoValido(telefono)) {
-    return { ok: false, error: 'Teléfono inválido. Use formato [+ código y número], máximo 20 caracteres).' };
+    return { ok: false, error: 'Teléfono inválido. Use formato + 000 0000-0000 (ej. + 504 7485-8574).' };
   }
   if (!correo || correo.length > 150 || !emailPattern.test(correo)) {
     return { ok: false, error: 'Correo electrónico inválido.' };

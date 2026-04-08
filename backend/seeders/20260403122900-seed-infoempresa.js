@@ -12,7 +12,7 @@ module.exports = {
         razon_social: 'Distribuidora La Ceiba, S. de R.L.',
         rtn: '08011999123456',
         direccion: 'Col. Palmira, Avenida Republica de Chile, Tegucigalpa, Francisco Morazan',
-        telefono: '+504 2234-5600',
+        telefono: '+ 504 2234-5600',
         correo: 'rrhh@dlc.hn',
         sitio_web: 'https://www.dlc.hn',
         codigo_moneda: 'HNL',
