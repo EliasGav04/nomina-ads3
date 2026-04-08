@@ -72,10 +72,11 @@
               <label class="form-label">Teléfono</label>
               <input formControlName="telefono" type="tel" class="form-control" maxlength="20"
                 placeholder="+ 504 7485-8574" autocomplete="tel"
+                (input)="onTelefonoMask($event)"
                 [ngClass]="{'is-invalid': isInvalid('telefono')}" />
-              <div class="form-text">Formato: + xxx xxxx-xxxx</div>
+              <div class="form-text">Formato: + 000 0000-0000</div>
               <div class="invalid-feedback" *ngIf="isInvalid('telefono')">
-                Use el formato + xxx xxxx-xxxx (ej. + 504 2234-5600).
+                Utilice el formato + 000 0000-0000 (ej. + 504 2234-5600).
               </div>
             </div>
 

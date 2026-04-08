@@ -111,6 +111,28 @@ export class InfoempresaComponent implements OnInit {
     input.click();
   }
 
+  //mascara telefono
+  private aplicarMascaraTelefono(soloDigitos: string): string {
+    const d = soloDigitos.replace(/\D/g, '').slice(0, 11);
+    if (!d.length) return '';
+    const a = d.slice(0, 3);
+    const b = d.slice(3);
+    if (!b.length) return `+ ${a}`;
+    if (b.length <= 4) return `+ ${a} ${b}`;
+    return `+ ${a} ${b.slice(0, 4)}-${b.slice(4)}`;
+  }
+
+  onTelefonoMask(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const masked = this.aplicarMascaraTelefono(input.value);
+    this.empresaForm.get('telefono')?.setValue(masked);
+    if (input.value !== masked) {
+      input.value = masked;
+      const end = masked.length;
+      requestAnimationFrame(() => input.setSelectionRange(end, end));
+    }
+  }
+
   onRtnInput(event: Event): void {
     const input = event.target as HTMLInputElement;
     const digits = input.value.replace(/\D/g, '').slice(0, 14);
