@@ -70,11 +70,12 @@
 
             <div class="col-12 col-md-6">
               <label class="form-label">Teléfono</label>
-              <input formControlName="telefono" type="text" class="form-control" maxlength="14"
-                (input)="onTelefonoInput($event)" placeholder="+504 0000-0000"
+              <input formControlName="telefono" type="text" class="form-control" maxlength="20"
+                (input)="onTelefonoInput($event)" placeholder="+504 2234-5600"
                 [ngClass]="{'is-invalid': isInvalid('telefono')}" />
+              <div class="form-text">Formato: + código y número, máximo 20 caracteres.</div>
               <div class="invalid-feedback" *ngIf="isInvalid('telefono')">
-                Formato requerido: +504 0000-0000.
+                Use + seguido del código de país y el número (ej. +504 9584-5600).
               </div>
             </div>
 

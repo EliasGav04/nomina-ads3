@@ -20,7 +20,7 @@ const upload = multer({
 const namePattern = /^[A-Za-zÁÉÍÓÚÑáéíóúñ0-9.,()'"\-&\s]+$/;
 const direccionPattern = /^[A-Za-zÁÉÍÓÚÑáéíóúñ0-9.,()'"#\-/&\s]+$/;
 const rtnPattern = /^\d{14}$/;
-const telefonoPattern = /^\+504 \d{4}-\d{4}$/;
+const telefonoMaxLen = 20;
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const webPattern = /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/\S*)?$/;
 const monedaPattern = /^[A-Z]{3}$/;
@@ -29,12 +29,25 @@ function sanitize(value) {
   return typeof value === 'string' ? value.trim() : '';
 }
 
+function telefonoUnSoloGuion(s) {
+  const i = s.indexOf('-');
+  if (i === -1) return s;
+  return s.slice(0, i + 1) + s.slice(i + 1).replace(/-/g, '');
+}
+
+function telefonoValido(s) {
+  if (!s.startsWith('+')) return false;
+  const digits = s.slice(1).replace(/\D/g, '');
+  if (digits.length < 7 || digits.length > 15 || digits[0] === '0') return false;
+  return s.length <= telefonoMaxLen;
+}
+
 function validateEmpresaPayload(payload) {
   const nombre = sanitize(payload.nombre);
   const razon_social = sanitize(payload.razon_social);
   const rtn = sanitize(payload.rtn);
   const direccion = sanitize(payload.direccion);
-  const telefono = sanitize(payload.telefono);
+  const telefono = telefonoUnSoloGuion(sanitize(payload.telefono));
   const correo = sanitize(payload.correo);
   const sitio_web = sanitize(payload.sitio_web);
   const codigo_moneda = sanitize(payload.codigo_moneda).toUpperCase() || 'HNL';
@@ -51,8 +64,8 @@ function validateEmpresaPayload(payload) {
   if (!direccion || direccion.length < 10 || direccion.length > 250 || !direccionPattern.test(direccion)) {
     return { ok: false, error: 'Dirección inválida. Debe tener entre 10 y 250 caracteres.' };
   }
-  if (!telefonoPattern.test(telefono)) {
-    return { ok: false, error: 'Teléfono inválido. Use el formato +504 0000-0000.' };
+  if (!telefonoValido(telefono)) {
+    return { ok: false, error: 'Teléfono inválido. Use formato [+ código y número], máximo 20 caracteres).' };
   }
   if (!correo || correo.length > 150 || !emailPattern.test(correo)) {
     return { ok: false, error: 'Correo electrónico inválido.' };
